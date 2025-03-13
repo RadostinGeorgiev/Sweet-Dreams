@@ -18,27 +18,36 @@ export default function BlogCard({ post }) {
             <Title order={2} fw={900}>
               {post.date.day}
             </Title>
-            <Text size="sm" f1w={600} tt="uppercase">
+            <Text size="sm" f1w={600} tt="uppercase" c="dimmed">
               {post.date.month}
             </Text>
           </Stack>
         </BackgroundImage>
       </Card.Section>
-      <Card.Section>
-        <Text span size={"sm"} fw={700} tt={"uppercase"}>
+      <Card.Section className={styles["item-text"]}>
+        <Text span size={"sm"} fw={700} tt="uppercase" className={styles.label}>
           {post.tags[0]}
         </Text>
         <Title order={3} fw={400}>
           <a href="#">{post.title}</a>
         </Title>
 
-        <List>
-          <List.Item>by {post.userId}</List.Item>
-          <List.Item>{post.minToRead} min read</List.Item>
-          <List.Item>{post.reviews.length} comments</List.Item>
+        <List className={styles.widget}>
+          <List.Item className={styles.property}>
+            by
+            <Text span className={styles.user}>
+              {post.userId}
+            </Text>
+          </List.Item>
+          <List.Item className={styles.property}>
+            {post.minToRead} min read
+          </List.Item>
+          <List.Item className={styles.property}>
+            {post.reviews.length} comments
+          </List.Item>
         </List>
 
-        <Text size="sm" mt="xs" lineClamp={3}>
+        <Text size="sm" mt="xs" lineClamp={3} className="description">
           {post.body}
         </Text>
       </Card.Section>

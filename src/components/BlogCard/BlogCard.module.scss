@@ -1,10 +1,10 @@
 .item-image {
   position: relative;
-  margin-bottom: 25px;
-  height: 506px;
+  margin-bottom: 1.5em;
+  height: 500px;
 
   .small {
-    height: 253px;
+    height: 250px;
   }
 
   .large {
@@ -12,10 +12,10 @@
   }
 
   .meta {
-    background: whitesmoke;
+    background: var(--color-white);
     position: absolute;
-    left: 20px;
-    top: 20px;
+    left: 1.25em;
+    top: 1.25em;
     height: 4rem;
     width: 4rem;
 
@@ -23,9 +23,62 @@
       font-family: var(--fm-nunito);
       color: var(--heading-color);
     }
+  }
+}
 
-    .month {
-      color: var(--para-color);
+.item-text {
+  text-align: center;
+
+  .label {
+    color: var(--color-primary);
+    margin-bottom: 0.625em;
+  }
+
+  .title {
+    margin-bottom: 0.3125em;
+
+    a {
+      color: var(--color-heading);
+      line-height: 1.8;
+      font-size: 1.375rem;
+      display: block;
     }
+  }
+
+  .widget {
+    margin-bottom: 0.625em;
+    list-style: none;
+
+    .property {
+      position: relative;
+      display: inline-block;
+      margin-right: 1.5em;
+      font-size: 0.75rem;
+      color: var(--color-text);
+
+      .user {
+        color: var(--color-heading);
+      }
+
+      :after {
+        position: absolute;
+        right: -1em;
+        top: -1px;
+        content: "|";
+        color: var(--color-text);
+      }
+
+      :last-child {
+        margin-right: 0;
+
+        :after {
+          display: none;
+        }
+      }
+    }
+  }
+
+  .description {
+    margin-bottom: 1.5em;
   }
 }
