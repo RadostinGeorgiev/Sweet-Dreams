@@ -1,0 +1,31 @@
+.item-image {
+  position: relative;
+  margin-bottom: 25px;
+  height: 506px;
+
+  .small {
+    height: 253px;
+  }
+
+  .large {
+    height: 380px;
+  }
+
+  .meta {
+    background: whitesmoke;
+    position: absolute;
+    left: 20px;
+    top: 20px;
+    height: 4rem;
+    width: 4rem;
+
+    .day {
+      font-family: var(--fm-nunito);
+      color: var(--heading-color);
+    }
+
+    .month {
+      color: var(--para-color);
+    }
+  }
+}
