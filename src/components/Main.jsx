@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-import { Grid } from "@mantine/core";
+import { Container, Grid } from "@mantine/core";
 
 import BlogCard from "./BlogCard/BlogCard";
 
@@ -16,15 +16,15 @@ export default function Main() {
   }, []);
 
   return (
-    <>
+    <Container size="lg" mt="md">
       <h1>Sweet Dreams</h1>
-      <Grid gutter="xl">
+      <Grid gutter="xl" direction="column">
         {posts.map((post) => (
           <Grid.Col key={post.id} span={4}>
             <BlogCard post={post} />
           </Grid.Col>
         ))}
       </Grid>
-    </>
+    </Container>
   );
 }
