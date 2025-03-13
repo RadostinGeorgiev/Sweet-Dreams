@@ -1,4 +1,7 @@
 import { useEffect, useState } from "react";
+
+import { Grid } from "@mantine/core";
+
 import BlogCard from "./BlogCard/BlogCard";
 
 export default function Main() {
@@ -15,9 +18,13 @@ export default function Main() {
   return (
     <>
       <h1>Sweet Dreams</h1>
-      {posts.map((post) => (
-        <BlogCard key={post.id} post={post} />
-      ))}
+      <Grid gutter="xl">
+        {posts.map((post) => (
+          <Grid.Col key={post.id} span={4}>
+            <BlogCard post={post} />
+          </Grid.Col>
+        ))}
+      </Grid>
     </>
   );
 }

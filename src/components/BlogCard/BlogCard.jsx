@@ -3,10 +3,8 @@ import { Card, BackgroundImage, Stack, Title, Text, List } from "@mantine/core";
 import styles from "./BlogCard.module.scss";
 
 export default function BlogCard({ post }) {
-  console.log(post);
-
   return (
-    <Card shadow="xs" padding="md" radius="md">
+    <Card shadow="md" radius="0">
       <Card.Section>
         <BackgroundImage src={post.image} className={styles["item-image"]}>
           <Stack
@@ -28,7 +26,7 @@ export default function BlogCard({ post }) {
         <Text span size={"sm"} fw={700} tt="uppercase" className={styles.label}>
           {post.tags[0]}
         </Text>
-        <Title order={3} fw={400}>
+        <Title order={3} fw={400} className={styles.title}>
           <a href="#">{post.title}</a>
         </Title>
 
@@ -47,7 +45,7 @@ export default function BlogCard({ post }) {
           </List.Item>
         </List>
 
-        <Text size="sm" mt="xs" lineClamp={3} className="description">
+        <Text size="sm" m="md" lineClamp={3} className={styles.description}>
           {post.body}
         </Text>
       </Card.Section>
