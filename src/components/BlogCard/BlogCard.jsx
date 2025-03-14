@@ -2,9 +2,14 @@ import { Card, Image, Stack, Title, Text, List } from "@mantine/core";
 
 import styles from "./BlogCard.module.scss";
 
-export default function BlogCard({ article, author }) {
+export default function BlogCard({ article, author, layout = "vertical" }) {
   return (
-    <Card shadow="md" mb="lg" radius="0">
+    <Card
+      shadow="md"
+      mb="lg"
+      radius="0"
+      className={`${styles.card} ${styles[layout]}`}
+    >
       <Card.Section className={styles["item-image"]}>
         <Image src={article.image} />
         <Stack align="center" justify="center" gap="0" className={styles.meta}>
