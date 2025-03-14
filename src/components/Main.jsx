@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
 
-import { Container, Grid } from "@mantine/core";
+import { Container } from "@mantine/core";
 
 import BlogCard from "./BlogCard/BlogCard";
+
+import styles from "./Main.module.scss";
 
 export default function Main() {
   const [posts, setPosts] = useState([]);
@@ -15,16 +17,22 @@ export default function Main() {
       });
   }, []);
 
+  const getChild = (height) => (
+    <Skeleton height={height} radius="md" animate={false} />
+  );
+  const BASE_HEIGHT = 360;
+  const getSubHeight = (children, spacing) =>
+    BASE_HEIGHT / children - spacing * ((children - 1) / children);
+
   return (
     <Container size="lg" mt="md">
       <h1>Sweet Dreams</h1>
-      <Grid gutter="xl" direction="column">
+
+      <div className={styles.masonry}>
         {posts.map((post) => (
-          <Grid.Col key={post.id} span={4}>
-            <BlogCard post={post} />
-          </Grid.Col>
+          <BlogCard className={styles["masonry-item"]} post={post} />
         ))}
-      </Grid>
+      </div>
     </Container>
   );
 }
