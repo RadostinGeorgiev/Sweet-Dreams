@@ -2,45 +2,45 @@ import { Card, Image, Stack, Title, Text, List } from "@mantine/core";
 
 import styles from "./BlogCard.module.scss";
 
-export default function BlogCard({ post }) {
+export default function BlogCard({ article, author }) {
   return (
     <Card shadow="md" mb="lg" radius="0">
       <Card.Section className={styles["item-image"]}>
-        <Image src={post.image} />
+        <Image src={article.image} />
         <Stack align="center" justify="center" gap="0" className={styles.meta}>
           <Title order={2} fw={900}>
-            {post.date.day}
+            {article.date.day}
           </Title>
           <Text size="sm" f1w={600} tt="uppercase" c="dimmed">
-            {post.date.month}
+            {article.date.month}
           </Text>
         </Stack>
       </Card.Section>
       <Card.Section className={styles["item-text"]}>
         <Text span size={"sm"} fw={700} tt="uppercase" className={styles.label}>
-          {post.tags[0]}
+          {article.tags[0]}
         </Text>
         <Title order={3} fw={400} className={styles.title}>
-          <a href="#">{post.title}</a>
+          <a href="#">{article.title}</a>
         </Title>
 
         <List className={styles.widget}>
           <List.Item className={styles.property}>
             by
             <Text span className={styles.user}>
-              {post.userId}
+              {` ${author?.firstName} ${author?.lastName}`}
             </Text>
           </List.Item>
           <List.Item className={styles.property}>
-            {post.minToRead} min read
+            {article.minToRead} min read
           </List.Item>
           <List.Item className={styles.property}>
-            {post.reviews.length} comments
+            {article.reviews.length} comments
           </List.Item>
         </List>
 
         <Text size="sm" m="md" lineClamp={3} className={styles.description}>
-          {post.body}
+          {article.body}
         </Text>
       </Card.Section>
     </Card>
