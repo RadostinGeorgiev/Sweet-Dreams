@@ -1,17 +1,20 @@
-import { Card, Image, Stack, Title, Text, List } from "@mantine/core";
+import { Flex, Box, Image, Stack, Title, Text, List } from "@mantine/core";
 
 import styles from "./BlogCard.module.scss";
 
 export default function BlogCard({ article, author, layout = "vertical" }) {
   return (
-    <Card
+    <Flex
       shadow="md"
-      mb="lg"
+      gap="md"
+      align="stretch"
+      w="100%"
+      p="md"
       radius="0"
       className={`${styles.card} ${styles[layout]}`}
     >
-      <Card.Section className={styles["item-image"]}>
-        <Image src={article.image} />
+      <Box className={styles["item-image"]}>
+        <Image className={styles.image} src={article.image} />
         <Stack align="center" justify="center" gap="0" className={styles.meta}>
           <Title order={2} fw={900}>
             {article.date.day}
@@ -20,9 +23,10 @@ export default function BlogCard({ article, author, layout = "vertical" }) {
             {article.date.month}
           </Text>
         </Stack>
-      </Card.Section>
-      <Card.Section className={styles["item-text"]}>
-        <Text span size={"sm"} fw={700} tt="uppercase" className={styles.label}>
+      </Box>
+
+      <Flex className={styles["item-text"]}>
+        <Text size={"sm"} fw={700} tt="uppercase" className={styles.label}>
           {article.tags[0]}
         </Text>
         <Title order={3} fw={400} className={styles.title}>
@@ -44,10 +48,10 @@ export default function BlogCard({ article, author, layout = "vertical" }) {
           </List.Item>
         </List>
 
-        <Text size="sm" m="md" lineClamp={3} className={styles.description}>
+        <Text size="sm" lineClamp={3} className={styles.description}>
           {article.body}
         </Text>
-      </Card.Section>
-    </Card>
+      </Flex>
+    </Flex>
   );
 }
