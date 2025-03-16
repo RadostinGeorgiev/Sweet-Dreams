@@ -14,7 +14,7 @@ import {
 
 const create = async (user) => {
   try {
-    let response = await fetch("https://dummyjson.com/c/eb3d-d728-4cdf-ab19", {
+    let response = await fetch("https://dummyjson.com/users/add", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(user),
@@ -34,6 +34,7 @@ export default function RegisterForm({ opened, onClose }) {
       password: "",
       confirmPassword: "",
       subscribe: false,
+      role: "user",
     },
   });
 
