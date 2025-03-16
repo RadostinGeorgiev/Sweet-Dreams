@@ -24,7 +24,7 @@ export default function UsersList({ users }) {
       </Table.Td>
 
       <Table.Td>
-        <Badge color={jobColors[item.role.toLowerCase()]} variant="light">
+        <Badge color={jobColors[item.role?.toLowerCase()]} variant="light">
           {item.role}
         </Badge>
       </Table.Td>

@@ -10,6 +10,7 @@ import {
   Checkbox,
   Paper,
   Notification,
+  Group,
 } from "@mantine/core";
 
 const create = async (user) => {
@@ -25,11 +26,13 @@ const create = async (user) => {
   }
 };
 
-export default function RegisterForm({ opened, onClose }) {
+export default function RegisterForm({ opened, onClose, onAddUser }) {
   const [serverError, setServerError] = useState(null);
 
   const form = useForm({
     initialValues: {
+      firstName: "",
+      lastName: "",
       email: "",
       password: "",
       confirmPassword: "",
@@ -40,9 +43,13 @@ export default function RegisterForm({ opened, onClose }) {
 
   const handleSubmit = (values) => {
     const user = {
+      id: new Date().getTime(),
+      firstName: values.firstName,
+      lastName: values.lastName,
       email: values.email,
       password: values.password,
       subscribe: values.subscribe,
+      role: "user",
     };
 
     create(user).then((data) => {
@@ -51,6 +58,8 @@ export default function RegisterForm({ opened, onClose }) {
       }
     });
 
+    onAddUser(user);
+    form.reset();
     onClose(false);
   };
 
@@ -66,6 +75,21 @@ export default function RegisterForm({ opened, onClose }) {
               {serverError}
             </Notification>
           )}
+
+          <Group justify="space-between" wrap="nowrap" mb="md">
+            <TextInput
+              label="First Name"
+              placeholder="Enter your first name"
+              {...form.getInputProps("firstName")}
+              required
+            />
+            <TextInput
+              label="Last Name"
+              placeholder="Enter your last name"
+              {...form.getInputProps("lastName")}
+              required
+            />
+          </Group>
 
           <TextInput
             label="Email"

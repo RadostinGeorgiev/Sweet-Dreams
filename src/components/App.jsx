@@ -43,6 +43,10 @@ export default function App() {
       });
   }, []);
 
+  const handleAddUser = (newUser) => {
+    setUsers((users) => [...users, newUser]);
+  };
+
   return (
     <BrowserRouter>
       <MantineProvider theme={theme} withGlobalStyles withNormalizeCSS>
@@ -71,6 +75,7 @@ export default function App() {
             <RegisterForm
               opened={isRegisterOpen}
               onClose={() => setIsRegisterOpen(false)}
+              onAddUser={handleAddUser}
             />
           </AppShell.Main>
 
