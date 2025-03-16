@@ -1,3 +1,5 @@
+import { useState } from "react";
+
 import { useForm } from "@mantine/form";
 import {
   Modal,
@@ -7,9 +9,25 @@ import {
   Button,
   Checkbox,
   Paper,
+  Notification,
 } from "@mantine/core";
 
+const create = async (user) => {
+  try {
+    let response = await fetch("https://dummyjson.com/c/eb3d-d728-4cdf-ab19", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(user),
+    });
+    return await response.json();
+  } catch (err) {
+    console.log(err);
+  }
+};
+
 export default function RegisterForm({ opened, onClose }) {
+  const [serverError, setServerError] = useState(null);
+
   const form = useForm({
     initialValues: {
       email: "",
@@ -20,7 +38,18 @@ export default function RegisterForm({ opened, onClose }) {
   });
 
   const handleSubmit = (values) => {
-    console.log("Form values:", values);
+    const user = {
+      email: values.email,
+      password: values.password,
+      subscribe: values.subscribe,
+    };
+
+    create(user).then((data) => {
+      if (data.error) {
+        setServerError(data.error.message);
+      }
+    });
+
     onClose(false);
   };
 
@@ -31,6 +60,12 @@ export default function RegisterForm({ opened, onClose }) {
           Register
         </Title>
         <form onSubmit={form.onSubmit(handleSubmit)}>
+          {serverError && (
+            <Notification color="red" mb="md">
+              {serverError}
+            </Notification>
+          )}
+
           <TextInput
             label="Email"
             placeholder="Enter your email"
