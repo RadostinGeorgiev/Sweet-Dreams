@@ -7,7 +7,7 @@ import "@mantine/carousel/styles.css";
 import BlogMasonry from "./BlogMasonry/BlogMasonry";
 import BlogList from "./BlogList/BlogList";
 
-export default function Main() {
+export default function HomePage() {
   const [articles, setArticles] = useState([]);
   const [users, setUsers] = useState([]);
   const [images, setImages] = useState([]);
