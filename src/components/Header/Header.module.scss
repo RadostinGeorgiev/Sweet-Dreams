@@ -1,15 +1,5 @@
-.header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
 .logo {
   height: 4rem;
-}
-
-.links {
-  margin-right: calc(var(--mantine-spacing-sm) * -1);
 }
 
 .link {

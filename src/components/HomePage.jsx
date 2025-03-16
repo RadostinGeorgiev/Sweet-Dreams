@@ -33,28 +33,25 @@ export default function HomePage() {
   }, []);
 
   return (
-    <>
-      <h2>Main</h2>
-      <Container size="lg" mt="md">
-        <h1>Sweet Dreams</h1>
-        <BlogMasonry articles={articles} users={users} />
-        <BlogList articles={articles} users={users} />
-        <Carousel height={300} slideSize="md" slideGap="xs" loop dragFree>
-          {images.map((src) => {
-            return (
-              <Carousel.Slide key={src.id}>
-                <Image
-                  h="auto"
-                  w={200}
-                  src={src.image}
-                  alt={`Image ${src.id}`}
-                  radius="0"
-                />
-              </Carousel.Slide>
-            );
-          })}
-        </Carousel>
-      </Container>
-    </>
+    <Container size="lg" mt="md">
+      <h1>Sweet Dreams</h1>
+      <BlogMasonry articles={articles} users={users} />
+      <BlogList articles={articles} users={users} />
+      <Carousel height={300} slideSize="md" slideGap="xs" loop dragFree>
+        {images.map((src) => {
+          return (
+            <Carousel.Slide key={src.id}>
+              <Image
+                h="auto"
+                w={200}
+                src={src.image}
+                alt={`Image ${src.id}`}
+                radius="0"
+              />
+            </Carousel.Slide>
+          );
+        })}
+      </Carousel>
+    </Container>
   );
 }

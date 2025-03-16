@@ -25,7 +25,7 @@ export default function RegisterForm({ opened, onClose }) {
   };
 
   return (
-    <Modal title="Register" opened={opened} onClose={onClose}>
+    <Modal opened={opened} onClose={onClose}>
       <Paper
         shadow="md"
         p="xl"

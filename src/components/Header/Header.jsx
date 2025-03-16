@@ -45,7 +45,6 @@ export default function Header({ onRegister }) {
         <Group justify="flex-end" align="center" grow px="md">
           <Button
             variant="outline"
-            color="var(--color-primary)"
             size="compact-md"
             radius="0"
             className={styles.button}
@@ -54,7 +53,6 @@ export default function Header({ onRegister }) {
           </Button>
           <Button
             variant="filled"
-            color="var(--color-primary)"
             size="compact-md"
             radius="0"
             className={styles.button}
