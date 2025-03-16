@@ -14,6 +14,7 @@ export default function LoginForm({ opened, onClose }) {
     initialValues: {
       email: "",
       password: "",
+      remember: true,
     },
   });
 
@@ -24,15 +25,9 @@ export default function LoginForm({ opened, onClose }) {
 
   return (
     <Modal opened={opened} onClose={onClose}>
-      <Paper
-        shadow="md"
-        p="xl"
-        radius="md"
-        withBorder
-        style={{ maxWidth: 400, margin: "auto" }}
-      >
+      <Paper p="lg" style={{ maxWidth: 400, margin: "auto" }}>
         <Title align="center" mb="md">
-          Register
+          Login
         </Title>
         <form onSubmit={form.onSubmit(handleSubmit)}>
           <TextInput
@@ -50,23 +45,15 @@ export default function LoginForm({ opened, onClose }) {
             required
           />
 
-          <PasswordInput
-            label="Confirm Password"
-            placeholder="Confirm your password"
-            mt="md"
-            {...form.getInputProps("confirmPassword")}
-            required
-          />
-
           <Checkbox
-            label="I want to receive inspiration, marketing promotions and updates via email."
+            label="Remember me"
             size="xs"
             mt="md"
-            {...form.getInputProps("subscribe", { type: "checkbox" })}
+            {...form.getInputProps("remember", { type: "checkbox" })}
           />
 
-          <Button type="submit" fullWidth mt="lg">
-            Register
+          <Button type="submit" fullWidth mt="lg" tt="uppercase">
+            Login
           </Button>
         </form>
       </Paper>

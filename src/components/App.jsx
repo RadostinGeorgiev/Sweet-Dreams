@@ -13,17 +13,19 @@ import Footer from "./Footer";
 import Recipes from "./Recipes";
 import CookingTips from "./CookingTips";
 import ProjectDescription from "./ProjectDescription";
+import LoginForm from "./Login";
 import RegisterForm from "./Register";
 
 export default function App() {
   const [isRegisterOpen, setIsRegisterOpen] = useState(false);
+  const [isLoginOpen, setIsLoginOpen] = useState(false);
 
   return (
     <BrowserRouter>
       <MantineProvider theme={theme} withGlobalStyles withNormalizeCSS>
         <AppShell header={{ height: 100 }} footer={{ height: 60 }}>
           <AppShell.Header>
-            <Header onRegister={setIsRegisterOpen} />
+            <Header onLogin={setIsLoginOpen} onRegister={setIsRegisterOpen} />
           </AppShell.Header>
 
           <AppShell.Main>
@@ -34,6 +36,10 @@ export default function App() {
               <Route path="/project" element={<ProjectDescription />} />
             </Routes>
 
+            <LoginForm
+              opened={isLoginOpen}
+              onClose={() => setIsLoginOpen(false)}
+            />
             <RegisterForm
               opened={isRegisterOpen}
               onClose={() => setIsRegisterOpen(false)}

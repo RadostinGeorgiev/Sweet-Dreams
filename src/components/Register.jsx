@@ -26,13 +26,7 @@ export default function RegisterForm({ opened, onClose }) {
 
   return (
     <Modal opened={opened} onClose={onClose}>
-      <Paper
-        shadow="md"
-        p="xl"
-        radius="md"
-        withBorder
-        style={{ maxWidth: 400, margin: "auto" }}
-      >
+      <Paper p="lg" style={{ maxWidth: 400, margin: "auto" }}>
         <Title align="center" mb="md">
           Register
         </Title>
@@ -67,7 +61,7 @@ export default function RegisterForm({ opened, onClose }) {
             {...form.getInputProps("subscribe", { type: "checkbox" })}
           />
 
-          <Button type="submit" fullWidth mt="lg">
+          <Button type="submit" fullWidth mt="lg" tt="uppercase">
             Register
           </Button>
         </form>

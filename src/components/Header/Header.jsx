@@ -13,7 +13,7 @@ const mainLinks = [
   { link: "/project", label: "Project Design" },
 ];
 
-export default function Header({ onRegister }) {
+export default function Header({ onLogin, onRegister }) {
   const [active, setActive] = useState(0);
 
   const menuItems = mainLinks.map((item, index) => (
@@ -48,6 +48,7 @@ export default function Header({ onRegister }) {
             size="compact-md"
             radius="0"
             className={styles.button}
+            onClick={() => onLogin(true)}
           >
             Log in
           </Button>
