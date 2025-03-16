@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { BrowserRouter, Routes, Route } from "react-router";
 
 import { MantineProvider, createTheme, AppShell } from "@mantine/core";
@@ -11,18 +12,21 @@ import "./App.scss";
 import Recipes from "./Recipes";
 import CookingTips from "./CookingTips";
 import ProjectDescription from "./ProjectDescription";
+import RegisterForm from "./Register/Register";
 
 const theme = createTheme({
   fontFamily: "Nunito Sans, sans-serif",
 });
 
 export default function App() {
+  const [isRegisterOpen, setIsRegisterOpen] = useState(false);
+
   return (
     <BrowserRouter>
       <MantineProvider theme={theme} withGlobalStyles withNormalizeCSS>
         <AppShell header={{ height: 100 }} footer={{ height: 60 }}>
           <AppShell.Header>
-            <Header />
+            <Header onRegister={setIsRegisterOpen} />
           </AppShell.Header>
 
           <AppShell.Main>
@@ -32,6 +36,11 @@ export default function App() {
               <Route path="/tips" element={<CookingTips />} />
               <Route path="/project" element={<ProjectDescription />} />
             </Routes>
+
+            <RegisterForm
+              opened={isRegisterOpen}
+              onClose={() => setIsRegisterOpen(false)}
+            />
           </AppShell.Main>
 
           <AppShell.Footer>
