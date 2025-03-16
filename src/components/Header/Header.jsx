@@ -33,7 +33,7 @@ export default function Header({ onLogin, onRegister }) {
 
   return (
     <Container>
-      <Group justify="space-between">
+      <Group justify="space-between" align="center" mt="md">
         <Image
           h={60}
           w="auto"
@@ -42,29 +42,37 @@ export default function Header({ onLogin, onRegister }) {
           alt="Logo"
           className={styles.logo}
         />
-        <Group justify="flex-end" align="center" grow px="md">
-          <Button
-            variant="outline"
-            size="compact-md"
-            radius="0"
-            className={styles.button}
-            onClick={() => onLogin(true)}
-          >
-            Log in
-          </Button>
-          <Button
-            variant="filled"
-            size="compact-md"
-            radius="0"
-            className={styles.button}
-            onClick={() => onRegister(true)}
-          >
-            Register
-          </Button>
-        </Group>
-      </Group>
-      <Group gap={0} justify="center">
-        {menuItems}
+        <div
+          style={{
+            flex: 1,
+            display: "flex",
+            flexDirection: "column",
+          }}
+        >
+          <Group justify="flex-end" align="center">
+            <Button
+              variant="outline"
+              size="compact-md"
+              radius="0"
+              className={styles.button}
+              onClick={() => onLogin(true)}
+            >
+              Log in
+            </Button>
+            <Button
+              variant="filled"
+              size="compact-md"
+              radius="0"
+              className={styles.button}
+              onClick={() => onRegister(true)}
+            >
+              Register
+            </Button>
+          </Group>
+          <Group gap={0} justify="center">
+            {menuItems}
+          </Group>
+        </div>
       </Group>
     </Container>
   );
