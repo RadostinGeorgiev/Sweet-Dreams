@@ -1,37 +1,19 @@
 import { useState } from "react";
 import { BrowserRouter, Routes, Route } from "react-router";
 
-import { MantineProvider, createTheme, AppShell } from "@mantine/core";
+import { MantineProvider, AppShell } from "@mantine/core";
 import "@mantine/core/styles.css";
+
+import "./App.scss";
+import { theme } from "../assets/styles/theme";
 
 import Header from "./Header/Header";
 import Main from "./HomePage";
 import Footer from "./Footer";
-
-import "./App.scss";
 import Recipes from "./Recipes";
 import CookingTips from "./CookingTips";
 import ProjectDescription from "./ProjectDescription";
-import RegisterForm from "./Register/Register";
-
-const theme = createTheme({
-  fontFamily: "Nunito Sans, sans-serif",
-  primaryColor: "custom-red",
-  colors: {
-    "custom-red": [
-      "#ffe5e9",
-      "#ffb3bf",
-      "#ff8095",
-      "#ff4d6b",
-      "#ff1a41",
-      "#e60026",
-      "#b40124",
-      "#8a011c",
-      "#600113",
-      "#30000a",
-    ],
-  },
-});
+import RegisterForm from "./Register";
 
 export default function App() {
   const [isRegisterOpen, setIsRegisterOpen] = useState(false);
