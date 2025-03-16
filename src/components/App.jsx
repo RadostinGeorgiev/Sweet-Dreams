@@ -30,7 +30,7 @@ export default function App() {
         setArticles(data.posts);
       });
 
-    fetch("https://dummyjson.com/users?limit=200")
+    fetch("https://dummyjson.com/users")
       .then((response) => response.json())
       .then((data) => {
         setUsers(data.users);

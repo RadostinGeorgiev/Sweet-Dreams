@@ -7,11 +7,15 @@ const jobColors = {
 };
 
 export default function UsersList({ users }) {
-  const rows = users.map((item) => (
+  const rows = users?.map((item) => (
     <Table.Tr key={item.id}>
       <Table.Td>
         <Group gap="sm">
-          <Avatar size={40} src={item.image} radius={40} />
+          <Avatar
+            size={40}
+            src={`https://randomuser.me/api/portraits/thumb/men/${item.id}.jpg`}
+            radius={40}
+          />
           <div>
             <Text fz="sm" fw={500}>
               {`${item.firstName} ${item.lastName}`}
