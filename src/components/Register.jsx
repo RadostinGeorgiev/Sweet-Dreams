@@ -1,16 +1,17 @@
 import { useState } from "react";
+import { useNavigate, Link } from "react-router";
 
 import { useForm } from "@mantine/form";
 import {
-  Modal,
   Title,
+  Paper,
   TextInput,
   PasswordInput,
   Button,
   Checkbox,
-  Paper,
   Notification,
   Group,
+  Text,
 } from "@mantine/core";
 
 import { zodResolver } from "mantine-form-zod-resolver";
@@ -48,8 +49,9 @@ const schema = z
     path: ["confirmPassword"],
   });
 
-export default function RegisterForm({ opened, onClose, onAddUser }) {
+export default function RegisterForm({ onAddUser }) {
   const [serverError, setServerError] = useState(null);
+  const navigate = useNavigate();
 
   const form = useForm({
     initialValues: {
@@ -83,72 +85,82 @@ export default function RegisterForm({ opened, onClose, onAddUser }) {
 
     onAddUser(user);
     form.reset();
-    onClose(false);
+    navigate("/");
   };
 
   return (
-    <Modal opened={opened} onClose={onClose}>
-      <Paper p="lg" style={{ maxWidth: 400, margin: "auto" }}>
-        <Title align="center" mb="md">
-          Register
-        </Title>
-        <form onSubmit={form.onSubmit(handleSubmit)}>
-          {serverError && (
-            <Notification color="red" mb="md">
-              {serverError}
-            </Notification>
-          )}
+    <Paper
+      withBorder
+      shadow="lg"
+      p="lg"
+      mt="lg"
+      style={{ maxWidth: 400, margin: "auto" }}
+    >
+      <Title align="center" mb="md">
+        Register
+      </Title>
+      <form onSubmit={form.onSubmit(handleSubmit)}>
+        {serverError && (
+          <Notification color="red" mb="md">
+            {serverError}
+          </Notification>
+        )}
 
-          <Group justify="space-between" wrap="nowrap" mb="md">
-            <TextInput
-              label="First Name"
-              placeholder="Enter your first name"
-              {...form.getInputProps("firstName")}
-              required
-            />
-            <TextInput
-              label="Last Name"
-              placeholder="Enter your last name"
-              {...form.getInputProps("lastName")}
-              required
-            />
-          </Group>
-
+        <Group justify="space-between" wrap="nowrap" mb="md">
           <TextInput
-            label="Email"
-            placeholder="Enter your email"
-            {...form.getInputProps("email")}
+            label="First Name"
+            placeholder="Enter your first name"
+            {...form.getInputProps("firstName")}
             required
           />
-
-          <PasswordInput
-            label="Password"
-            placeholder="Enter your password"
-            mt="md"
-            {...form.getInputProps("password")}
+          <TextInput
+            label="Last Name"
+            placeholder="Enter your last name"
+            {...form.getInputProps("lastName")}
             required
           />
+        </Group>
 
-          <PasswordInput
-            label="Confirm Password"
-            placeholder="Confirm your password"
-            mt="md"
-            {...form.getInputProps("confirmPassword")}
-            required
-          />
+        <TextInput
+          label="Email"
+          placeholder="Enter your email"
+          {...form.getInputProps("email")}
+          required
+        />
 
-          <Checkbox
-            label="I want to receive inspiration, marketing promotions and updates via email."
-            size="xs"
-            mt="md"
-            {...form.getInputProps("subscribe", { type: "checkbox" })}
-          />
+        <PasswordInput
+          label="Password"
+          placeholder="Enter your password"
+          mt="md"
+          {...form.getInputProps("password")}
+          required
+        />
 
-          <Button type="submit" fullWidth mt="lg" tt="uppercase">
-            Register
-          </Button>
-        </form>
-      </Paper>
-    </Modal>
+        <PasswordInput
+          label="Confirm Password"
+          placeholder="Confirm your password"
+          mt="md"
+          {...form.getInputProps("confirmPassword")}
+          required
+        />
+
+        <Checkbox
+          label="I want to receive inspiration, marketing promotions and updates via email."
+          size="xs"
+          mt="md"
+          {...form.getInputProps("subscribe", { type: "checkbox" })}
+        />
+
+        <Button type="submit" fullWidth mt="lg" tt="uppercase">
+          Register
+        </Button>
+      </form>
+
+      <Link to="/login" variant="body2">
+        <Text mt="md" size="xs">
+          Already have an account? Sign in
+        </Text>
+      </Link>
+    </Paper>
   );
 }

@@ -3,6 +3,8 @@ import { Link } from "react-router";
 
 import { Image, Anchor, Container, Group, Button } from "@mantine/core";
 
+import { IconUserDown, IconUserPlus } from "@tabler/icons-react";
+
 import styles from "./Header.module.scss";
 import logo from "/images/logo.png";
 
@@ -13,7 +15,7 @@ const mainLinks = [
   { link: "/project", label: "Project Design" },
 ];
 
-export default function Header({ onLogin, onRegister }) {
+export default function Header() {
   const [active, setActive] = useState(0);
 
   const menuItems = mainLinks.map((item, index) => (
@@ -54,8 +56,10 @@ export default function Header({ onLogin, onRegister }) {
               variant="outline"
               size="compact-md"
               radius="0"
+              leftSection={<IconUserDown size={16} />}
               className={styles.button}
-              onClick={() => onLogin(true)}
+              component={Link}
+              to="/login"
             >
               Log in
             </Button>
@@ -63,8 +67,10 @@ export default function Header({ onLogin, onRegister }) {
               variant="filled"
               size="compact-md"
               radius="0"
+              leftSection={<IconUserPlus size={16} />}
               className={styles.button}
-              onClick={() => onRegister(true)}
+              component={Link}
+              to="/register"
             >
               Register
             </Button>

@@ -8,17 +8,15 @@ import "./App.scss";
 import { theme } from "../assets/styles/theme";
 
 import Header from "./Header/Header";
+import LoginForm from "./Login";
+import RegisterForm from "./Register";
 import Footer from "./Footer";
 import HomePage from "./HomePage";
 import Recipes from "./Recipes";
 import CookingTips from "./CookingTips";
 import ProjectDescription from "./ProjectDescription";
-import LoginForm from "./Login";
-import RegisterForm from "./Register";
 
 export default function App() {
-  const [isRegisterOpen, setIsRegisterOpen] = useState(false);
-  const [isLoginOpen, setIsLoginOpen] = useState(false);
   const [articles, setArticles] = useState([]);
   const [users, setUsers] = useState([]);
   const [images, setImages] = useState([]);
@@ -52,7 +50,7 @@ export default function App() {
       <MantineProvider theme={theme} withGlobalStyles withNormalizeCSS>
         <AppShell header={{ height: 100 }} footer={{ height: 60 }}>
           <AppShell.Header>
-            <Header onLogin={setIsLoginOpen} onRegister={setIsRegisterOpen} />
+            <Header />
           </AppShell.Header>
 
           <AppShell.Main>
@@ -63,20 +61,16 @@ export default function App() {
                   <HomePage users={users} articles={articles} images={images} />
                 }
               />
+              <Route path="/login" element={<LoginForm />} />
+              <Route
+                path="/register"
+                element={<RegisterForm onAddUser={handleAddUser} />}
+              />
+
               <Route path="/recipes" element={<Recipes />} />
               <Route path="/tips" element={<CookingTips />} />
               <Route path="/project" element={<ProjectDescription />} />
             </Routes>
-
-            <LoginForm
-              opened={isLoginOpen}
-              onClose={() => setIsLoginOpen(false)}
-            />
-            <RegisterForm
-              opened={isRegisterOpen}
-              onClose={() => setIsRegisterOpen(false)}
-              onAddUser={handleAddUser}
-            />
           </AppShell.Main>
 
           <AppShell.Footer>
