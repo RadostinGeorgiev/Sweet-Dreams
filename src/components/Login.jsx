@@ -9,6 +9,13 @@ import {
   Paper,
 } from "@mantine/core";
 
+import { zodResolver } from "mantine-form-zod-resolver";
+import { z } from "zod";
+
+const schema = z.object({
+  email: z.string().email({ message: "Invalid email" }),
+});
+
 export default function LoginForm({ opened, onClose }) {
   const form = useForm({
     initialValues: {
@@ -16,6 +23,7 @@ export default function LoginForm({ opened, onClose }) {
       password: "",
       remember: true,
     },
+    validate: zodResolver(schema),
   });
 
   const handleSubmit = (values) => {
