@@ -13,6 +13,9 @@ import {
   Group,
 } from "@mantine/core";
 
+import { zodResolver } from "mantine-form-zod-resolver";
+import { z } from "zod";
+
 const create = async (user) => {
   try {
     let response = await fetch("https://dummyjson.com/users/add", {
@@ -25,6 +28,25 @@ const create = async (user) => {
     console.log(err);
   }
 };
+
+const schema = z
+  .object({
+    firstName: z
+      .string()
+      .min(2, { message: "First name must be at least 2 characters" }),
+    lastName: z
+      .string()
+      .min(2, { message: "Last name must be at least 2 characters" }),
+    email: z.string().email({ message: "Invalid email" }),
+    password: z
+      .string()
+      .min(6, { message: "Password must be at least 6 characters" }),
+    confirmPassword: z.string(),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords do not match",
+    path: ["confirmPassword"],
+  });
 
 export default function RegisterForm({ opened, onClose, onAddUser }) {
   const [serverError, setServerError] = useState(null);
@@ -39,6 +61,7 @@ export default function RegisterForm({ opened, onClose, onAddUser }) {
       subscribe: false,
       role: "user",
     },
+    validate: zodResolver(schema),
   });
 
   const handleSubmit = (values) => {
