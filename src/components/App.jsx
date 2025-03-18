@@ -4,6 +4,9 @@ import { BrowserRouter, Routes, Route } from "react-router";
 import { MantineProvider, AppShell } from "@mantine/core";
 import "@mantine/core/styles.css";
 
+import { services } from "../services/item.service";
+import { endpoints } from "../../config";
+
 import "./App.scss";
 import { theme } from "../assets/styles/theme";
 
@@ -22,23 +25,26 @@ export default function App() {
   const [images, setImages] = useState([]);
 
   useEffect(() => {
-    fetch("https://dummyjson.com/c/f4c3-1f33-4174-878d")
-      .then((response) => response.json())
-      .then((data) => {
-        setArticles(data.posts);
-      });
+    const fetchData = async () => {
+      try {
+        const items = await services.getAllItems(endpoints.items);
+        setArticles(items.posts);
 
-    fetch("https://dummyjson.com/users")
-      .then((response) => response.json())
-      .then((data) => {
-        setUsers(data.users);
-      });
+        const users = await services.getAllItems(endpoints.users);
+        setUsers(users.users);
 
-    fetch("https://dummyjson.com/recipes?limit=20&select=image")
-      .then((response) => response.json())
-      .then((data) => {
-        setImages(data.recipes);
-      });
+        const recipes = await services.getAllItems(
+          endpoints.limitedRecipeImages
+        );
+        console.log("images:", recipes.recipes);
+
+        setImages(recipes.recipes);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    fetchData();
   }, []);
 
   const handleAddUser = (newUser) => {

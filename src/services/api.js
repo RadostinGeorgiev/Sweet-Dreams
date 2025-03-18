@@ -1,4 +1,4 @@
-const host = "https://dummyjson.com/users";
+const host = "https://dummyjson.com";
 
 /**
  * --- function CRUD requests ---------------------------------------------------
