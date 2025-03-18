@@ -10,7 +10,7 @@ const host = "https://dummyjson.com";
 
 let cachedUserData = JSON.parse(localStorage.getItem("user")) || null;
 
-async function request(method, url, data) {
+async function request(method = "GET", url, data) {
   const options = {
     method: method,
     headers: {},
@@ -18,7 +18,7 @@ async function request(method, url, data) {
 
   if (data instanceof FormData) {
     options.body = data;
-  } else {
+  } else if (data) {
     options.headers["Content-Type"] = "application/json";
     options.body = JSON.stringify(data);
   }
@@ -48,7 +48,7 @@ async function request(method, url, data) {
 
     return response.status === 204 ? response : response.json();
   } catch (error) {
-    console.error("Request error:", error);
+    console.error("Request error:", error.message);
     throw error;
   }
 }

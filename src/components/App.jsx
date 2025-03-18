@@ -1,10 +1,10 @@
-import { useEffect, useState } from "react";
 import { BrowserRouter, Routes, Route } from "react-router";
 
 import { MantineProvider, AppShell } from "@mantine/core";
 import "@mantine/core/styles.css";
 
 import { services } from "../services/item.service";
+import { useFetch } from "../hooks/useFetch";
 import { endpoints } from "../../config";
 
 import "./App.scss";
@@ -20,32 +20,29 @@ import CookingTips from "./CookingTips";
 import ProjectDescription from "./ProjectDescription";
 
 export default function App() {
-  const [articles, setArticles] = useState([]);
-  const [users, setUsers] = useState([]);
-  const [images, setImages] = useState([]);
+  const {
+    data: articles,
+    loading: articlesLoading,
+    error: articlesError,
+  } = useFetch(services.getAllItems, "posts", endpoints.items);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const items = await services.getAllItems(endpoints.items);
-        setArticles(items.posts);
+  const {
+    data: users,
+    setData: setUsers,
+    loading: usersLoading,
+    error: usersError,
+  } = useFetch(services.getAllItems, "users", endpoints.users);
 
-        const users = await services.getAllItems(endpoints.users);
-        setUsers(users.users);
+  const {
+    data: images,
+    loading: imagesLoading,
+    error: imagesError,
+  } = useFetch(services.getAllItems, "recipes", endpoints.limitedRecipeImages);
 
-        const recipes = await services.getAllItems(
-          endpoints.limitedRecipeImages
-        );
-        console.log("images:", recipes.recipes);
-
-        setImages(recipes.recipes);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
-    };
-
-    fetchData();
-  }, []);
+  if (articlesLoading || usersLoading || imagesLoading)
+    return <div>Loading...</div>;
+  if (articlesError || usersError || imagesError)
+    return <div>Error: {articlesError}</div>;
 
   const handleAddUser = (newUser) => {
     setUsers((users) => [...users, newUser]);
