@@ -6,7 +6,7 @@ import BlogMasonry from "./BlogMasonry/BlogMasonry";
 import BlogList from "./BlogList/BlogList";
 import UsersList from "./UsersList/UsersList";
 
-export default function HomePage({ users, articles, images }) {
+export default function HomePage({ articles, users, images }) {
   return (
     <Container size="lg" mt="md">
       <h1>Sweet Dreams</h1>
