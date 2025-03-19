@@ -1,4 +1,4 @@
-const host = "https://dummyjson.com";
+import * as config from "../../config";
 
 /**
  * --- function CRUD requests ---------------------------------------------------
@@ -24,19 +24,19 @@ async function request(method = "GET", url, data) {
   }
 
   try {
-    cachedUserData = localStorage.user ? JSON.parse(localStorage.user) : null;
+    cachedUserData = JSON.parse(localStorage.user) || null;
   } catch (error) {
     console.error("Error parsing user data:", error);
   }
 
-  if (cachedUserData) {
+  if (cachedUserData && cachedUserData.token) {
     options.headers["Authorization"] = cachedUserData.token;
   }
 
   try {
-    const response = await fetch(host + url, options);
+    const response = await fetch(config.host + url, options);
 
-    if (response.ok !== true) {
+    if (!response.ok) {
       if (response.status === 403) {
         localStorage.removeItem("user");
         cachedUserData = null;
@@ -59,4 +59,8 @@ const put = (url, data) => request("PUT", url, data);
 const patch = (url, data) => request("PATCH", url, data);
 const del = (url, data) => request("DELETE", url, data);
 
-export { get, post, put, patch, del };
+const register = (data) => request("POST", config.endpoints.register, data);
+const login = (data) => request("POST", config.endpoints.login, data);
+const logout = () => request("GET", config.endpoints.logout);
+
+export { get, post, put, patch, del, register, login, logout };
