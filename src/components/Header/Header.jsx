@@ -2,11 +2,16 @@ import { useState } from "react";
 import { Link } from "react-router";
 
 import { Image, Anchor, Container, Group, Button } from "@mantine/core";
-
-import { IconUserDown, IconUserPlus } from "@tabler/icons-react";
+import { IconUserDown, IconUserPlus, IconUserShare } from "@tabler/icons-react";
 
 import styles from "./Header.module.scss";
+
+import { services } from "../../services/item.service";
+import { useFetch } from "../../hooks/useFetch";
+import { endpoints } from "../../../config";
+
 import logo from "/images/logo.png";
+import { UserInfo } from "../UserInfo/UserInfo";
 
 const mainLinks = [
   { link: "/", label: "Home" },
@@ -18,6 +23,15 @@ const mainLinks = [
 
 export default function Header() {
   const [active, setActive] = useState(0);
+
+  const {
+    data: user,
+    loading: userLoading,
+    error: userError,
+  } = useFetch(services.getItemById, null, endpoints.users, 101);
+
+  if (userLoading) return <div>Loading...</div>;
+  if (userError) return <div>Error: {userError}</div>;
 
   const menuItems = mainLinks.map((item, index) => (
     <Anchor
@@ -52,30 +66,48 @@ export default function Header() {
             flexDirection: "column",
           }}
         >
-          <Group justify="flex-end" align="center">
-            <Button
-              variant="outline"
-              size="compact-md"
-              radius="0"
-              leftSection={<IconUserDown size={16} />}
-              className={styles.button}
-              component={Link}
-              to="/login"
-            >
-              Log in
-            </Button>
-            <Button
-              variant="filled"
-              size="compact-md"
-              radius="0"
-              leftSection={<IconUserPlus size={16} />}
-              className={styles.button}
-              component={Link}
-              to="/register"
-            >
-              Register
-            </Button>
-          </Group>
+          {user.email ? (
+            <Group justify="flex-end" align="center">
+              <UserInfo user={user} />
+              <Button
+                variant="filled"
+                size="compact-md"
+                radius="0"
+                leftSection={<IconUserShare size={16} />}
+                className={styles.button}
+                component={Link}
+                to="/"
+              >
+                Log out
+              </Button>
+            </Group>
+          ) : (
+            <Group justify="flex-end" align="center">
+              <Button
+                variant="outline"
+                size="compact-md"
+                radius="0"
+                leftSection={<IconUserDown size={16} />}
+                className={styles.button}
+                component={Link}
+                to="/login"
+              >
+                Log in
+              </Button>
+              <Button
+                variant="filled"
+                size="compact-md"
+                radius="0"
+                leftSection={<IconUserPlus size={16} />}
+                className={styles.button}
+                component={Link}
+                to="/register"
+              >
+                Register
+              </Button>
+            </Group>
+          )}
+
           <Group gap={0} justify="center">
             {menuItems}
           </Group>
