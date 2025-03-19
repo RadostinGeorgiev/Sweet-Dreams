@@ -45,7 +45,7 @@ export default function BlogCard({ article, author, layout = "vertical" }) {
           {article.tags[0]}
         </Text>
         <Title order={3} fw={400} className={styles.title}>
-          <a href="#">{article.title}</a>
+          {article.title}
         </Title>
         <List className={styles.widget}>
           <List.Item className={styles.property}>

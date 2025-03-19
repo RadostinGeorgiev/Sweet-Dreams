@@ -10,6 +10,7 @@ import logo from "/images/logo.png";
 
 const mainLinks = [
   { link: "/", label: "Home" },
+  { link: "/blog", label: "Blog" },
   { link: "/recipes", label: "Recipes" },
   { link: "/tips", label: "Cooking Tips" },
   { link: "/project", label: "Project Design" },

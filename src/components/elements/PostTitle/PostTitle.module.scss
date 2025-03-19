@@ -1,0 +1,59 @@
+.text {
+  overflow: hidden;
+  z-index: 201;
+
+  .label {
+    color: var(--color-primary);
+    font-size: 0.75rem;
+  }
+
+  .title {
+    font-size: 1.625rem;
+    color: var(--color-heading);
+  }
+
+  .widget {
+    color: var(--color-heading);
+    font-size: 0.75rem;
+    display: flex;
+    gap: 2em;
+  }
+}
+
+.caption {
+  .title {
+    color: var(--color-heading);
+  }
+}
+
+.carousel {
+  .title {
+    color: var(--color-white);
+  }
+}
+
+.large {
+  .title {
+    font-size: 1.625rem;
+  }
+}
+
+.medium {
+  .title {
+    font-size: 1.25rem;
+  }
+
+  .widget {
+    display: none;
+  }
+}
+
+.small {
+  .title {
+    font-size: 1.25rem;
+  }
+
+  .widget {
+    display: none;
+  }
+}

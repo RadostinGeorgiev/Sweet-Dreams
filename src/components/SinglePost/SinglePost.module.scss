@@ -1,0 +1,17 @@
+.post-title {
+  background: var(--color-white);
+  padding: 3em;
+  position: relative;
+  margin-top: -8.5em;
+  margin-bottom: 3em;
+}
+
+.options {
+  background: var(--background-color-gray);
+
+  .button {
+    border-color: var(--color-primary);
+    color: var(--color-heading);
+    margin-left: 5em;
+  }
+}

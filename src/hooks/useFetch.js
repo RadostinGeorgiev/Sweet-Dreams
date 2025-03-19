@@ -5,11 +5,13 @@ export const useFetch = (serviceFunction, dataKey = null, ...args) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  const argString = JSON.stringify(args);
+
   useEffect(() => {
     const fetchData = async () => {
       try {
         const result = await serviceFunction(...args);
-        dataKey ? setData(result[dataKey]) : setData(result);
+        setData(dataKey ? result[dataKey] : result);
       } catch (err) {
         setError(err);
       } finally {
@@ -18,7 +20,7 @@ export const useFetch = (serviceFunction, dataKey = null, ...args) => {
     };
 
     fetchData();
-  }, [serviceFunction, dataKey]);
+  }, [serviceFunction, dataKey, argString]);
 
   return { data, setData, loading, error };
 };

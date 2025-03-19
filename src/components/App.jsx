@@ -15,9 +15,11 @@ import LoginForm from "./Login";
 import RegisterForm from "./Register";
 import Footer from "./Footer";
 import HomePage from "./HomePage";
+import Blog from "./Blog";
 import Recipes from "./Recipes";
 import CookingTips from "./CookingTips";
 import ProjectDescription from "./ProjectDescription";
+import SinglePost from "./SinglePost/SinglePost";
 
 export default function App() {
   const {
@@ -61,7 +63,7 @@ export default function App() {
               <Route
                 path="/"
                 element={
-                  <HomePage users={users} articles={articles} images={images} />
+                  <HomePage articles={articles} users={users} images={images} />
                 }
               />
               <Route path="/login" element={<LoginForm />} />
@@ -70,6 +72,11 @@ export default function App() {
                 element={<RegisterForm onAddUser={handleAddUser} />}
               />
 
+              <Route
+                path="/blog"
+                element={<Blog articles={articles} users={users} />}
+              />
+              <Route path="/blog/:id" element={<SinglePost />} />
               <Route path="/recipes" element={<Recipes />} />
               <Route path="/tips" element={<CookingTips />} />
               <Route path="/project" element={<ProjectDescription />} />
