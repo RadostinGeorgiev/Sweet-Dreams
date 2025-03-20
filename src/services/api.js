@@ -3,17 +3,20 @@ import * as config from "../../config";
 /**
  * --- function CRUD requests ---------------------------------------------------
  * --- return data or error as promise
+ * @param {string} method
  * @param {string} url
- * @param {object} options
+ * @param {object} data
+ * @param {AbortSignal} signal
  * @returns {promise}
  */
 
 let cachedUserData = JSON.parse(localStorage.getItem("user")) || null;
 
-async function request(method = "GET", url, data) {
+async function request(method = "GET", url, data, signal) {
   const options = {
     method: method,
     headers: {},
+    signal,
   };
 
   if (data instanceof FormData) {
@@ -48,19 +51,25 @@ async function request(method = "GET", url, data) {
 
     return response.status === 204 ? response : response.json();
   } catch (error) {
-    console.error("Request error:", error.message);
+    if (signal?.aborted) {
+      console.warn("Request aborted:", url);
+    } else {
+      console.error("Request error:", error.message);
+    }
     throw error;
   }
 }
 
-const get = (url, data) => request("GET", url, data);
-const post = (url, data) => request("POST", url, data);
-const put = (url, data) => request("PUT", url, data);
-const patch = (url, data) => request("PATCH", url, data);
-const del = (url, data) => request("DELETE", url, data);
+const get = (url, data, signal) => request("GET", url, data, signal);
+const post = (url, data, signal) => request("POST", url, data, signal);
+const put = (url, data, signal) => request("PUT", url, data, signal);
+const patch = (url, data, signal) => request("PATCH", url, data, signal);
+const del = (url, data, signal) => request("DELETE", url, data, signal);
 
-const register = (data) => request("POST", config.endpoints.register, data);
-const login = (data) => request("POST", config.endpoints.login, data);
-const logout = () => request("GET", config.endpoints.logout);
+const register = (data, signal) =>
+  request("POST", config.endpoints.register, data, signal);
+const login = (data, signal) =>
+  request("POST", config.endpoints.login, data, signal);
+const logout = (signal) => request("GET", config.endpoints.logout, signal);
 
 export { get, post, put, patch, del, register, login, logout };
