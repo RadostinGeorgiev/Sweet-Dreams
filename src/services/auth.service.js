@@ -11,6 +11,7 @@ export const authServices = {
       };
 
       const response = await api.register(data);
+      authServices.setUserData(response);
       return response;
     } catch (error) {
       console.error("Registration error:", error);

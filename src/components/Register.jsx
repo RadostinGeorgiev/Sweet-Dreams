@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { useNavigate, Link } from "react-router";
 
 import { useForm } from "@mantine/form";
@@ -17,18 +16,9 @@ import {
 import { zodResolver } from "mantine-form-zod-resolver";
 import { z } from "zod";
 
-const create = async (user) => {
-  try {
-    let response = await fetch("https://dummyjson.com/users/add", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(user),
-    });
-    return await response.json();
-  } catch (err) {
-    console.log(err);
-  }
-};
+import { useFetch } from "../hooks/useFetch";
+import { authServices } from "../services/auth.service";
+import { endpoints } from "../../config";
 
 const schema = z
   .object({
@@ -50,7 +40,17 @@ const schema = z
   });
 
 export default function RegisterForm({ onAddUser }) {
-  const [serverError, setServerError] = useState(null);
+  const {
+    data: user,
+    setData: setUser,
+    loading: userLoading,
+    error: userError,
+    execute: register,
+  } = useFetch(
+    authServices.register,
+    { dataKey: null, immediate: true },
+    endpoints.register
+  );
   const navigate = useNavigate();
 
   const form = useForm({
@@ -66,26 +66,24 @@ export default function RegisterForm({ onAddUser }) {
     validate: zodResolver(schema),
   });
 
-  const handleSubmit = (values) => {
-    const user = {
-      id: new Date().getTime(),
-      firstName: values.firstName,
-      lastName: values.lastName,
-      email: values.email,
-      password: values.password,
-      subscribe: values.subscribe,
-      role: "user",
-    };
-
-    create(user).then((data) => {
-      if (data.error) {
-        setServerError(data.error.message);
-      }
-    });
-
-    onAddUser(user);
-    form.reset();
-    navigate("/");
+  // const user = {
+  //   id: new Date().getTime(),
+  //   firstName: values.firstName,
+  //   lastName: values.lastName,
+  //   email: values.email,
+  //   password: values.password,
+  //   subscribe: values.subscribe,
+  //   role: "user",
+  // };
+  const handleSubmit = async (values) => {
+    try {
+      const response = await register(values);
+      onAddUser(response);
+      form.reset();
+      navigate("/");
+    } catch (error) {
+      console.error("Registration failed:", error);
+    }
   };
 
   return (
@@ -100,12 +98,6 @@ export default function RegisterForm({ onAddUser }) {
         Register
       </Title>
       <form onSubmit={form.onSubmit(handleSubmit)}>
-        {serverError && (
-          <Notification color="red" mb="md">
-            {serverError}
-          </Notification>
-        )}
-
         <Group justify="space-between" wrap="nowrap" mb="md">
           <TextInput
             label="First Name"
@@ -154,6 +146,12 @@ export default function RegisterForm({ onAddUser }) {
         <Button type="submit" fullWidth mt="lg" tt="uppercase">
           Register
         </Button>
+
+        {userError && (
+          <Notification color="red" mt="md">
+            {userError}
+          </Notification>
+        )}
       </form>
 
       <Link to="/login" variant="body2">

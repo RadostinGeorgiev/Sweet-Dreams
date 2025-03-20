@@ -6,9 +6,9 @@ import { IconUserDown, IconUserPlus, IconUserShare } from "@tabler/icons-react";
 
 import styles from "./Header.module.scss";
 
-import { services } from "../../services/item.service";
-import { useFetch } from "../../hooks/useFetch";
-import { endpoints } from "../../../config";
+// import { services } from "../../services/item.service";
+// import { useFetch } from "../../hooks/useFetch";
+// import { endpoints } from "../../../config";
 
 import logo from "/images/logo.png";
 import { UserInfo } from "../UserInfo/UserInfo";
@@ -24,19 +24,20 @@ const mainLinks = [
 export default function Header() {
   const [active, setActive] = useState(0);
 
-  const {
-    data: user,
-    loading: userLoading,
-    error: userError,
-  } = useFetch(
-    services.getItemById,
-    { dataKey: null, immediate: true },
-    endpoints.users,
-    101
-  );
+  const user = {};
+  // const {
+  //   data: user,
+  //   loading: userLoading,
+  //   error: userError,
+  // } = useFetch(
+  //   services.getItemById,
+  //   { dataKey: null, immediate: true },
+  //   endpoints.users,
+  //   101
+  // );
 
-  if (userLoading) return <div>Loading...</div>;
-  if (userError) return <div>Error: {userError}</div>;
+  // if (userLoading) return <div>Loading...</div>;
+  // if (userError) return <div>Error: {userError}</div>;
 
   const menuItems = mainLinks.map((item, index) => (
     <Anchor

@@ -10,15 +10,12 @@ export const useFetch = (serviceFunction, options = {}, ...args) => {
     async (...args) => {
       const controller = new AbortController();
       const signal = controller.signal;
-      console.log("initial signal:", signal);
 
       setLoading(true);
       setError(null);
 
       try {
         const result = await serviceFunction(...args, signal);
-        console.log("result:", result);
-        console.log("dataKey:", dataKey);
 
         setData(dataKey ? result[dataKey] : result);
         if (!signal.aborted) {
