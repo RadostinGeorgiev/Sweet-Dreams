@@ -9,30 +9,46 @@ import {
   Button,
   Checkbox,
   Text,
+  Notification,
 } from "@mantine/core";
 
 import { zodResolver } from "mantine-form-zod-resolver";
 import { z } from "zod";
 
+import { useLogin } from "../hooks/useAuth";
+
 const schema = z.object({
-  email: z.string().email({ message: "Invalid email" }),
+  username: z
+    .string()
+    .min(2, { message: "Username must be at least 2 characters" }),
 });
 
 export default function LoginForm() {
+  const { login, error } = useLogin();
   const navigate = useNavigate();
 
   const form = useForm({
     initialValues: {
-      email: "",
+      username: "",
       password: "",
       remember: true,
     },
     validate: zodResolver(schema),
   });
 
-  const handleSubmit = (values) => {
-    console.log("Form values:", values);
-    navigate("/");
+  const handleSubmit = async (values) => {
+    const credentials = {
+      username: values.username,
+      password: values.password,
+    };
+    try {
+      const user = await login(credentials);
+      if (user) {
+        navigate("/");
+      }
+    } catch (error) {
+      console.error("Registration failed:", error);
+    }
   };
 
   return (
@@ -48,9 +64,9 @@ export default function LoginForm() {
       </Title>
       <form onSubmit={form.onSubmit(handleSubmit)}>
         <TextInput
-          label="Email"
-          placeholder="Enter your email"
-          {...form.getInputProps("email")}
+          label="Username"
+          placeholder="Enter your username"
+          {...form.getInputProps("username")}
           required
         />
 
@@ -72,6 +88,12 @@ export default function LoginForm() {
         <Button type="submit" fullWidth mt="lg" tt="uppercase">
           Login
         </Button>
+
+        {error && (
+          <Notification color="red" mt="md">
+            {error}
+          </Notification>
+        )}
       </form>
 
       <Link to="/register" variant="body2">

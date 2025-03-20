@@ -47,6 +47,7 @@ export default function RegisterForm({ onAddUser }) {
     initialValues: {
       firstName: "",
       lastName: "",
+      username: "",
       email: "",
       password: "",
       confirmPassword: "",
@@ -71,6 +72,7 @@ export default function RegisterForm({ onAddUser }) {
       // id: new Date().getTime(),
       firstName: values.firstName,
       lastName: values.lastName,
+      username: values.username,
       email: values.email,
       password: values.password,
       subscribe: values.subscribe,
@@ -118,6 +120,13 @@ export default function RegisterForm({ onAddUser }) {
             required
           />
         </Group>
+
+        <TextInput
+          label="Username"
+          placeholder="Enter your username"
+          {...form.getInputProps("username")}
+          required
+        />
 
         <TextInput
           label="Email"

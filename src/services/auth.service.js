@@ -3,14 +3,7 @@ import * as api from "./api.js";
 export const authServices = {
   register: async (credentials) => {
     try {
-      const data = {
-        email: credentials.email,
-        password: credentials.password,
-        firstName: credentials.firstName,
-        lastName: credentials.lastName,
-      };
-
-      const response = await api.register(data);
+      const response = await api.register(credentials);
       authServices.setUserData(response);
       return response;
     } catch (error) {
@@ -19,14 +12,9 @@ export const authServices = {
     }
   },
 
-  login: async (credentials) => {
+  login: async (credentials, signal) => {
     try {
-      const data = {
-        email: credentials.email,
-        password: credentials.password,
-      };
-
-      const response = await api.login(data);
+      const response = await api.login(credentials, signal);
       authServices.setUserData(response);
       return response;
     } catch (error) {
@@ -35,9 +23,9 @@ export const authServices = {
     }
   },
 
-  logout: async () => {
+  logout: async (signal) => {
     try {
-      await api.logout();
+      await api.logout(signal);
       authServices.clearUserData();
     } catch (error) {
       console.error("Logout error:", error);

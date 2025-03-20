@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link } from "react-router";
+import { useNavigate, Link } from "react-router";
 
 import { Image, Anchor, Container, Group, Button } from "@mantine/core";
 import { IconUserDown, IconUserPlus, IconUserShare } from "@tabler/icons-react";
@@ -25,10 +25,21 @@ const mainLinks = [
 
 export default function Header() {
   const [active, setActive] = useState(0);
+  const logout = useLogout();
+  const navigate = useNavigate();
 
   const user = authServices.getUserData();
-  const logout = useLogout();
   const isLogged = authServices.isLogged();
+
+  const handleLogout = async () => {
+    try {
+      if (logout()) {
+        navigate("/");
+      }
+    } catch (error) {
+      console.error("Registration failed:", error);
+    }
+  };
 
   const menuItems = mainLinks.map((item, index) => (
     <Anchor
@@ -72,7 +83,7 @@ export default function Header() {
                 radius="0"
                 leftSection={<IconUserShare size={16} />}
                 className={styles.button}
-                onClick={logout}
+                onClick={handleLogout}
                 component={Link}
                 to="/"
               >
