@@ -5,6 +5,7 @@ import { authServices } from "../services/auth.service";
 export const useLogin = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const navigate = useNavigate();
 
   const controller = useRef(new AbortController());
   const signal = controller.current.signal;
@@ -14,7 +15,11 @@ export const useLogin = () => {
     setError(null);
 
     try {
-      return await authServices.login(credentials, signal);
+      const response = await authServices.login(credentials, signal);
+      if (response) {
+        navigate("/");
+      }
+      return response;
     } catch (err) {
       if (err.name !== "AbortError") {
         setError(err.message || "Login failed");
@@ -34,21 +39,16 @@ export const useLogin = () => {
 export const useLogout = () => {
   const navigate = useNavigate();
 
-  const controller = useRef(new AbortController());
-  const signal = controller.current.signal;
-
   const logout = async () => {
     try {
-      await authServices.logout(signal);
-      navigate("/");
+      const response = await authServices.logout();
+      if (response) {
+        navigate("/");
+      }
     } catch (error) {
       console.error("Logout failed:", error);
     }
   };
-
-  useEffect(() => {
-    return () => controller.current.abort();
-  }, []);
 
   return logout;
 };

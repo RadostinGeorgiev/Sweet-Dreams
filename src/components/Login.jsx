@@ -1,4 +1,4 @@
-import { useNavigate, Link } from "react-router";
+import { Link } from "react-router";
 
 import { useForm } from "@mantine/form";
 import {
@@ -25,7 +25,6 @@ const schema = z.object({
 
 export default function LoginForm() {
   const { login, error } = useLogin();
-  const navigate = useNavigate();
 
   const form = useForm({
     initialValues: {
@@ -42,10 +41,7 @@ export default function LoginForm() {
       password: values.password,
     };
     try {
-      const user = await login(credentials);
-      if (user) {
-        navigate("/");
-      }
+      await login(credentials);
     } catch (error) {
       console.error("Registration failed:", error);
     }

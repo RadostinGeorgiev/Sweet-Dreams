@@ -71,7 +71,6 @@ const register = (data, signal) =>
   request("POST", config.endpoints.register, data, signal);
 const login = (data, signal) =>
   request("POST", config.endpoints.login, data, signal);
-const logout = (signal) =>
-  request("GET", config.endpoints.logout, null, signal);
+const logout = () => request("GET", config.endpoints.logout, null);
 
 export { get, post, put, patch, del, register, login, logout };

@@ -38,13 +38,23 @@ export default function SinglePost() {
     data: post,
     loading: recipeLoading,
     error: recipeError,
-  } = useFetch(services.getItemById, null, endpoints.recipes, id);
+  } = useFetch(
+    services.getItemById,
+    { dataKey: null, immediate: true },
+    endpoints.recipes,
+    id
+  );
 
   const {
     data: author,
     loading: authorLoading,
     error: authorError,
-  } = useFetch(services.getItemById, null, endpoints.users, id);
+  } = useFetch(
+    services.getItemById,
+    { dataKey: null, immediate: true },
+    endpoints.users,
+    id
+  );
 
   if (recipeLoading || authorLoading) return <div>Loading...</div>;
   if (recipeError || authorError) return <div>Error: {recipeError}</div>;

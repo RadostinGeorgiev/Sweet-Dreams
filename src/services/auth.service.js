@@ -23,9 +23,9 @@ export const authServices = {
     }
   },
 
-  logout: async (signal) => {
+  logout: async () => {
     try {
-      await api.logout(signal);
+      await api.logout();
       authServices.clearUserData();
     } catch (error) {
       console.error("Logout error:", error);
