@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { useNavigate, Link } from "react-router";
 
 import { useForm } from "@mantine/form";
@@ -40,17 +41,6 @@ const schema = z
   });
 
 export default function RegisterForm({ onAddUser }) {
-  const {
-    data: user,
-    setData: setUser,
-    loading: userLoading,
-    error: userError,
-    execute: register,
-  } = useFetch(
-    authServices.register,
-    { dataKey: null, immediate: true },
-    endpoints.register
-  );
   const navigate = useNavigate();
 
   const form = useForm({
@@ -66,25 +56,41 @@ export default function RegisterForm({ onAddUser }) {
     validate: zodResolver(schema),
   });
 
-  // const user = {
-  //   id: new Date().getTime(),
-  //   firstName: values.firstName,
-  //   lastName: values.lastName,
-  //   email: values.email,
-  //   password: values.password,
-  //   subscribe: values.subscribe,
-  //   role: "user",
-  // };
+  const {
+    data: user,
+    error: userError,
+    execute,
+  } = useFetch(
+    authServices.register,
+    { dataKey: null, immediate: false },
+    endpoints.register
+  );
+
   const handleSubmit = async (values) => {
+    const credentials = {
+      // id: new Date().getTime(),
+      firstName: values.firstName,
+      lastName: values.lastName,
+      email: values.email,
+      password: values.password,
+      subscribe: values.subscribe,
+      role: "user",
+    };
     try {
-      const response = await register(values);
-      onAddUser(response);
-      form.reset();
-      navigate("/");
+      await execute(credentials);
     } catch (error) {
       console.error("Registration failed:", error);
     }
   };
+
+  useEffect(() => {
+    if (user) {
+      console.log("User registered successfully:", user);
+      onAddUser(user);
+      form.reset();
+      navigate("/");
+    }
+  }, [user]);
 
   return (
     <Paper

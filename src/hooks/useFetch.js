@@ -17,7 +17,6 @@ export const useFetch = (serviceFunction, options = {}, ...args) => {
       try {
         const result = await serviceFunction(...args, signal);
 
-        setData(dataKey ? result[dataKey] : result);
         if (!signal.aborted) {
           setData(dataKey ? result[dataKey] : result);
         }
