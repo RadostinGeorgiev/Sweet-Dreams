@@ -8,18 +8,32 @@ export const useFetch = (serviceFunction, dataKey = null, ...args) => {
   const argString = JSON.stringify(args);
 
   useEffect(() => {
+    const controller = new AbortController();
+    const signal = controller.signal;
+
     const fetchData = async () => {
       try {
-        const result = await serviceFunction(...args);
+        const result = await serviceFunction(...args, signal);
         setData(dataKey ? result[dataKey] : result);
+        if (!signal.aborted) {
+          setData(dataKey ? result[dataKey] : result);
+        }
       } catch (err) {
-        setError(err);
+        if (!signal.aborted) {
+          setError(err);
+        }
       } finally {
-        setLoading(false);
+        if (!signal.aborted) {
+          setLoading(false);
+        }
       }
     };
 
     fetchData();
+
+    return () => {
+      controller.abort();
+    };
   }, [serviceFunction, dataKey, argString]);
 
   return { data, setData, loading, error };
