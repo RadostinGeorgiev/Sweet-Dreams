@@ -27,7 +27,8 @@ async function request(method = "GET", url, data, signal) {
   }
 
   try {
-    cachedUserData = JSON.parse(localStorage.user) || null;
+    const userData = localStorage.getItem("user");
+    cachedUserData = userData ? JSON.parse(userData) : null;
   } catch (error) {
     console.error("Error parsing user data:", error);
   }
@@ -60,7 +61,7 @@ async function request(method = "GET", url, data, signal) {
   }
 }
 
-const get = (url, data, signal) => request("GET", url, data, signal);
+const get = (url, signal) => request("GET", url, null, signal);
 const post = (url, data, signal) => request("POST", url, data, signal);
 const put = (url, data, signal) => request("PUT", url, data, signal);
 const patch = (url, data, signal) => request("PATCH", url, data, signal);
