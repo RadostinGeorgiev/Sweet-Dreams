@@ -45,6 +45,14 @@ export const authServices = {
     }
   },
 
+  getUserData: () => {
+    try {
+      return JSON.parse(localStorage.getItem("user"));
+    } catch (error) {
+      console.error("Error reading user data:", error);
+    }
+  },
+
   setUserData: (data) => {
     try {
       localStorage.setItem("user", JSON.stringify(data));

@@ -12,6 +12,8 @@ import styles from "./Header.module.scss";
 
 import logo from "/images/logo.png";
 import { UserInfo } from "../UserInfo/UserInfo";
+import { authServices } from "../../services/auth.service";
+import { useLogout } from "../../hooks/useAuth";
 
 const mainLinks = [
   { link: "/", label: "Home" },
@@ -24,20 +26,9 @@ const mainLinks = [
 export default function Header() {
   const [active, setActive] = useState(0);
 
-  const user = {};
-  // const {
-  //   data: user,
-  //   loading: userLoading,
-  //   error: userError,
-  // } = useFetch(
-  //   services.getItemById,
-  //   { dataKey: null, immediate: true },
-  //   endpoints.users,
-  //   101
-  // );
-
-  // if (userLoading) return <div>Loading...</div>;
-  // if (userError) return <div>Error: {userError}</div>;
+  const user = authServices.getUserData();
+  const logout = useLogout();
+  const isLogged = authServices.isLogged();
 
   const menuItems = mainLinks.map((item, index) => (
     <Anchor
@@ -72,7 +63,7 @@ export default function Header() {
             flexDirection: "column",
           }}
         >
-          {user.email ? (
+          {isLogged ? (
             <Group justify="flex-end" align="center">
               <UserInfo user={user} />
               <Button
@@ -81,6 +72,7 @@ export default function Header() {
                 radius="0"
                 leftSection={<IconUserShare size={16} />}
                 className={styles.button}
+                onClick={logout}
                 component={Link}
                 to="/"
               >
