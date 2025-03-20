@@ -26,20 +26,32 @@ export default function App() {
     data: articles,
     loading: articlesLoading,
     error: articlesError,
-  } = useFetch(services.getAllItems, "posts", endpoints.items);
+  } = useFetch(
+    services.getAllItems,
+    { dataKey: "posts", immediate: true },
+    endpoints.items
+  );
 
   const {
     data: users,
     setData: setUsers,
     loading: usersLoading,
     error: usersError,
-  } = useFetch(services.getAllItems, "users", endpoints.users);
+  } = useFetch(
+    services.getAllItems,
+    { dataKey: "users", immediate: true },
+    endpoints.users
+  );
 
   const {
     data: images,
     loading: imagesLoading,
     error: imagesError,
-  } = useFetch(services.getAllItems, "recipes", endpoints.limitedRecipeImages);
+  } = useFetch(
+    services.getAllItems,
+    { dataKey: "recipes", immediate: true },
+    endpoints.limitedRecipeImages
+  );
 
   if (articlesLoading || usersLoading || imagesLoading)
     return <div>Loading...</div>;

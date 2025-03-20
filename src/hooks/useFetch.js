@@ -1,19 +1,25 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 
-export const useFetch = (serviceFunction, dataKey = null, ...args) => {
+export const useFetch = (serviceFunction, options = {}, ...args) => {
+  const { dataKey = null, immediate = true } = options;
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const argString = JSON.stringify(args);
+  const execute = useCallback(
+    async (...args) => {
+      const controller = new AbortController();
+      const signal = controller.signal;
+      console.log("initial signal:", signal);
 
-  useEffect(() => {
-    const controller = new AbortController();
-    const signal = controller.signal;
+      setLoading(true);
+      setError(null);
 
-    const fetchData = async () => {
       try {
         const result = await serviceFunction(...args, signal);
+        console.log("result:", result);
+        console.log("dataKey:", dataKey);
+
         setData(dataKey ? result[dataKey] : result);
         if (!signal.aborted) {
           setData(dataKey ? result[dataKey] : result);
@@ -27,14 +33,15 @@ export const useFetch = (serviceFunction, dataKey = null, ...args) => {
           setLoading(false);
         }
       }
-    };
+    },
+    [serviceFunction, dataKey]
+  );
 
-    fetchData();
+  useEffect(() => {
+    if (immediate) {
+      execute(...args).catch(() => {});
+    }
+  }, [execute, immediate]);
 
-    return () => {
-      controller.abort();
-    };
-  }, [serviceFunction, dataKey, argString]);
-
-  return { data, setData, loading, error };
+  return { data, setData, loading, error, execute };
 };

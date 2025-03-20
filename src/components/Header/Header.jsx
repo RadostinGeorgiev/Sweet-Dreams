@@ -28,7 +28,12 @@ export default function Header() {
     data: user,
     loading: userLoading,
     error: userError,
-  } = useFetch(services.getItemById, null, endpoints.users, 101);
+  } = useFetch(
+    services.getItemById,
+    { dataKey: null, immediate: true },
+    endpoints.users,
+    101
+  );
 
   if (userLoading) return <div>Loading...</div>;
   if (userError) return <div>Error: {userError}</div>;
