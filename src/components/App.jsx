@@ -62,9 +62,19 @@ export default function App() {
     endpoints.limitedRecipeImages
   );
 
-  if (articlesLoading || usersLoading || imagesLoading)
+  const {
+    data: recipes,
+    loading: recipesLoading,
+    error: recipesError,
+  } = useFetch(
+    services.getAllItems,
+    { dataKey: "recipes", immediate: true },
+    endpoints.recipes
+  );
+
+  if (articlesLoading || usersLoading || imagesLoading || recipesLoading)
     return <div>Loading...</div>;
-  if (articlesError || usersError || imagesError)
+  if (articlesError || usersError || imagesError || recipesError)
     return <div>Error: {articlesError}</div>;
 
   const handleAddUser = (newUser) => {
@@ -96,7 +106,7 @@ export default function App() {
             element={<Blog articles={articles} users={users} />}
           />
           <Route path="/blog/:id" element={<SinglePost />} />
-          <Route path="/recipes" element={<Recipes />} />
+          <Route path="/recipes" element={<Recipes recipes={recipes} />} />
           <Route path="/tips" element={<CookingTips />} />
           <Route path="/project" element={<ProjectDescription />} />
         </Routes>
