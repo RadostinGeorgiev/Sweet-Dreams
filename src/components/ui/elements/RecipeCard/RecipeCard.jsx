@@ -7,10 +7,9 @@ import {
   List,
   ListItem,
   Text,
-  Rating,
   Button,
 } from "@mantine/core";
-import { IconArrowRight } from "@tabler/icons-react";
+import { IconStar, IconArrowRight } from "@tabler/icons-react";
 
 import styles from "./RecipeCard.module.scss";
 
@@ -92,9 +91,9 @@ export default function RecipeCard({ recipe, layout = "vertical" }) {
         </Text>
 
         <Group justify="space-between">
-          <Group>
-            <Rating color="gray" count={6} defaultValue={recipe.rating} />
-            <Text size="sm">/{recipe.rating.toFixed(2)}/</Text>
+          <Group c="dimmed">
+            <IconStar size={20} className={styles.icon} />
+            <Text size="sm">{recipe.rating.toFixed(2)}</Text>
           </Group>
           <Button
             variant="outline"

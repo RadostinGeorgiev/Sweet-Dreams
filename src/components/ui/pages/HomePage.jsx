@@ -8,7 +8,7 @@ import BlogMasonry from "../containers/BlogMasonry/BlogMasonry";
 
 export default function HomePage({ articles, users, images }) {
   return (
-    <Container size="lg" mt="md">
+    <Container size="xl" mt="md">
       <h1>Sweet Dreams</h1>
       {/* <UsersList users={users} /> */}
       <BlogMasonry articles={articles} users={users} />

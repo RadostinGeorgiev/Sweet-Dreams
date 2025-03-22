@@ -16,6 +16,7 @@ import LoginForm from "./auth/Login";
 import RegisterForm from "./auth/Register";
 import HomePage from "./ui/pages/HomePage";
 import Blog from "./ui/pages/Blog";
+import BlogList from "./ui/containers/BlogList/BlogList";
 import Recipes from "./ui/pages/Recipes";
 import CookingTips from "./CookingTips";
 import ProjectDescription from "./ui/pages/ProjectDescription";
@@ -38,7 +39,7 @@ export default function App() {
   } = useFetch(
     services.getAllItems,
     { dataKey: "posts", immediate: true },
-    endpoints.items
+    endpoints.blog
   );
 
   const {
@@ -101,11 +102,15 @@ export default function App() {
             element={<RegisterForm onAddUser={handleAddUser} />}
           />
 
-          <Route
-            path="/blog"
-            element={<Blog articles={articles} users={users} />}
-          />
-          <Route path="/blog/:id" element={<SinglePost />} />
+          <Route element={<Blog />}>
+            <Route path="/" element={<h1>Welcome to the Blog!</h1>} />
+            <Route
+              path="/blog"
+              element={<BlogList articles={articles} users={users} />}
+            />
+            <Route path="/blog/:id" element={<SinglePost />} />
+          </Route>
+
           <Route path="/recipes" element={<Recipes recipes={recipes} />} />
           <Route path="/tips" element={<CookingTips />} />
           <Route path="/project" element={<ProjectDescription />} />

@@ -1,12 +1,21 @@
-import { Container } from "@mantine/core";
+import { Container, Grid } from "@mantine/core";
 
-import BlogList from "../containers/BlogList/BlogList";
+import { Outlet } from "react-router";
+import AsideContent from "../containers/AsideContent";
 
-export default function Blog({ articles, users }) {
+export default function Blog() {
   return (
-    <Container size="lg" mt="md">
+    <Container size="xl" mt="md">
       <h1>Blog List</h1>
-      <BlogList articles={articles} users={users} />;
+      <Grid>
+        <Grid.Col span={9}>
+          <Outlet />
+        </Grid.Col>
+
+        <Grid.Col span={3}>
+          <AsideContent />
+        </Grid.Col>
+      </Grid>
     </Container>
   );
 }

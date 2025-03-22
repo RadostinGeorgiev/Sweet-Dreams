@@ -3,7 +3,7 @@ import RecipeList from "../containers/RecipeList/RecipeList";
 
 export default function Recipes({ recipes }) {
   return (
-    <Container size="lg" mt="md">
+    <Container size="xl" mt="md">
       <h1>Recipes List</h1>
       <RecipeList recipes={recipes} />
     </Container>

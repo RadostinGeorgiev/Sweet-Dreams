@@ -3,21 +3,28 @@ import {
   Box,
   Group,
   Image,
-  Stack,
+  List,
+  ListItem,
+  Button,
   Title,
   Text,
-  List,
-  Rating,
 } from "@mantine/core";
+import {
+  IconStar,
+  IconThumbUp,
+  IconThumbDown,
+  IconArrowRight,
+} from "@tabler/icons-react";
 
 import styles from "./BlogCard.module.scss";
 
 export default function BlogCard({ article, author, layout = "vertical" }) {
-  const rating =
-    1 +
-    (article.reactions.likes /
-      (article.reactions.likes + article.reactions.dislikes)) *
-      5;
+  const formattedDate = new Intl.DateTimeFormat("en-US", {
+    month: "long",
+    day: "numeric",
+    year: "numeric",
+  }).format(new Date(article.meta.createdAt));
+
   return (
     <Flex
       shadow="md"
@@ -29,44 +36,97 @@ export default function BlogCard({ article, author, layout = "vertical" }) {
       className={`${styles.card} ${styles[layout]}`}
     >
       <Box className={styles["item-image"]}>
-        <Image className={styles.image} src={article.image} />
-        <Stack align="center" justify="center" gap="0" className={styles.meta}>
+        <Image className={styles.image} src={article.images[0]} />
+        <Text span size="md" tt="uppercase" c="dimmed" className={styles.date}>
+          {`${formattedDate} ――`}
+        </Text>
+      </Box>
+      {/* <Stack align="center" justify="center" gap="0" className={styles.meta}>
           <Title order={2} fw={900}>
             {article.date.day}
           </Title>
           <Text size="sm" f1w={600} tt="uppercase" c="dimmed">
             {article.date.month}
           </Text>
-        </Stack>
-      </Box>
+        </Stack> */}
 
-      <Flex className={styles["item-text"]}>
-        <Text size={"sm"} fw={700} tt="uppercase" className={styles.label}>
-          {article.tags[0]}
-        </Text>
+      <Flex gap="0" className={styles["item-text"]}>
+        <List className={styles.widget}>
+          {article.category.map((category, index) => (
+            <ListItem key={index}>
+              <Button
+                variant="outline"
+                size="compact-xs"
+                radius="0"
+                tt="uppercase"
+                className={styles.property}
+              >
+                {category}
+              </Button>
+            </ListItem>
+          ))}
+        </List>
+
         <Title order={3} fw={400} className={styles.title}>
           {article.title}
         </Title>
-        <List className={styles.widget}>
-          <List.Item className={styles.property}>
-            by
-            <Text span className={styles.user}>
+
+        <Flex
+          gap="xl"
+          direction="row"
+          justify="start"
+          align="center"
+          className={styles.widget}
+        >
+          <Group gap="xs">
+            <Text size="sm" c="dimmed">
+              by
+            </Text>
+            <Text size="sm" fw={700}>
               {` ${author?.firstName} ${author?.lastName}`}
             </Text>
-          </List.Item>
-          <List.Item className={styles.property}>
-            {article.minToRead} min read
-          </List.Item>
-          <List.Item className={styles.property}>
-            {article.reviews.length} comments
-          </List.Item>
-        </List>
-        <Text size="sm" lineClamp={2} className={styles.description}>
-          {article.body}
+          </Group>
+
+          <Group gap="xs">
+            <Text size="sm" fw={700}>
+              {article.readingTimeMinutes}
+            </Text>
+            <Text size="sm" c="dimmed">
+              minutes read
+            </Text>
+          </Group>
+        </Flex>
+
+        <Text size="md" lineClamp={3} className={styles.description}>
+          {article.content}
         </Text>
-        <Group>
-          <Rating defaultValue={rating} />{" "}
-          <Text size="xs">({rating.toFixed(2)})</Text>
+
+        <Group justify="space-between">
+          <Group c="dimmed">
+            <Group gap="0">
+              <IconStar size={20} className={styles.icon} />
+              <Text size="sm">{article.rating.toFixed(2)}</Text>
+            </Group>
+            <Group gap="0">
+              <IconThumbUp size={20} className={styles.icon} />
+              <Text size="sm">{article.reactions.likes}</Text>
+            </Group>
+            <Group gap="0">
+              <IconThumbDown size={20} className={styles.icon} />
+              <Text size="sm">{article.reactions.dislikes}</Text>
+            </Group>
+          </Group>
+          <Button
+            variant="outline"
+            radius="0"
+            size="s"
+            tt="uppercase"
+            p="xs"
+            rightSection={<IconArrowRight size={24} />}
+            className={styles.button}
+          >
+            Read more
+          </Button>
         </Group>
       </Flex>
     </Flex>
