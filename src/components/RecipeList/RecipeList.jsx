@@ -1,17 +1,14 @@
 import { Container, Grid } from "@mantine/core";
 
-import BlogCard from "../BlogCard/BlogCard";
+import RecipeCard from "../RecipeCard/RecipeCard";
 
 export default function RecipeList({ recipes }) {
   return (
     <Container size="lg" mt="md">
-      <Grid gutter="lg">
+      <Grid gutter="xs">
         {recipes.map((recipe) => (
-          <Grid.Col
-            key={recipe.id}
-            span={recipe.featured ? 12 : 6} // Голямата статия заема 2 колони (span 12)
-          >
-            <BlogCard key={recipe.id} post={recipe} />
+          <Grid.Col key={recipe.id} span={6}>
+            <RecipeCard key={recipe.id} recipe={recipe} />
           </Grid.Col>
         ))}
       </Grid>

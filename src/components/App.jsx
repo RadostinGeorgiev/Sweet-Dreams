@@ -49,7 +49,7 @@ export default function App() {
   } = useFetch(
     services.getAllItems,
     { dataKey: "users", immediate: true },
-    endpoints.users
+    `${endpoints.users}?limit=0`
   );
 
   const {

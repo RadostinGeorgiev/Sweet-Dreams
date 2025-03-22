@@ -6,7 +6,7 @@ const endpoints = {
   logout: "/users",
   users: "/users",
   items: "/c/401c-ac78-4085-93d7",
-  recipes: "/recipes",
+  recipes: "/c/c261-c6f9-4b95-b0ea",
   limitedRecipeImages: "/recipes?limit=20&select=image",
 };
 
