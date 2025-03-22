@@ -1,6 +1,6 @@
 import { Container } from "@mantine/core";
 
-import BlogList from "./BlogList/BlogList";
+import BlogList from "../containers/BlogList/BlogList";
 
 export default function Blog({ articles, users }) {
   return (

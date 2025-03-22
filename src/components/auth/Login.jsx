@@ -15,7 +15,7 @@ import {
 import { zodResolver } from "mantine-form-zod-resolver";
 import { z } from "zod";
 
-import { useLogin } from "../hooks/useAuth";
+import { useLogin } from "../../hooks/useAuth";
 
 const schema = z.object({
   username: z

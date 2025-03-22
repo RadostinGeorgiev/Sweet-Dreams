@@ -4,6 +4,8 @@ import {
   Group,
   Image,
   Title,
+  List,
+  ListItem,
   Text,
   Rating,
   Button,
@@ -28,12 +30,26 @@ export default function RecipeCard({ recipe, layout = "vertical" }) {
       </Box>
 
       <Flex gap="0" className={styles["item-text"]}>
-        <Text size={"sm"} fw={700} tt="uppercase" className={styles.label}>
-          {recipe.tags[0]}
-        </Text>
+        <List className={styles.widget}>
+          {recipe.category.map((category, index) => (
+            <ListItem key={index}>
+              <Button
+                variant="outline"
+                size="compact-xs"
+                radius="0"
+                tt="uppercase"
+                className={styles.property}
+              >
+                {category}
+              </Button>
+            </ListItem>
+          ))}
+        </List>
+
         <Title order={3} fw={400} className={styles.title}>
           {recipe.name}
         </Title>
+
         <Flex
           gap="xl"
           direction="row"
@@ -70,17 +86,19 @@ export default function RecipeCard({ recipe, layout = "vertical" }) {
             </Text>
           </Group>
         </Flex>
-        <Text size="sm" lineClamp={2} className={styles.description}>
-          {recipe.body}
+
+        <Text size="md" lineClamp={3} className={styles.description}>
+          {recipe.description}
         </Text>
+
         <Group justify="space-between">
           <Group>
             <Rating color="gray" count={6} defaultValue={recipe.rating} />
-            <Text size="xs">({recipe.rating.toFixed(2)})</Text>
+            <Text size="sm">/{recipe.rating.toFixed(2)}/</Text>
           </Group>
           <Button
             variant="outline"
-            radius={0}
+            radius="0"
             size="s"
             tt="uppercase"
             p="xs"

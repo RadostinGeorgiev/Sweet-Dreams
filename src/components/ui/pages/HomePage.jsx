@@ -2,7 +2,7 @@ import { Container, Image } from "@mantine/core";
 import { Carousel } from "@mantine/carousel";
 import "@mantine/carousel/styles.css";
 
-import BlogMasonry from "./BlogMasonry/BlogMasonry";
+import BlogMasonry from "../containers/BlogMasonry/BlogMasonry";
 
 // import UsersList from "./UsersList/UsersList";
 

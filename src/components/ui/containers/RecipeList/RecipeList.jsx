@@ -1,6 +1,6 @@
-import { Container, Grid } from "@mantine/core";
+import { Container, Grid, Pagination } from "@mantine/core";
 
-import RecipeCard from "../RecipeCard/RecipeCard";
+import RecipeCard from "../../elements/RecipeCard/RecipeCard";
 
 export default function RecipeList({ recipes }) {
   return (
@@ -12,6 +12,7 @@ export default function RecipeList({ recipes }) {
           </Grid.Col>
         ))}
       </Grid>
+      <Pagination />
     </Container>
   );
 }

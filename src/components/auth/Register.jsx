@@ -17,9 +17,9 @@ import {
 import { zodResolver } from "mantine-form-zod-resolver";
 import { z } from "zod";
 
-import { useFetch } from "../hooks/useFetch";
-import { authServices } from "../services/auth.service";
-import { endpoints } from "../../config";
+import { useFetch } from "../../hooks/useFetch";
+import { authServices } from "../../services/auth.service";
+import { endpoints } from "../../../config";
 
 const schema = z
   .object({

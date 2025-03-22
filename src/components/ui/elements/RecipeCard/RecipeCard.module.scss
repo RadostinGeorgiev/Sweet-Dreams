@@ -26,9 +26,15 @@
     justify-content: start;
     padding: 1em;
 
-    .label {
-      color: var(--color-primary);
+    .widget {
       margin-bottom: 0.625em;
+      list-style: none;
+      display: flex;
+      gap: 1em;
+
+      .property {
+        color: var(--color-text);
+      }
     }
 
     .title {
@@ -44,28 +50,10 @@
       }
     }
 
-    .widget {
-      margin-bottom: 0.625em;
-      list-style: none;
-
-      .property {
-        margin-right: 1.5em;
-        font-size: 0.75rem;
-        color: var(--color-text);
-
-        :last-child {
-          margin-right: 0;
-
-          :after {
-            display: none;
-          }
-        }
-      }
-    }
-
     .description {
       color: var(--color-text);
-      text-align: center;
+      text-align: start;
+      margin: 2em 0;
     }
   }
 }

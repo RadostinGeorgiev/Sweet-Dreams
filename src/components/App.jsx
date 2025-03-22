@@ -11,14 +11,14 @@ import { endpoints } from "../../config";
 import "./App.scss";
 
 import Header from "./Header/Header";
-import LoginForm from "./Login";
-import RegisterForm from "./Register";
 import Footer from "./Footer";
-import HomePage from "./HomePage";
-import Blog from "./Blog";
-import Recipes from "./Recipes";
+import LoginForm from "./auth/Login";
+import RegisterForm from "./auth/Register";
+import HomePage from "./ui/pages/HomePage";
+import Blog from "./ui/pages/Blog";
+import Recipes from "./ui/pages/Recipes";
 import CookingTips from "./CookingTips";
-import ProjectDescription from "./ProjectDescription";
+import ProjectDescription from "./ui/pages/ProjectDescription";
 import SinglePost from "./SinglePost/SinglePost";
 
 export default function App() {

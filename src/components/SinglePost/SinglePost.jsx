@@ -26,8 +26,8 @@ import { services } from "../../services/item.service";
 import { useFetch } from "../../hooks/useFetch";
 import { endpoints } from "../../../config";
 
-import PostTitle from "../elements/PostTitle/PostTitle";
-import MetaDate from "../elements/MetaDate/MetaDate";
+import PostTitle from "../ui/elements/PostTitle/PostTitle";
+import MetaDate from "../ui/elements/MetaDate/MetaDate";
 
 import styles from "./SinglePost.module.scss";
 

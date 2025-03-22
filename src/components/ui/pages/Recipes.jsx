@@ -1,5 +1,5 @@
 import { Container } from "@mantine/core";
-import RecipeList from "./RecipeList/RecipeList";
+import RecipeList from "../containers/RecipeList/RecipeList";
 
 export default function Recipes({ recipes }) {
   return (

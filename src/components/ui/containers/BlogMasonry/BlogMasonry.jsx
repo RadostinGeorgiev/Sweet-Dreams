@@ -1,4 +1,4 @@
-import BlogCard from "../BlogCard/BlogCard";
+import BlogCard from "../../elements/BlogCard/BlogCard";
 
 import styles from "./BlogMasonry.module.scss";
 
