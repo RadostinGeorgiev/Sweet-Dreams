@@ -7,7 +7,7 @@ export function UserInfo({ user }) {
   return (
     <div>
       <Group wrap="nowrap">
-        <Avatar src={user.image} size={60} radius="xl" />
+        <Avatar src={user.image} size={48} radius="xl" />
         <div className={styles.text}>
           <Text fz="xs" tt="uppercase" fw={700} c="dimmed">
             {user.role}

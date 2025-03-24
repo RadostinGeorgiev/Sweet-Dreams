@@ -1,7 +1,6 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useCallback } from "react";
 
-export const useFetch = (serviceFunction, options = {}, ...args) => {
-  const { dataKey = null, immediate = true } = options;
+export const useFetch = (serviceFunction) => {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -18,7 +17,7 @@ export const useFetch = (serviceFunction, options = {}, ...args) => {
         const result = await serviceFunction(...args, signal);
 
         if (!signal.aborted) {
-          setData(dataKey ? result[dataKey] : result);
+          setData(result);
         }
       } catch (err) {
         if (!signal.aborted) {
@@ -30,14 +29,8 @@ export const useFetch = (serviceFunction, options = {}, ...args) => {
         }
       }
     },
-    [serviceFunction, dataKey]
+    [serviceFunction]
   );
-
-  useEffect(() => {
-    if (immediate) {
-      execute(...args).catch(() => {});
-    }
-  }, [execute, immediate]);
 
   return { data, setData, loading, error, execute };
 };

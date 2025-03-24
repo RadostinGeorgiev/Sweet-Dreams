@@ -34,49 +34,44 @@ export default function App() {
 
   const {
     data: articles,
-    loading: articlesLoading,
-    error: articlesError,
-  } = useFetch(
-    services.getAllItems,
-    { dataKey: "posts", immediate: true },
-    endpoints.blog
-  );
+    // loading: articlesLoading,
+    // error: articlesError,
+    execute: getAllArticles,
+  } = useFetch(services.getAllItems);
 
   const {
     data: users,
     setData: setUsers,
-    loading: usersLoading,
-    error: usersError,
-  } = useFetch(
-    services.getAllItems,
-    { dataKey: "users", immediate: true },
-    `${endpoints.users}?limit=0`
-  );
-
-  const {
-    data: images,
-    loading: imagesLoading,
-    error: imagesError,
-  } = useFetch(
-    services.getAllItems,
-    { dataKey: "recipes", immediate: true },
-    endpoints.limitedRecipeImages
-  );
+    // loading: usersLoading,
+    // error: usersError,
+    execute: getAllUsers,
+  } = useFetch(services.getAllItems);
 
   const {
     data: recipes,
-    loading: recipesLoading,
-    error: recipesError,
-  } = useFetch(
-    services.getAllItems,
-    { dataKey: "recipes", immediate: true },
-    endpoints.recipes
-  );
+    // loading: recipesLoading,
+    // error: recipesError,
+    execute: getAllRecipes,
+  } = useFetch(services.getAllItems);
 
-  if (articlesLoading || usersLoading || imagesLoading || recipesLoading)
-    return <div>Loading...</div>;
-  if (articlesError || usersError || imagesError || recipesError)
-    return <div>Error: {articlesError}</div>;
+  const {
+    data: images,
+    // loading: imagesLoading,
+    // error: imagesError,
+    execute: getImages,
+  } = useFetch(services.getAllItems);
+
+  useEffect(() => {
+    getAllArticles(endpoints.blog);
+    getAllUsers(`${endpoints.users}?limit=0`);
+    getAllRecipes(endpoints.recipes);
+    getImages(endpoints.limitedRecipeImages);
+  }, [getAllArticles, getAllUsers, getAllRecipes, getImages]);
+
+  // if (articlesLoading || usersLoading || imagesLoading || recipesLoading)
+  //   return <div>Loading...</div>;
+  // if (articlesError || usersError || imagesError || recipesError)
+  //   return <div>Error: {articlesError}</div>;
 
   const handleAddUser = (newUser) => {
     setUsers((users) => [...users, newUser]);
@@ -93,7 +88,11 @@ export default function App() {
           <Route
             path="/"
             element={
-              <HomePage articles={articles} users={users} images={images} />
+              <HomePage
+                articles={articles?.posts}
+                users={users?.users}
+                images={images?.recipes}
+              />
             }
           />
           <Route path="/login" element={<LoginForm />} />
@@ -106,12 +105,17 @@ export default function App() {
             <Route path="/" element={<h1>Welcome to the Blog!</h1>} />
             <Route
               path="/blog"
-              element={<BlogList articles={articles} users={users} />}
+              element={
+                <BlogList articles={articles?.posts} users={users?.users} />
+              }
             />
             <Route path="/blog/:id" element={<SinglePost />} />
           </Route>
 
-          <Route path="/recipes" element={<Recipes recipes={recipes} />} />
+          <Route
+            path="/recipes"
+            element={<Recipes recipes={recipes?.recipes} />}
+          />
           <Route path="/tips" element={<CookingTips />} />
           <Route path="/project" element={<ProjectDescription />} />
         </Routes>
