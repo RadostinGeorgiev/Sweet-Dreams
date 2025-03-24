@@ -14,7 +14,7 @@ export default function HomePage({ articles, users, images }) {
       <BlogMasonry articles={articles} users={users} />
 
       <Carousel height={300} slideSize="md" slideGap="xs" loop dragFree>
-        {images.map((src) => {
+        {images?.map((src) => {
           return (
             <Carousel.Slide key={src.id}>
               <Image
