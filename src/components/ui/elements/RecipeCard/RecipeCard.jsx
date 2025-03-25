@@ -1,3 +1,5 @@
+import { Link } from "react-router";
+
 import {
   Flex,
   Box,
@@ -102,6 +104,8 @@ export default function RecipeCard({ recipe, layout = "vertical" }) {
             tt="uppercase"
             p="xs"
             rightSection={<IconArrowRight size={24} />}
+            component={Link}
+            to={`/recipes/${recipe.id}`}
             className={styles.button}
           >
             Read more

@@ -18,6 +18,7 @@ import HomePage from "./ui/pages/HomePage";
 import Blog from "./ui/pages/Blog";
 import BlogList from "./ui/containers/BlogList/BlogList";
 import Recipes from "./ui/pages/Recipes";
+import RecipeDetails from "./ui/pages/RecipeDetails/RecipeDetails";
 import CookingTips from "./CookingTips";
 import ProjectDescription from "./ui/pages/ProjectDescription";
 import SinglePost from "./SinglePost/SinglePost";
@@ -34,44 +35,36 @@ export default function App() {
 
   const {
     data: articles,
-    // loading: articlesLoading,
-    // error: articlesError,
+    loading: articlesLoading,
+    error: articlesError,
     execute: getAllArticles,
   } = useFetch(services.getAllItems);
 
   const {
     data: users,
     setData: setUsers,
-    // loading: usersLoading,
-    // error: usersError,
+    loading: usersLoading,
+    error: usersError,
     execute: getAllUsers,
   } = useFetch(services.getAllItems);
 
   const {
     data: recipes,
-    // loading: recipesLoading,
-    // error: recipesError,
+    loading: recipesLoading,
+    error: recipesError,
     execute: getAllRecipes,
-  } = useFetch(services.getAllItems);
-
-  const {
-    data: images,
-    // loading: imagesLoading,
-    // error: imagesError,
-    execute: getImages,
   } = useFetch(services.getAllItems);
 
   useEffect(() => {
     getAllArticles(endpoints.blog);
-    getAllUsers(`${endpoints.users}?limit=0`);
+    getAllUsers(endpoints.users);
     getAllRecipes(endpoints.recipes);
-    getImages(endpoints.limitedRecipeImages);
-  }, [getAllArticles, getAllUsers, getAllRecipes, getImages]);
+  }, [getAllArticles, getAllUsers, getAllRecipes]);
 
-  // if (articlesLoading || usersLoading || imagesLoading || recipesLoading)
-  //   return <div>Loading...</div>;
-  // if (articlesError || usersError || imagesError || recipesError)
-  //   return <div>Error: {articlesError}</div>;
+  if (articlesLoading || usersLoading || recipesLoading)
+    return <div>Loading...</div>;
+  if (articlesError || usersError || recipesError)
+    return <div>Error: {articlesError || usersError || recipesError}</div>;
 
   const handleAddUser = (newUser) => {
     setUsers((users) => [...users, newUser]);
@@ -89,9 +82,9 @@ export default function App() {
             path="/"
             element={
               <HomePage
-                articles={articles?.posts}
-                users={users?.users}
-                images={images?.recipes}
+                articles={Object.values(articles)}
+                users={Object.values(users)}
+                images={Object.values(recipes).images}
               />
             }
           />
@@ -102,11 +95,13 @@ export default function App() {
           />
 
           <Route element={<Blog />}>
-            <Route path="/" element={<h1>Welcome to the Blog!</h1>} />
             <Route
               path="/blog"
               element={
-                <BlogList articles={articles?.posts} users={users?.users} />
+                <BlogList
+                  articles={Object.values(articles)}
+                  users={Object.values(users)}
+                />
               }
             />
             <Route path="/blog/:id" element={<SinglePost />} />
@@ -114,8 +109,9 @@ export default function App() {
 
           <Route
             path="/recipes"
-            element={<Recipes recipes={recipes?.recipes} />}
+            element={<Recipes recipes={Object.values(recipes)} />}
           />
+          <Route path="/recipes/:id" element={<RecipeDetails />} />
           <Route path="/tips" element={<CookingTips />} />
           <Route path="/project" element={<ProjectDescription />} />
         </Routes>

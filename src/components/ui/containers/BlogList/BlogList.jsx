@@ -9,7 +9,7 @@ import styles from "./BlogList.module.scss";
 export default function BlogList({ articles, users }) {
   return (
     <Grid gutter="md">
-      {articles.map((article) => {
+      {articles?.map((article) => {
         const author = users?.find((user) => user.id === article.userId);
         return (
           <Grid.Col key={article.id} span={6}>
