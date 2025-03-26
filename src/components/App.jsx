@@ -4,8 +4,7 @@ import { Routes, Route, useLocation, useNavigate } from "react-router";
 import { AppShell } from "@mantine/core";
 import "@mantine/core/styles.css";
 
-import { services } from "../services/item.service";
-import { useFetch } from "../hooks/useFetch";
+import { useGetItems } from "../hooks/useItems";
 import { endpoints } from "../../config";
 
 import "./App.scss";
@@ -37,29 +36,20 @@ export default function App() {
     data: articles,
     loading: articlesLoading,
     error: articlesError,
-    execute: getAllArticles,
-  } = useFetch(services.getAllItems);
+  } = useGetItems(endpoints.blog);
+
+  const {
+    data: recipes,
+    loading: recipesLoading,
+    error: recipesError,
+  } = useGetItems(endpoints.recipes);
 
   const {
     data: users,
     setData: setUsers,
     loading: usersLoading,
     error: usersError,
-    execute: getAllUsers,
-  } = useFetch(services.getAllItems);
-
-  const {
-    data: recipes,
-    loading: recipesLoading,
-    error: recipesError,
-    execute: getAllRecipes,
-  } = useFetch(services.getAllItems);
-
-  useEffect(() => {
-    getAllArticles(endpoints.blog);
-    getAllUsers(endpoints.users);
-    getAllRecipes(endpoints.recipes);
-  }, [getAllArticles, getAllUsers, getAllRecipes]);
+  } = useGetItems(endpoints.users);
 
   if (articlesLoading || usersLoading || recipesLoading)
     return <div>Loading...</div>;

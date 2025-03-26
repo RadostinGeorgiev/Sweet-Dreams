@@ -19,7 +19,6 @@ import { z } from "zod";
 
 import { useFetch } from "../../hooks/useFetch";
 import { authServices } from "../../services/auth.service";
-import { endpoints } from "../../../config";
 
 const schema = z
   .object({
@@ -47,7 +46,6 @@ export default function RegisterForm({ onAddUser }) {
     initialValues: {
       firstName: "",
       lastName: "",
-      username: "",
       email: "",
       password: "",
       confirmPassword: "",
@@ -60,26 +58,20 @@ export default function RegisterForm({ onAddUser }) {
   const {
     data: user,
     error: userError,
-    execute,
-  } = useFetch(
-    authServices.register,
-    { dataKey: null, immediate: false },
-    endpoints.register
-  );
+    execute: register,
+  } = useFetch(authServices.register);
 
   const handleSubmit = async (values) => {
     const credentials = {
-      // id: new Date().getTime(),
       firstName: values.firstName,
       lastName: values.lastName,
-      username: values.username,
       email: values.email,
       password: values.password,
       subscribe: values.subscribe,
       role: "user",
     };
     try {
-      await execute(credentials);
+      await register(credentials);
     } catch (error) {
       console.error("Registration failed:", error);
     }
@@ -90,7 +82,7 @@ export default function RegisterForm({ onAddUser }) {
       console.log("User registered successfully:", user);
       onAddUser(user);
       form.reset();
-      navigate("/");
+      navigate(-1);
     }
   }, [user]);
 
@@ -120,13 +112,6 @@ export default function RegisterForm({ onAddUser }) {
             required
           />
         </Group>
-
-        <TextInput
-          label="Username"
-          placeholder="Enter your username"
-          {...form.getInputProps("username")}
-          required
-        />
 
         <TextInput
           label="Email"
