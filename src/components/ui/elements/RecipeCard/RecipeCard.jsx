@@ -105,7 +105,7 @@ export default function RecipeCard({ recipe, layout = "vertical" }) {
             p="xs"
             rightSection={<IconArrowRight size={24} />}
             component={Link}
-            to={`/recipes/${recipe.id}`}
+            to={`/recipes/${recipe._id}`}
             className={styles.button}
           >
             Read more

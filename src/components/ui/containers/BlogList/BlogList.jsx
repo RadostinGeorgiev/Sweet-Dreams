@@ -6,19 +6,14 @@ import BlogCard from "../../elements/BlogCard/BlogCard";
 
 import styles from "./BlogList.module.scss";
 
-export default function BlogList({ articles, users }) {
+export default function BlogList({ articles }) {
   return (
     <Grid gutter="md">
       {articles?.map((article) => {
-        const author = users?.find((user) => user.id === article.userId);
         return (
-          <Grid.Col key={article.id} span={6}>
-            <Link
-              to={`/blog/${article.id}`}
-              key={article.id}
-              className={styles.link}
-            >
-              <BlogCard article={article} author={author} />
+          <Grid.Col key={article._id} span={6}>
+            <Link to={`/blog/${article._id}`} className={styles.link}>
+              <BlogCard article={article} />
             </Link>
           </Grid.Col>
         );

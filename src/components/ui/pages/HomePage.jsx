@@ -4,14 +4,11 @@ import "@mantine/carousel/styles.css";
 
 import BlogMasonry from "../containers/BlogMasonry/BlogMasonry";
 
-// import UsersList from "./UsersList/UsersList";
-
-export default function HomePage({ articles, users, images }) {
+export default function HomePage({ articles, images }) {
   return (
     <Container size="xl" mt="md">
       <h1>Sweet Dreams</h1>
-      {/* <UsersList users={users} /> */}
-      <BlogMasonry articles={articles} users={users} />
+      <BlogMasonry articles={articles} />
 
       <Carousel height={300} slideSize="md" slideGap="xs" loop dragFree>
         {images?.map((src) => {

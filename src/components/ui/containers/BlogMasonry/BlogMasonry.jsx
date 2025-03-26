@@ -2,21 +2,16 @@ import BlogCard from "../../elements/BlogCard/BlogCard";
 
 import styles from "./BlogMasonry.module.scss";
 
-export default function BlogMasonry({ articles, users }) {
+export default function BlogMasonry({ articles }) {
   return (
     <div className={styles.masonry}>
-      {articles?.map((article) => {
-        const author = users?.find((user) => user.id === article.userId);
-
-        return (
-          <BlogCard
-            key={article.id}
-            article={article}
-            author={author}
-            className={styles["masonry-item"]}
-          />
-        );
-      })}
+      {articles?.map((article) => (
+        <BlogCard
+          key={article._id}
+          article={article}
+          className={styles["masonry-item"]}
+        />
+      ))}
     </div>
   );
 }

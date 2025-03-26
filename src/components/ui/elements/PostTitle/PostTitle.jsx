@@ -3,7 +3,7 @@ import { Box, Title, Text, Divider, List } from "@mantine/core";
 import { IconUserEdit, IconClock, IconMessage } from "@tabler/icons-react";
 import styles from "./PostTitle.module.scss";
 
-export default function PostTitle({ post, author, variant, size }) {
+export default function PostTitle({ post, variant, size }) {
   return (
     <Box className={`${styles.text} ${styles[variant]} ${styles[size]}`}>
       <Text span size={"sm"} fw={700} tt={"uppercase"} className={styles.label}>
@@ -15,7 +15,7 @@ export default function PostTitle({ post, author, variant, size }) {
 
       <List c="dimmed" className={styles.widget}>
         <List.Item icon={<IconUserEdit size={16} />}>
-          <Text>{`${author?.firstName} ${author?.lastName}`}</Text>
+          <Text>{`${post.author?.firstName} ${post.author?.lastName}`}</Text>
         </List.Item>
         <Divider orientation="vertical" />
         <List.Item icon={<IconClock size={16} />}>

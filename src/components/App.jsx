@@ -73,7 +73,6 @@ export default function App() {
             element={
               <HomePage
                 articles={Object.values(articles)}
-                users={Object.values(users)}
                 images={Object.values(recipes).images}
               />
             }

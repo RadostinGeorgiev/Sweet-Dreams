@@ -18,7 +18,7 @@ import {
 
 import styles from "./BlogCard.module.scss";
 
-export default function BlogCard({ article, author, layout = "vertical" }) {
+export default function BlogCard({ article, layout = "vertical" }) {
   const formattedDate = new Intl.DateTimeFormat("en-US", {
     month: "long",
     day: "numeric",
@@ -83,7 +83,7 @@ export default function BlogCard({ article, author, layout = "vertical" }) {
               by
             </Text>
             <Text size="sm" fw={700}>
-              {` ${author?.firstName} ${author?.lastName}`}
+              {` ${article.author?.firstName} ${article.author?.lastName}`}
             </Text>
           </Group>
 

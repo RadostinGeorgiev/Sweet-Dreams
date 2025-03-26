@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import { useParams } from "react-router";
 
 import {
@@ -23,8 +22,7 @@ import {
   IconListNumbers,
 } from "@tabler/icons-react";
 
-import { services } from "../../../../services/item.service";
-import { useFetch } from "../../../../hooks/useFetch";
+import { useGetItem } from "../../../../hooks/useItems";
 import { endpoints } from "../../../../../config";
 
 import PostTitle from "../../elements/PostTitle/PostTitle";
@@ -38,24 +36,10 @@ export default function RecipeDetails() {
     data: recipe,
     loading: recipeLoading,
     error: recipeError,
-    execute: getRecipeById,
-  } = useFetch(services.getItemById);
+  } = useGetItem(endpoints.recipes, id);
 
-  const {
-    data: author,
-    loading: authorLoading,
-    error: authorError,
-    execute: getUserById,
-  } = useFetch(services.getItemById);
-
-  useEffect(() => {
-    getRecipeById(endpoints.recipes, id);
-    getUserById(endpoints.users, id);
-  }, [id, getRecipeById, getUserById]);
-
-  if (recipeLoading || authorLoading) return <div>Loading...</div>;
-  if (recipeError || authorError)
-    return <div>Error: {recipeError || authorError}</div>;
+  if (recipeLoading) return <div>Loading...</div>;
+  if (recipeError) return <div>Error: {recipeError}</div>;
 
   if (recipe.length === 0) return;
 
@@ -93,7 +77,6 @@ export default function RecipeDetails() {
               />
               <PostTitle
                 post={recipe}
-                author={author}
                 size="large"
                 variant="caption"
                 className={`${styles["post-title"]}`}
