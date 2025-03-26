@@ -36,13 +36,13 @@ export default function App() {
     data: articles,
     loading: articlesLoading,
     error: articlesError,
-  } = useGetItems(endpoints.blog);
+  } = useGetItems(endpoints.blog, 1, 6);
 
   const {
     data: recipes,
     loading: recipesLoading,
     error: recipesError,
-  } = useGetItems(endpoints.recipes);
+  } = useGetItems(endpoints.recipes, 1, 10);
 
   const {
     data: users,
