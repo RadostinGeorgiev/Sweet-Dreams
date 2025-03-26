@@ -1,4 +1,10 @@
-import { Container, Grid, Group, Pagination } from "@mantine/core";
+import {
+  Container,
+  Grid,
+  Group,
+  NativeSelect,
+  Pagination,
+} from "@mantine/core";
 
 import RecipeCard from "../../elements/RecipeCard/RecipeCard";
 
@@ -22,8 +28,18 @@ export default function RecipeList() {
 
   return (
     <Container size="lg" mt="md">
-      <Group justify="center" mt="lg">
-        <Pagination total={total} value={page} onChange={setPage} />
+      <Group justify="end" mt="lg">
+        <NativeSelect
+          size="md"
+          label="SortBy"
+          data={[
+            "Popularity",
+            "Newest",
+            "Oldest",
+            "Title (A-Z)",
+            "Title (Z-A)",
+          ]}
+        />
       </Group>
       <Grid gutter="xs">
         {recipes?.map((recipe) => (
