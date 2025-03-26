@@ -18,9 +18,7 @@ import { z } from "zod";
 import { useLogin } from "../../hooks/useAuth";
 
 const schema = z.object({
-  username: z
-    .string()
-    .min(2, { message: "Username must be at least 2 characters" }),
+  email: z.string().email({ message: "Invalid email" }),
 });
 
 export default function LoginForm() {
@@ -28,7 +26,7 @@ export default function LoginForm() {
 
   const form = useForm({
     initialValues: {
-      username: "",
+      email: "",
       password: "",
       remember: true,
     },
@@ -37,13 +35,13 @@ export default function LoginForm() {
 
   const handleSubmit = async (values) => {
     const credentials = {
-      username: values.username,
+      email: values.email,
       password: values.password,
     };
     try {
       await login(credentials);
     } catch (error) {
-      console.error("Registration failed:", error);
+      console.error("Login failed:", error);
     }
   };
 
@@ -60,9 +58,9 @@ export default function LoginForm() {
       </Title>
       <form onSubmit={form.onSubmit(handleSubmit)}>
         <TextInput
-          label="Username"
-          placeholder="Enter your username"
-          {...form.getInputProps("username")}
+          label="Email"
+          placeholder="Enter your email"
+          {...form.getInputProps("email")}
           required
         />
 
