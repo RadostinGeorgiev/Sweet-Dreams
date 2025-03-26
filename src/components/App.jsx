@@ -96,10 +96,7 @@ export default function App() {
             <Route path="/blog/:id" element={<SinglePost />} />
           </Route>
 
-          <Route
-            path="/recipes"
-            element={<Recipes recipes={Object.values(recipes)} />}
-          />
+          <Route path="/recipes" element={<Recipes />} />
           <Route path="/recipes/:id" element={<RecipeDetails />} />
           <Route path="/tips" element={<CookingTips />} />
           <Route path="/project" element={<ProjectDescription />} />

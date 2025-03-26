@@ -4,6 +4,7 @@ import * as api from "../services/api";
 
 export const useGetItems = (endpoint, initialPage = 1, pageSize = 10) => {
   const [page, setPage] = useState(initialPage);
+  const [total, setTotal] = useState(1);
 
   const getAllItems = useCallback(
     async (endpoint, signal) => {
@@ -18,13 +19,23 @@ export const useGetItems = (endpoint, initialPage = 1, pageSize = 10) => {
     [page, pageSize]
   );
 
+  const collectionSize = useCallback(async () => {
+    return await api.get(`${endpoint}?count={}`);
+  }, [endpoint]);
+
   const { data, loading, error, execute } = useFetch(getAllItems);
+
+  useEffect(() => {
+    collectionSize().then((count) => {
+      setTotal(Math.ceil(count / pageSize));
+    });
+  }, [collectionSize, pageSize]);
 
   useEffect(() => {
     execute(endpoint);
   }, [endpoint, execute, page]);
 
-  return { data, loading, error, page, setPage };
+  return { data, loading, error, page, setPage, total };
 };
 
 export const useGetItem = (endpoint, id) => {

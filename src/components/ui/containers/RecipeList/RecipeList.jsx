@@ -1,10 +1,30 @@
-import { Container, Grid, Pagination } from "@mantine/core";
+import { Container, Grid, Group, Pagination } from "@mantine/core";
 
 import RecipeCard from "../../elements/RecipeCard/RecipeCard";
 
-export default function RecipeList({ recipes }) {
+import { useGetItems } from "../../../../hooks/useItems";
+import { endpoints } from "../../../../../config";
+
+export default function RecipeList() {
+  const pageSize = 10;
+
+  const {
+    data: recipes,
+    loading: recipesLoading,
+    error: recipesError,
+    page,
+    setPage,
+    total,
+  } = useGetItems(endpoints.recipes, 1, pageSize);
+
+  if (recipesLoading) return <div>Loading...</div>;
+  if (recipesError) return <div>Error: {recipesError}</div>;
+
   return (
     <Container size="lg" mt="md">
+      <Group justify="center" mt="lg">
+        <Pagination total={total} value={page} onChange={setPage} />
+      </Group>
       <Grid gutter="xs">
         {recipes?.map((recipe) => (
           <Grid.Col key={recipe._id} span={6}>
@@ -12,7 +32,9 @@ export default function RecipeList({ recipes }) {
           </Grid.Col>
         ))}
       </Grid>
-      <Pagination />
+      <Group justify="center" mt="lg">
+        <Pagination total={total} value={page} onChange={setPage} />
+      </Group>
     </Container>
   );
 }
