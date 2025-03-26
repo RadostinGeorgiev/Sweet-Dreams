@@ -1,9 +1,15 @@
-import { useEffect } from "react";
+import { useCallback, useEffect } from "react";
 import { useFetch } from "./useFetch";
-import { services } from "../services/item.service";
+import * as api from "../services/api";
 
 export const useGetItems = (endpoint) => {
-  const { data, loading, error, execute } = useFetch(services.getAllItems);
+  const getAllItems = useCallback(async (endpoint, signal) => {
+    const params = new URLSearchParams({ load: "author=_authorId:authors" });
+
+    return await api.get(`${endpoint}?${params.toString()}`, signal);
+  }, []);
+
+  const { data, loading, error, execute } = useFetch(getAllItems);
 
   useEffect(() => {
     execute(endpoint);
@@ -13,7 +19,16 @@ export const useGetItems = (endpoint) => {
 };
 
 export const useGetItem = (endpoint, id) => {
-  const { data, loading, error, execute } = useFetch(services.getItemById);
+  const getItemById = useCallback(
+    async (endpoint, id, signal) => {
+      const params = new URLSearchParams({ load: "author=_authorId:authors" });
+
+      return await api.get(`${endpoint}/${id}?${params.toString()}`, signal);
+    },
+    [id]
+  );
+
+  const { data, loading, error, execute } = useFetch(getItemById);
 
   useEffect(() => {
     if (id) {
@@ -22,14 +37,4 @@ export const useGetItem = (endpoint, id) => {
   }, [endpoint, id, execute]);
 
   return { data, loading, error };
-};
-
-export const useCreateItem = (endpoint) => {
-  const { data, loading, error, execute } = useFetch(services.createItem);
-
-  const createItem = async (itemData) => {
-    return await execute(endpoint, itemData);
-  };
-
-  return { createItem, data, loading, error };
 };
