@@ -38,7 +38,14 @@ export default function App() {
     data: articles,
     loading: articlesLoading,
     error: articlesError,
-  } = useGetItems(endpoints.blog, sortValue, 1, 6, "author=_authorId:authors");
+  } = useGetItems(
+    endpoints.blog,
+    1,
+    6,
+    sortValue,
+    null,
+    "author=_authorId:authors"
+  );
 
   const {
     data: recipes,
@@ -46,9 +53,10 @@ export default function App() {
     error: recipesError,
   } = useGetItems(
     endpoints.recipes,
-    sortValue,
     1,
     10,
+    sortValue,
+    null,
     "author=_authorId:authors"
   );
 

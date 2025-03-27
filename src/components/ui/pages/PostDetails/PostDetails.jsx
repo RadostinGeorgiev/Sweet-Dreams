@@ -16,8 +16,8 @@ import {
   IconEye,
   IconThumbUp,
   IconThumbDown,
-  IconArrowLeft,
-  IconArrowRight,
+  // IconArrowLeft,
+  // IconArrowRight,
 } from "@tabler/icons-react";
 
 import { useGetItem } from "../../../../hooks/useItems";
@@ -45,13 +45,13 @@ export default function PostDetails() {
     year: "numeric",
   }).format(new Date(article.createdAt));
 
-  function handlePreviousClick() {
-    console.log(article._id);
-  }
+  // function handlePreviousClick() {
+  //   console.log(article._id);
+  // }
 
-  function handleNextClick() {
-    console.log(article._id);
-  }
+  // function handleNextClick() {
+  //   console.log(article._id);
+  // }
 
   return (
     <section className="single-post spad">
@@ -111,7 +111,7 @@ export default function PostDetails() {
           </Group>
         </Group>
 
-        <Group justify="space-between" mt="xl">
+        {/* <Group justify="space-between" mt="xl">
           <Button
             variant="transparent"
             radius="0"
@@ -134,7 +134,7 @@ export default function PostDetails() {
           >
             Go to Next
           </Button>
-        </Group>
+        </Group> */}
       </Container>
     </section>
   );
