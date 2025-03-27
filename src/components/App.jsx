@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Routes, Route, useLocation, useNavigate } from "react-router";
 
 import { AppShell } from "@mantine/core";
@@ -26,6 +26,8 @@ export default function App() {
   const location = useLocation();
   const navigate = useNavigate();
 
+  const [sortValue] = useState("createdAt");
+
   useEffect(() => {
     if (location.pathname !== "/") {
       navigate("/", { replace: true });
@@ -36,13 +38,19 @@ export default function App() {
     data: articles,
     loading: articlesLoading,
     error: articlesError,
-  } = useGetItems(endpoints.blog, 1, 6);
+  } = useGetItems(endpoints.blog, sortValue, 1, 6, "author=_authorId:authors");
 
   const {
     data: recipes,
     loading: recipesLoading,
     error: recipesError,
-  } = useGetItems(endpoints.recipes, 1, 10);
+  } = useGetItems(
+    endpoints.recipes,
+    sortValue,
+    1,
+    10,
+    "author=_authorId:authors"
+  );
 
   const {
     data: users,

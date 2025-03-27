@@ -11,6 +11,7 @@ import {
 } from "@mantine/core";
 import {
   IconStar,
+  IconEye,
   IconThumbUp,
   IconThumbDown,
   IconArrowRight,
@@ -23,7 +24,7 @@ export default function BlogCard({ article, layout = "vertical" }) {
     month: "long",
     day: "numeric",
     year: "numeric",
-  }).format(new Date(article.meta.createdAt));
+  }).format(new Date(article.createdAt));
 
   return (
     <Flex
@@ -106,6 +107,10 @@ export default function BlogCard({ article, layout = "vertical" }) {
             <Group gap="0">
               <IconStar size={20} className={styles.icon} />
               <Text size="sm">{article.rating.toFixed(2)}</Text>
+            </Group>
+            <Group gap="0">
+              <IconEye size={20} className={styles.icon} />
+              <Text size="sm">{article.views}</Text>
             </Group>
             <Group gap="0">
               <IconThumbUp size={20} className={styles.icon} />

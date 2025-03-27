@@ -2,21 +2,28 @@ import { useCallback, useEffect, useState } from "react";
 import { useFetch } from "./useFetch";
 import * as api from "../services/api";
 
-export const useGetItems = (endpoint, initialPage = 1, pageSize = 10) => {
+export const useGetItems = (
+  endpoint,
+  sortValue = null,
+  initialPage = 1,
+  pageSize = 10,
+  relation = null
+) => {
   const [page, setPage] = useState(initialPage);
   const [total, setTotal] = useState(1);
 
   const getAllItems = useCallback(
     async (endpoint, signal) => {
-      const params = new URLSearchParams({
-        load: "author=_authorId:authors",
-        offset: (page - 1) * pageSize,
-        pageSize: pageSize,
-      });
+      const queryParams = [
+        ...(sortValue ? [`sortBy=${encodeURIComponent(sortValue)}`] : []),
+        `offset=${(page - 1) * pageSize}`,
+        `pageSize=${pageSize}`,
+        ...(relation ? [`load=${encodeURIComponent(relation)}`] : []),
+      ].join("&");
 
-      return await api.get(`${endpoint}?${params.toString()}`, signal);
+      return await api.get(`${endpoint}?${queryParams}`, signal);
     },
-    [page, pageSize]
+    [page, pageSize, sortValue]
   );
 
   const collectionSize = useCallback(async () => {
@@ -33,7 +40,7 @@ export const useGetItems = (endpoint, initialPage = 1, pageSize = 10) => {
 
   useEffect(() => {
     execute(endpoint);
-  }, [endpoint, execute, page]);
+  }, [endpoint, execute, page, sortValue]);
 
   return { data, loading, error, page, setPage, total };
 };

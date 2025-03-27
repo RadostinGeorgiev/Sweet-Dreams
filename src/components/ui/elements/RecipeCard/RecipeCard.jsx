@@ -69,12 +69,10 @@ export default function RecipeCard({ recipe, layout = "vertical" }) {
 
           <Group gap="xs">
             <Text tt="uppercase" size="sm" c="dimmed">
-              Total time
+              Cooking time
             </Text>
             <Text size="sm" fw={700}>
-              {`${
-                Number(recipe.prepTimeMinutes) + Number(recipe.cookTimeMinutes)
-              } minutes`}
+              {`${Number(recipe.cookTimeMinutes)} minutes`}
             </Text>
           </Group>
 

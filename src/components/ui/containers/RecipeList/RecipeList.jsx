@@ -1,10 +1,5 @@
-import {
-  Container,
-  Grid,
-  Group,
-  NativeSelect,
-  Pagination,
-} from "@mantine/core";
+import { useState } from "react";
+import { Grid, Group, Select, Pagination } from "@mantine/core";
 
 import RecipeCard from "../../elements/RecipeCard/RecipeCard";
 
@@ -12,6 +7,7 @@ import { useGetItems } from "../../../../hooks/useItems";
 import { endpoints } from "../../../../../config";
 
 export default function RecipeList() {
+  const [sortValue, setSortValue] = useState("createdAt desc");
   const pageSize = 10;
 
   const {
@@ -21,24 +17,36 @@ export default function RecipeList() {
     page,
     setPage,
     total,
-  } = useGetItems(endpoints.recipes, 1, pageSize);
+  } = useGetItems(
+    endpoints.recipes,
+    sortValue,
+    1,
+    pageSize,
+    "author=_authorId:authors"
+  );
 
   if (recipesLoading) return <div>Loading...</div>;
   if (recipesError) return <div>Error: {recipesError}</div>;
 
   return (
-    <Container size="lg" mt="md">
+    <>
       <Group justify="end" mt="lg">
-        <NativeSelect
+        <Select
           size="md"
           label="SortBy"
           data={[
-            "Popularity",
-            "Newest",
-            "Oldest",
-            "Title (A-Z)",
-            "Title (Z-A)",
+            { value: "createdAt desc", label: "Newest" },
+            { value: "createdAt", label: "Oldest" },
+            { value: "name", label: "Title (A-Z)" },
+            { value: "name desc", label: "Title (Z-A)" },
+            { value: "difficulty desc", label: "Мost difficult" },
+            { value: "difficulty", label: "Easiest" },
+            { value: "cookTimeMinutes", label: "Cooking time" },
+            { value: "rating desc", label: "Highest rated" },
+            { value: "rating", label: "Lowest rated" },
           ]}
+          value={sortValue}
+          onChange={setSortValue}
         />
       </Group>
       <Grid gutter="xs">
@@ -51,6 +59,6 @@ export default function RecipeList() {
       <Group justify="center" mt="lg">
         <Pagination total={total} value={page} onChange={setPage} />
       </Group>
-    </Container>
+    </>
   );
 }
