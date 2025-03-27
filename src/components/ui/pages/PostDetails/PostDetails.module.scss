@@ -1,9 +1,12 @@
-.post-title {
-  background: var(--color-white);
-  padding: 3em;
-  position: relative;
-  margin-top: -8.5em;
-  margin-bottom: 3em;
+.widget {
+  margin-bottom: 0.625em;
+  list-style: none;
+  display: flex;
+  gap: 1em;
+
+  .property {
+    color: var(--color-text);
+  }
 }
 
 .options {

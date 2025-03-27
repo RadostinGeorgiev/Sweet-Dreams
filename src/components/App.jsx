@@ -16,11 +16,11 @@ import RegisterForm from "./auth/Register";
 import HomePage from "./ui/pages/HomePage";
 import Blog from "./ui/pages/Blog";
 import BlogList from "./ui/containers/BlogList/BlogList";
+import PostDetails from "./ui/pages/PostDetails/PostDetails";
 import Recipes from "./ui/pages/Recipes";
 import RecipeDetails from "./ui/pages/RecipeDetails/RecipeDetails";
 import CookingTips from "./CookingTips";
 import ProjectDescription from "./ui/pages/ProjectDescription";
-import SinglePost from "./SinglePost/SinglePost";
 
 export default function App() {
   const location = useLocation();
@@ -101,7 +101,7 @@ export default function App() {
                 />
               }
             />
-            <Route path="/blog/:id" element={<SinglePost />} />
+            <Route path="/blog/:id" element={<PostDetails />} />
           </Route>
 
           <Route path="/recipes" element={<Recipes />} />

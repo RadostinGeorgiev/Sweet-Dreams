@@ -1,3 +1,5 @@
+import { Link } from "react-router";
+
 import {
   Flex,
   Box,
@@ -122,12 +124,14 @@ export default function BlogCard({ article, layout = "vertical" }) {
             </Group>
           </Group>
           <Button
-            variant="outline"
+            variant="transparent"
             radius="0"
             size="s"
             tt="uppercase"
             p="xs"
             rightSection={<IconArrowRight size={24} />}
+            component={Link}
+            to={`/blog/${article._id}`}
             className={styles.button}
           >
             Read more

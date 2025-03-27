@@ -57,7 +57,7 @@ export default function RecipeList() {
         ))}
       </Grid>
       <Group justify="center" mt="lg">
-        <Pagination total={total} value={page} onChange={setPage} />
+        <Pagination radius="0" total={total} value={page} onChange={setPage} />
       </Group>
     </>
   );

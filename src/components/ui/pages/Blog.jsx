@@ -6,9 +6,8 @@ import AsideContent from "../containers/AsideContent";
 export default function Blog() {
   return (
     <Container size="xl" mt="md">
-      <h1>Blog List</h1>
       <Grid>
-        <Grid.Col span={9}>
+        <Grid.Col span={9} mt="lg">
           <Outlet />
         </Grid.Col>
 

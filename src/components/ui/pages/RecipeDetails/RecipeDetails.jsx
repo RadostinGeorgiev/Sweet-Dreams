@@ -58,10 +58,11 @@ export default function RecipeDetails() {
           padding: "2rem",
         }}
       ></BackgroundImage>
+
       <Container size="md" py="xl">
         <Stack gap={0}>
           {/* Заглавие  */}
-          <Paper shadow="lg" radius={0} className={styles["post-title"]}>
+          <Paper shadow="lg" radius={0} className={styles["recipe-title"]}>
             <Flex
               gap="md"
               justify="flex-start"
@@ -79,13 +80,13 @@ export default function RecipeDetails() {
                 post={recipe}
                 size="large"
                 variant="caption"
-                className={`${styles["post-title"]}`}
+                className={`${styles["recipe-title"]}`}
               />
             </Flex>
           </Paper>
 
           {/* Описание */}
-          {/* {post.content.map((paragraph, index) => (
+          {/* {recipe.content.map((paragraph, index) => (
             <Text size="md" mb="xl" key={index}>
               {paragraph}
             </Text>

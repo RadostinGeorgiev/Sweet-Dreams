@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { Link } from "react-router";
 
 import { Grid, Group, Select, Pagination } from "@mantine/core";
 
@@ -7,8 +6,6 @@ import BlogCard from "../../elements/BlogCard/BlogCard";
 
 import { useGetItems } from "../../../../hooks/useItems";
 import { endpoints } from "../../../../../config";
-
-import styles from "./BlogList.module.scss";
 
 export default function BlogList() {
   const [sortValue, setSortValue] = useState("createdAt desc");
@@ -55,15 +52,13 @@ export default function BlogList() {
         {articles?.map((article) => {
           return (
             <Grid.Col key={article._id} span={6}>
-              <Link to={`/blog/${article._id}`} className={styles.link}>
-                <BlogCard article={article} />
-              </Link>
+              <BlogCard article={article} />
             </Grid.Col>
           );
         })}
       </Grid>
       <Group justify="center" mt="lg">
-        <Pagination total={total} value={page} onChange={setPage} />
+        <Pagination radius="0" total={total} value={page} onChange={setPage} />
       </Group>
     </>
   );
