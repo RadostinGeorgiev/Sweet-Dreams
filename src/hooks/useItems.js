@@ -4,10 +4,11 @@ import * as api from "../services/api";
 
 export const useGetItems = (
   endpoint,
-  relation = null,
-  sortValue = null,
   initialPage = 1,
-  pageSize = 10
+  pageSize = 10,
+  sortValue = null,
+  filterValue = null,
+  relation = null
 ) => {
   const [page, setPage] = useState(initialPage);
   const [total, setTotal] = useState(1);
@@ -15,10 +16,11 @@ export const useGetItems = (
   const getAllItems = useCallback(
     async (endpoint, signal) => {
       const queryParams = [
-        ...(relation ? [`load=${encodeURIComponent(relation)}`] : []),
-        ...(sortValue ? [`sortBy=${encodeURIComponent(sortValue)}`] : []),
         `offset=${(page - 1) * pageSize}`,
         `pageSize=${pageSize}`,
+        ...(sortValue ? [`sortBy=${encodeURIComponent(sortValue)}`] : []),
+        ...(filterValue ? [`where=${encodeURIComponent(filterValue)}`] : []),
+        ...(relation ? [`load=${encodeURIComponent(relation)}`] : []),
       ].join("&");
 
       return await api.get(`${endpoint}?${queryParams}`, signal);
