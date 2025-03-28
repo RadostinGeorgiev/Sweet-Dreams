@@ -20,6 +20,7 @@ export default function BlogList() {
     total,
   } = useGetItems(
     endpoints.blog,
+    null,
     "author=_authorId:authors",
     sortValue,
     1,

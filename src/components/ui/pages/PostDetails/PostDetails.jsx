@@ -38,7 +38,7 @@ export default function PostDetails() {
     data: comments,
     loading: commentsLoading,
     error: commentsError,
-  } = useGetItems(endpoints.comments, null, null, 1, 10);
+  } = useGetItems(endpoints.comments, null, null, null, 1, 10);
 
   if (postLoading || commentsLoading) return <div>Loading...</div>;
   if (postError || commentsError)

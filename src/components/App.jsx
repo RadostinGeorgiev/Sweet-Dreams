@@ -40,6 +40,7 @@ export default function App() {
     error: articlesError,
   } = useGetItems(
     endpoints.blog,
+    null,
     "author=_authorId:authors",
     sortValue,
     1,
@@ -53,6 +54,7 @@ export default function App() {
     error: recipesError,
   } = useGetItems(
     endpoints.recipes,
+    null,
     "author=_authorId:authors",
     sortValue,
     1,
