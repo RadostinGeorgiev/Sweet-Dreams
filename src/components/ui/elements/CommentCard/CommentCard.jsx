@@ -1,8 +1,14 @@
 import { Card, Text, Group, Avatar, Stack, Button } from "@mantine/core";
-import { IconArrowBack, IconHeart } from "@tabler/icons-react";
+import { IconArrowRight, IconHeart } from "@tabler/icons-react";
+
+import styles from "./CommentCard.module.scss";
 
 export function CommentCard({ comment, onReply }) {
-  console.log("comment:", comment);
+  const formattedDate = new Intl.DateTimeFormat("en-US", {
+    month: "long",
+    day: "numeric",
+    year: "numeric",
+  }).format(new Date(comment.createdAt));
 
   return (
     <Card withBorder p="md" radius="0" mb="sm">
@@ -13,13 +19,13 @@ export function CommentCard({ comment, onReply }) {
           radius="0"
           size="xl"
         />
-        <Stack gap={0} style={{ flex: 1 }}>
+        <Stack gap={0} className={styles.content}>
           <Group gap="xs">
             <Text
               fw={500}
             >{`${comment.author.firstName} ${comment.author.lastName}`}</Text>
-            <Text c="dimmed" size="sm">
-              {new Date(comment.createdAt).toLocaleDateString()}
+            <Text size="sm" c="dimmed">
+              {formattedDate}
             </Text>
           </Group>
           <Text mt="xs">{comment.content}</Text>
@@ -27,7 +33,7 @@ export function CommentCard({ comment, onReply }) {
             <Button
               variant="subtle"
               size="compact-sm"
-              leftSection={<IconArrowBack size={14} />}
+              rightSection={<IconArrowRight size={14} />}
               onClick={onReply}
             >
               Reply

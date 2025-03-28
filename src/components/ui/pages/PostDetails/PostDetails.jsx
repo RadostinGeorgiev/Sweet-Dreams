@@ -24,8 +24,8 @@ import {
 import { useGetItem, useGetItems } from "../../../../hooks/useItems";
 import { endpoints } from "../../../../../config";
 
-import { CommentCard } from "../../elements/CommentCard";
 import styles from "./PostDetails.module.scss";
+import CommentsList from "../../containers/CommentsList/CommentsList";
 
 export default function PostDetails() {
   const [filter, setFilter] = useState(null);
@@ -55,9 +55,6 @@ export default function PostDetails() {
     1,
     100
   );
-
-  console.log("filter:", filter);
-  console.log("comments:", comments);
 
   if (postLoading || commentsLoading) return <div>Loading...</div>;
   if (postError || commentsError)
@@ -162,18 +159,7 @@ export default function PostDetails() {
           </Button>
         </Group> */}
 
-        <Group justify="flex-start">
-          <Text span size="md" tt="uppercase" c="dimmed">
-            {comments.length} comments
-          </Text>
-          <List>
-            {comments.map((comment) => (
-              <ListItem key={comment._id}>
-                <CommentCard comment={comment} />
-              </ListItem>
-            ))}
-          </List>
-        </Group>
+        <CommentsList comments={comments} />
       </Container>
     </section>
   );
