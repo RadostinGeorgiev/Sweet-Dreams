@@ -19,11 +19,10 @@ export default function RecipeList() {
     total,
   } = useGetItems(
     endpoints.recipes,
-    1,
-    pageSize,
+    "author=_authorId:authors",
     sortValue,
-    null,
-    "author=_authorId:authors"
+    1,
+    pageSize
   );
 
   if (recipesLoading) return <div>Loading...</div>;

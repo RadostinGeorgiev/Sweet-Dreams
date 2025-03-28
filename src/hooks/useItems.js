@@ -4,11 +4,10 @@ import * as api from "../services/api";
 
 export const useGetItems = (
   endpoint,
-  initialPage = 1,
-  pageSize = 10,
+  relation = null,
   sortValue = null,
-  filterValue = null,
-  relation = null
+  initialPage = 1,
+  pageSize = 10
 ) => {
   const [page, setPage] = useState(initialPage);
   const [total, setTotal] = useState(1);
@@ -16,16 +15,15 @@ export const useGetItems = (
   const getAllItems = useCallback(
     async (endpoint, signal) => {
       const queryParams = [
+        ...(relation ? [`load=${encodeURIComponent(relation)}`] : []),
+        ...(sortValue ? [`sortBy=${encodeURIComponent(sortValue)}`] : []),
         `offset=${(page - 1) * pageSize}`,
         `pageSize=${pageSize}`,
-        ...(sortValue ? [`sortBy=${encodeURIComponent(sortValue)}`] : []),
-        ...(filterValue ? [`where=${encodeURIComponent(filterValue)}`] : []),
-        ...(relation ? [`load=${encodeURIComponent(relation)}`] : []),
       ].join("&");
 
       return await api.get(`${endpoint}?${queryParams}`, signal);
     },
-    [page, pageSize, sortValue]
+    [page, pageSize, sortValue, relation]
   );
 
   const collectionSize = useCallback(async () => {
@@ -48,14 +46,11 @@ export const useGetItems = (
 };
 
 export const useGetItem = (endpoint, id) => {
-  const getItemById = useCallback(
-    async (endpoint, id, signal) => {
-      const params = new URLSearchParams({ load: "author=_authorId:authors" });
+  const getItemById = useCallback(async (endpoint, id, signal) => {
+    const params = new URLSearchParams({ load: "author=_authorId:authors" });
 
-      return await api.get(`${endpoint}/${id}?${params.toString()}`, signal);
-    },
-    [id]
-  );
+    return await api.get(`${endpoint}/${id}?${params.toString()}`, signal);
+  }, []);
 
   const { data, loading, error, execute } = useFetch(getItemById);
 

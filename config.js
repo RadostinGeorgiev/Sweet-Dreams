@@ -7,6 +7,7 @@ const endpoints = {
   users: "/data/authors",
   blog: "/data/blog",
   recipes: "/data/recipes",
+  comments: "/data/comments",
 };
 
 export { host, endpoints };

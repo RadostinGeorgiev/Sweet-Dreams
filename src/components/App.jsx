@@ -40,11 +40,11 @@ export default function App() {
     error: articlesError,
   } = useGetItems(
     endpoints.blog,
+    "author=_authorId:authors",
+    sortValue,
     1,
     6,
-    sortValue,
-    null,
-    "author=_authorId:authors"
+    null
   );
 
   const {
@@ -53,11 +53,11 @@ export default function App() {
     error: recipesError,
   } = useGetItems(
     endpoints.recipes,
+    "author=_authorId:authors",
+    sortValue,
     1,
     10,
-    sortValue,
-    null,
-    "author=_authorId:authors"
+    null
   );
 
   const {

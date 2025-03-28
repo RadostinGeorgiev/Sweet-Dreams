@@ -20,7 +20,7 @@ import {
   // IconArrowRight,
 } from "@tabler/icons-react";
 
-import { useGetItem } from "../../../../hooks/useItems";
+import { useGetItem, useGetItems } from "../../../../hooks/useItems";
 import { endpoints } from "../../../../../config";
 
 import styles from "./PostDetails.module.scss";
@@ -34,10 +34,19 @@ export default function PostDetails() {
     error: postError,
   } = useGetItem(endpoints.blog, id);
 
-  if (postLoading) return <div>Loading...</div>;
-  if (postError) return <div>Error: {postError}</div>;
+  const {
+    data: comments,
+    loading: commentsLoading,
+    error: commentsError,
+  } = useGetItems(endpoints.comments, null, null, 1, 10);
+
+  if (postLoading || commentsLoading) return <div>Loading...</div>;
+  if (postError || commentsError)
+    return <div>Error: {postError || commentsError}</div>;
 
   if (article.length === 0) return;
+
+  console.log("comments:", comments);
 
   const formattedDate = new Intl.DateTimeFormat("en-US", {
     month: "long",
@@ -135,6 +144,19 @@ export default function PostDetails() {
             Go to Next
           </Button>
         </Group> */}
+
+        <Group justify="flex-start">
+          <Text span size="md" tt="uppercase" c="dimmed">
+            {comments.length} comments
+          </Text>
+          <List>
+            {comments.map((comment) => (
+              <ListItem key={comment._id}>
+                <Text>{comment.content}</Text>
+              </ListItem>
+            ))}
+          </List>
+        </Group>
       </Container>
     </section>
   );

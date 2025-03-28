@@ -20,11 +20,10 @@ export default function BlogList() {
     total,
   } = useGetItems(
     endpoints.blog,
-    1,
-    pageSize,
+    "author=_authorId:authors",
     sortValue,
-    null,
-    "author=_authorId:authors"
+    1,
+    pageSize
   );
 
   if (articlesLoading) return <div>Loading...</div>;
