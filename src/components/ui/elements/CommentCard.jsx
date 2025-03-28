@@ -1,21 +1,25 @@
 import { Card, Text, Group, Avatar, Stack, Button } from "@mantine/core";
 import { IconArrowBack, IconHeart } from "@tabler/icons-react";
 
-export function Comment({ author, content, createdAt, onReply }) {
+export function CommentCard({ comment, onReply }) {
+  console.log("comment:", comment);
+
   return (
     <Card withBorder p="md" radius="md" mb="sm">
       <Group align="start">
         <Avatar radius="xl" size="sm" color="blue">
-          {author.charAt(0)}
+          {comment.author.image}
         </Avatar>
         <Stack gap={0} style={{ flex: 1 }}>
           <Group gap="xs">
-            <Text fw={500}>{author}</Text>
+            <Text
+              fw={500}
+            >{`${comment.author.firstName} ${comment.author.lastName}`}</Text>
             <Text c="dimmed" size="sm">
-              {new Date(createdAt).toLocaleDateString()}
+              {new Date(comment.createdAt).toLocaleDateString()}
             </Text>
           </Group>
-          <Text mt="xs">{content}</Text>
+          <Text mt="xs">{comment.content}</Text>
           <Group mt="sm">
             <Button
               variant="subtle"

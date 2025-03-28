@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { useParams } from "react-router";
 
 import {
@@ -23,9 +24,11 @@ import {
 import { useGetItem, useGetItems } from "../../../../hooks/useItems";
 import { endpoints } from "../../../../../config";
 
+import { CommentCard } from "../../elements/CommentCard";
 import styles from "./PostDetails.module.scss";
 
 export default function PostDetails() {
+  const [filter, setFilter] = useState(null);
   const { id } = useParams();
 
   const {
@@ -34,19 +37,33 @@ export default function PostDetails() {
     error: postError,
   } = useGetItem(endpoints.blog, id);
 
+  useEffect(() => {
+    if (article?._id) {
+      setFilter(`_postId=${article?._id}`);
+    }
+  }, [article?._id]);
+
   const {
     data: comments,
     loading: commentsLoading,
     error: commentsError,
-  } = useGetItems(endpoints.comments, null, null, null, 1, 10);
+  } = useGetItems(
+    endpoints.comments,
+    filter,
+    "author=_authorId:authors",
+    null,
+    1,
+    100
+  );
+
+  console.log("filter:", filter);
+  console.log("comments:", comments);
 
   if (postLoading || commentsLoading) return <div>Loading...</div>;
   if (postError || commentsError)
     return <div>Error: {postError || commentsError}</div>;
 
   if (article.length === 0) return;
-
-  console.log("comments:", comments);
 
   const formattedDate = new Intl.DateTimeFormat("en-US", {
     month: "long",
@@ -152,7 +169,7 @@ export default function PostDetails() {
           <List>
             {comments.map((comment) => (
               <ListItem key={comment._id}>
-                <Text>{comment.content}</Text>
+                <CommentCard comment={comment} />
               </ListItem>
             ))}
           </List>

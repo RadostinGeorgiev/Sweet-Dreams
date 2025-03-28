@@ -25,7 +25,7 @@ export const useGetItems = (
 
       return await api.get(`${endpoint}?${queryParams}`, signal);
     },
-    [page, pageSize, sortValue, relation]
+    [filterValue, sortValue, relation, page, pageSize]
   );
 
   const collectionSize = useCallback(async () => {
