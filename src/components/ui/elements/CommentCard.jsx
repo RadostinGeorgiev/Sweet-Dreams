@@ -5,11 +5,14 @@ export function CommentCard({ comment, onReply }) {
   console.log("comment:", comment);
 
   return (
-    <Card withBorder p="md" radius="md" mb="sm">
+    <Card withBorder p="md" radius="0" mb="sm">
       <Group align="start">
-        <Avatar radius="xl" size="sm" color="blue">
-          {comment.author.image}
-        </Avatar>
+        <Avatar
+          src={comment.author.image}
+          alt={`${comment.author.firstName} ${comment.author.lastName}`}
+          radius="0"
+          size="xl"
+        />
         <Stack gap={0} style={{ flex: 1 }}>
           <Group gap="xs">
             <Text
