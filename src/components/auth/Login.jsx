@@ -1,4 +1,4 @@
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 
 import { useForm } from "@mantine/form";
 import {
@@ -11,18 +11,20 @@ import {
   Text,
   Notification,
 } from "@mantine/core";
+import { IconXboxXFilled } from "@tabler/icons-react";
 
 import { zodResolver } from "mantine-form-zod-resolver";
 import { z } from "zod";
 
-import { useLogin } from "../../hooks/useAuth";
+import { useAuth } from "../../hooks/useAuth";
 
 const schema = z.object({
   email: z.string().email({ message: "Invalid email" }),
 });
 
 export default function LoginForm() {
-  const { login, error } = useLogin();
+  const { login, loginError } = useAuth();
+  const navigate = useNavigate();
 
   const form = useForm({
     initialValues: {
@@ -38,11 +40,9 @@ export default function LoginForm() {
       email: values.email,
       password: values.password,
     };
-    try {
-      await login(credentials);
-    } catch (error) {
-      console.error("Login failed:", error);
-    }
+
+    await login(credentials);
+    navigate(-1);
   };
 
   return (
@@ -79,13 +79,18 @@ export default function LoginForm() {
           {...form.getInputProps("remember", { type: "checkbox" })}
         />
 
-        <Button type="submit" fullWidth mt="lg" tt="uppercase">
+        <Button type="submit" fullWidth radius="0" mt="lg" tt="uppercase">
           Login
         </Button>
 
-        {error && (
-          <Notification color="red" mt="md">
-            {error}
+        {loginError && (
+          <Notification
+            icon={<IconXboxXFilled size={24} />}
+            title="Error"
+            color="red"
+            mt="md"
+          >
+            {loginError}
           </Notification>
         )}
       </form>

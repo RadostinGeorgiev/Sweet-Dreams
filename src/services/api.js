@@ -33,8 +33,8 @@ async function request(method = "GET", url, data, signal) {
     console.error("Error parsing user data:", error);
   }
 
-  if (cachedUserData && cachedUserData.token) {
-    options.headers["Authorization"] = cachedUserData.token;
+  if (cachedUserData && cachedUserData.accessToken) {
+    options.headers["X-Authorization"] = cachedUserData.accessToken;
   }
 
   try {

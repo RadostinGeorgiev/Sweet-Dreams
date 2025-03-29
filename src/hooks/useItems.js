@@ -32,7 +32,7 @@ export const useGetItems = (
     return await api.get(`${endpoint}?count={}`);
   }, [endpoint]);
 
-  const { data, loading, error, execute } = useFetch(getAllItems);
+  const { data, setData, loading, error, execute } = useFetch(getAllItems);
 
   useEffect(() => {
     collectionSize().then((count) => {
@@ -44,7 +44,7 @@ export const useGetItems = (
     execute(endpoint);
   }, [endpoint, execute, page, sortValue]);
 
-  return { data, loading, error, page, setPage, total };
+  return { data, setData, loading, error, page, setPage, total };
 };
 
 export const useGetItem = (endpoint, id) => {

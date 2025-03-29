@@ -5,6 +5,7 @@ export const authServices = {
     try {
       const response = await api.register(credentials);
       authServices.setUserData(response);
+
       return response;
     } catch (error) {
       console.error("Registration error:", error);

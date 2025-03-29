@@ -1,46 +1,66 @@
-import { useNavigate } from "react-router";
 import { useFetch } from "./useFetch";
 import { authServices } from "../services/auth.service";
 
 export const useAuth = () => {
-  const navigate = useNavigate();
+  const {
+    execute: registerExecute,
+    data: registerData,
+    loading: registerLoading,
+    error: registerError,
+    setError: setRegisterError,
+  } = useFetch(authServices.register);
 
   const {
     execute: loginExecute,
+    data: loginData,
     loading: loginLoading,
     error: loginError,
+    setError: setLoginError,
   } = useFetch(authServices.login);
-  const {
-    execute: registerExecute,
-    loading: registerLoading,
-    error: registerError,
-  } = useFetch(authServices.register);
+
   const { execute: logoutExecute } = useFetch(authServices.logout);
 
   const register = async (credentials) => {
-    const response = await registerExecute(credentials);
-    if (response) navigate("/");
-    return response;
+    try {
+      const response = await registerExecute(credentials);
+      if (!response) {
+        throw new Error("Invalid credentials");
+      }
+      return response;
+    } catch (error) {
+      const errorMessage =
+        error.response?.data?.message || error.message || "Register failed";
+      setRegisterError(errorMessage);
+      throw errorMessage;
+    }
   };
 
   const login = async (credentials) => {
-    const response = await loginExecute(credentials);
-    if (response) navigate("/");
-    return response;
+    try {
+      const response = await loginExecute(credentials);
+      if (!response) {
+        throw new Error("Invalid credentials");
+      }
+      return response;
+    } catch (error) {
+      const errorMessage =
+        error.response?.data?.message || error.message || "Login failed";
+      setLoginError(errorMessage);
+      throw errorMessage;
+    }
   };
 
   const logout = async () => {
     await logoutExecute();
-    navigate("/");
   };
-
-  const isLogged = authServices.isLogged;
-  const getUserData = authServices.getUserData;
 
   return {
     register,
     login,
     logout,
+
+    registerData,
+    loginData,
 
     registerLoading,
     loginLoading,
@@ -48,7 +68,7 @@ export const useAuth = () => {
     registerError,
     loginError,
 
-    isLogged,
-    getUserData,
+    isLogged: authServices.isLogged,
+    getUserData: authServices.getUserData,
   };
 };

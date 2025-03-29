@@ -9,7 +9,7 @@ import { endpoints } from "../../config";
 
 import "./App.scss";
 
-import Header from "./Header/Header";
+import Header from "./ui/layout/Header/Header";
 import Footer from "./Footer";
 import LoginForm from "./auth/Login";
 import RegisterForm from "./auth/Register";

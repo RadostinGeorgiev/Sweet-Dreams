@@ -11,7 +11,7 @@ export function CommentCard({ comment, onReply }) {
   }).format(new Date(comment.createdAt));
 
   return (
-    <Card withBorder p="md" radius="0" mb="sm">
+    <Card radius="0" className={styles.card}>
       <Group align="start">
         <Avatar
           src={comment.author.image}

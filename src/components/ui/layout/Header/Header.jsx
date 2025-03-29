@@ -6,14 +6,9 @@ import { IconUserDown, IconUserPlus, IconUserShare } from "@tabler/icons-react";
 
 import styles from "./Header.module.scss";
 
-// import { services } from "../../services/item.service";
-// import { useFetch } from "../../hooks/useFetch";
-// import { endpoints } from "../../../config";
-
 import logo from "/images/logo.png";
-import { UserInfo } from "../UserInfo/UserInfo";
-import { authServices } from "../../services/auth.service";
-import { useLogout } from "../../hooks/useAuth";
+import { UserInfo } from "../../elements/UserInfo/UserInfo";
+import { useAuth } from "../../../../hooks/useAuth";
 
 const mainLinks = [
   { link: "/", label: "Home" },
@@ -24,11 +19,11 @@ const mainLinks = [
 ];
 
 export default function Header() {
+  const { logout, getUserData, isLogged } = useAuth();
   const [active, setActive] = useState(0);
-  const logout = useLogout();
 
-  const user = authServices.getUserData();
-  const isLogged = authServices.isLogged();
+  const user = getUserData();
+  const loggedIn = isLogged();
 
   const menuItems = mainLinks.map((item, index) => (
     <Anchor
@@ -63,7 +58,7 @@ export default function Header() {
             flexDirection: "column",
           }}
         >
-          {isLogged ? (
+          {loggedIn ? (
             <Group justify="flex-end" align="center">
               <UserInfo user={user} />
               <Button
@@ -72,7 +67,7 @@ export default function Header() {
                 radius="0"
                 leftSection={<IconUserShare size={16} />}
                 className={styles.button}
-                onClick={logout}
+                onClick={() => logout()}
                 component={Link}
                 to="/"
               >

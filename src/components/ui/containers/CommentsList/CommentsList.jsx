@@ -1,21 +1,22 @@
-import { Group, List, ListItem, Text } from "@mantine/core";
+import { Stack, List, ListItem, Text } from "@mantine/core";
 
 import { CommentCard } from "../../elements/CommentCard/CommentCard";
 import styles from "./CommentsList.module.scss";
 
 export default function CommentsList({ comments }) {
   return (
-    <Group justify="flex-start">
+    <Stack justify="flex-start" mt="lg" className={styles.list}>
       <Text span size="md" tt="uppercase" c="dimmed">
         {comments.length} comments
       </Text>
-      <List className={styles.comments}>
+
+      <List>
         {comments.map((comment) => (
-          <ListItem key={comment._id}>
+          <ListItem key={comment._id} className={styles.item}>
             <CommentCard comment={comment} />
           </ListItem>
         ))}
       </List>
-    </Group>
+    </Stack>
   );
 }

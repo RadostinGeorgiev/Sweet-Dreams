@@ -26,6 +26,7 @@ import { endpoints } from "../../../../../config";
 
 import styles from "./PostDetails.module.scss";
 import CommentsList from "../../containers/CommentsList/CommentsList";
+import CreateCommentForm from "../../elements/CreateComment/CreateComment";
 
 export default function PostDetails() {
   const [filter, setFilter] = useState(null);
@@ -160,6 +161,7 @@ export default function PostDetails() {
         </Group> */}
 
         <CommentsList comments={comments} />
+        <CreateCommentForm />
       </Container>
     </section>
   );

@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useState } from "react";
 import { useNavigate, Link } from "react-router";
 
 import { useForm } from "@mantine/form";
@@ -13,12 +13,12 @@ import {
   Group,
   Text,
 } from "@mantine/core";
+import { IconXboxXFilled, IconCircleCheckFilled } from "@tabler/icons-react";
 
 import { zodResolver } from "mantine-form-zod-resolver";
 import { z } from "zod";
 
-import { useFetch } from "../../hooks/useFetch";
-import { authServices } from "../../services/auth.service";
+import { useAuth } from "../../hooks/useAuth";
 
 const schema = z
   .object({
@@ -40,6 +40,9 @@ const schema = z
   });
 
 export default function RegisterForm({ onAddUser }) {
+  const { register, registerError } = useAuth();
+  const [userNotification, setUserNotification] = useState(null);
+
   const navigate = useNavigate();
 
   const form = useForm({
@@ -55,12 +58,6 @@ export default function RegisterForm({ onAddUser }) {
     validate: zodResolver(schema),
   });
 
-  const {
-    data: user,
-    error: userError,
-    execute: register,
-  } = useFetch(authServices.register);
-
   const handleSubmit = async (values) => {
     const credentials = {
       firstName: values.firstName,
@@ -70,21 +67,19 @@ export default function RegisterForm({ onAddUser }) {
       subscribe: values.subscribe,
       role: "user",
     };
-    try {
-      await register(credentials);
-    } catch (error) {
-      console.error("Registration failed:", error);
+
+    const registeredUser = await register(credentials);
+
+    if (registeredUser) {
+      const notification = {
+        user: registeredUser,
+        message: `Welcome ${registeredUser.firstName}!`,
+      };
+      setUserNotification(notification);
+      onAddUser(registeredUser);
+      form.reset();
     }
   };
-
-  useEffect(() => {
-    if (user) {
-      console.log("User registered successfully:", user);
-      onAddUser(user);
-      form.reset();
-      navigate(-1);
-    }
-  }, [user]);
 
   return (
     <Paper
@@ -122,7 +117,7 @@ export default function RegisterForm({ onAddUser }) {
 
         <PasswordInput
           label="Password"
-          placeholder="Enter your password"
+          placeholder="Enter your password - min 6 chars"
           mt="md"
           {...form.getInputProps("password")}
           required
@@ -143,13 +138,36 @@ export default function RegisterForm({ onAddUser }) {
           {...form.getInputProps("subscribe", { type: "checkbox" })}
         />
 
-        <Button type="submit" fullWidth mt="lg" tt="uppercase">
+        <Button type="submit" fullWidth radius="0" mt="lg" tt="uppercase">
           Register
         </Button>
 
-        {userError && (
-          <Notification color="red" mt="md">
-            {userError}
+        {userNotification && (
+          <Notification
+            icon={<IconCircleCheckFilled size={24} />}
+            title="Registration Successful"
+            color="teal"
+            mt="md"
+            withCloseButton
+            onClose={() => {
+              setUserNotification(null);
+              navigate("/");
+            }}
+          >
+            <Text>{userNotification.message}</Text>
+            <Text size="sm" mt="xs">
+              Email: {userNotification.user.email}
+            </Text>
+          </Notification>
+        )}
+        {registerError && (
+          <Notification
+            icon={<IconXboxXFilled size={24} />}
+            title="Error"
+            color="red"
+            mt="md"
+          >
+            {registerError}
           </Notification>
         )}
       </form>

@@ -18,10 +18,12 @@ export const useFetch = (serviceFunction) => {
 
         if (!signal.aborted) {
           setData(result);
+          return result;
         }
       } catch (err) {
         if (!signal.aborted) {
           setError(err);
+          throw err;
         }
       } finally {
         if (!signal.aborted) {
@@ -32,5 +34,5 @@ export const useFetch = (serviceFunction) => {
     [serviceFunction]
   );
 
-  return { data, setData, loading, error, execute };
+  return { data, setData, loading, error, setError, execute };
 };
