@@ -1,54 +1,54 @@
-import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router";
+import { useFetch } from "./useFetch";
 import { authServices } from "../services/auth.service";
 
-export const useLogin = () => {
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+export const useAuth = () => {
   const navigate = useNavigate();
 
-  const controller = useRef(new AbortController());
-  const signal = controller.current.signal;
+  const {
+    execute: loginExecute,
+    loading: loginLoading,
+    error: loginError,
+  } = useFetch(authServices.login);
+  const {
+    execute: registerExecute,
+    loading: registerLoading,
+    error: registerError,
+  } = useFetch(authServices.register);
+  const { execute: logoutExecute } = useFetch(authServices.logout);
+
+  const register = async (credentials) => {
+    const response = await registerExecute(credentials);
+    if (response) navigate("/");
+    return response;
+  };
 
   const login = async (credentials) => {
-    setLoading(true);
-    setError(null);
-
-    try {
-      const response = await authServices.login(credentials, signal);
-      if (response) {
-        navigate("/");
-      }
-      return response;
-    } catch (err) {
-      if (err.name !== "AbortError") {
-        setError(err.message || "Login failed");
-      }
-    } finally {
-      setLoading(false);
-    }
+    const response = await loginExecute(credentials);
+    if (response) navigate("/");
+    return response;
   };
-
-  useEffect(() => {
-    return () => controller.current.abort();
-  }, []);
-
-  return { login, loading, error };
-};
-
-export const useLogout = () => {
-  const navigate = useNavigate();
 
   const logout = async () => {
-    try {
-      const response = await authServices.logout();
-      if (response) {
-        navigate("/");
-      }
-    } catch (error) {
-      console.error("Logout failed:", error);
-    }
+    await logoutExecute();
+    navigate("/");
   };
 
-  return logout;
+  const isLogged = authServices.isLogged;
+  const getUserData = authServices.getUserData;
+
+  return {
+    register,
+    login,
+    logout,
+
+    registerLoading,
+    loginLoading,
+
+    registerError,
+    loginError,
+
+    isLogged,
+    getUserData,
+  };
 };
