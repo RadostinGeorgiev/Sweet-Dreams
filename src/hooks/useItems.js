@@ -50,7 +50,6 @@ export const useGetItems = (
 export const useGetItem = (endpoint, id) => {
   const getItemById = useCallback(async (endpoint, id, signal) => {
     const params = new URLSearchParams({ load: "author=_authorId:authors" });
-
     return await api.get(`${endpoint}/${id}?${params.toString()}`, signal);
   }, []);
 
@@ -63,4 +62,21 @@ export const useGetItem = (endpoint, id) => {
   }, [endpoint, id, execute]);
 
   return { data, loading, error };
+};
+
+export const useCreateItem = (endpoint) => {
+  const createItem = useCallback(async (endpoint, item, signal) => {
+    return await api.post(`${endpoint}/create`, item, signal);
+  }, []);
+
+  const { data, loading, error, execute } = useFetch(createItem);
+
+  const create = useCallback(
+    async (itemData) => {
+      return execute(endpoint, itemData);
+    },
+    [endpoint, execute]
+  );
+
+  return { data, creating: loading, error, create };
 };
