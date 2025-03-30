@@ -27,6 +27,8 @@ import { endpoints } from "../../../../../config";
 
 import PostTitle from "../../elements/PostTitle/PostTitle";
 import MetaDate from "../../elements/MetaDate/MetaDate";
+import Comments from "../../layout/Comments";
+
 import styles from "./RecipeDetails.module.scss";
 
 export default function RecipeDetails() {
@@ -153,7 +155,6 @@ export default function RecipeDetails() {
             </Flex>
           </Paper>
 
-          {/* Ингредиенти */}
           <Paper p="lg" radius={0} withBorder>
             <Group mb="xs" gap="xs">
               <IconChecklist size={20} />
@@ -225,6 +226,8 @@ export default function RecipeDetails() {
             </Badge>
           </Group>
         </Stack>
+
+        <Comments subject={recipe} />
       </Container>
     </section>
   );

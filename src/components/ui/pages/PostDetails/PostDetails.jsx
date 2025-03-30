@@ -137,7 +137,7 @@ export default function PostDetails() {
           </Button>
         </Group> */}
 
-        <Comments article={article} />
+        <Comments subject={article} />
       </Container>
     </section>
   );
