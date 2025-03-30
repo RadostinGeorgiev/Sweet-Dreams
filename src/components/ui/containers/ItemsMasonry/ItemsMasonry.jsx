@@ -1,14 +1,14 @@
 import BlogCard from "../../elements/BlogCard/BlogCard";
 
-import styles from "./BlogMasonry.module.scss";
+import styles from "./ItemsMasonry.module.scss";
 
-export default function BlogMasonry({ articles }) {
+export default function ItemsMasonry({ subject }) {
   return (
     <div className={styles.masonry}>
-      {articles?.map((article) => (
+      {subject?.map((item) => (
         <BlogCard
-          key={article._id}
-          article={article}
+          key={item._id}
+          article={item}
           className={styles["masonry-item"]}
         />
       ))}

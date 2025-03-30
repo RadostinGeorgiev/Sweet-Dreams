@@ -3,27 +3,27 @@ import { Box, Title, Text, Divider, List } from "@mantine/core";
 import { IconUserEdit, IconClock, IconMessage } from "@tabler/icons-react";
 import styles from "./PostTitle.module.scss";
 
-export default function PostTitle({ post, variant, size }) {
+export default function PostTitle({ item, variant, size }) {
   return (
     <Box className={`${styles.text} ${styles[variant]} ${styles[size]}`}>
       <Text span size={"sm"} fw={700} tt={"uppercase"} className={styles.label}>
-        {post.cuisine}
+        {item.category[0]}
       </Text>
       <Title order={4} fw={400} className={`${styles.title}`}>
-        {post.name}
+        {item.title}
       </Title>
 
-      <List c="dimmed" className={styles.widget}>
+      <List className={styles.widget}>
         <List.Item icon={<IconUserEdit size={16} />}>
-          <Text>{`${post.author?.firstName} ${post.author?.lastName}`}</Text>
+          <Text>{`${item.author?.firstName} ${item.author?.lastName}`}</Text>
         </List.Item>
         <Divider orientation="vertical" />
         <List.Item icon={<IconClock size={16} />}>
-          <Text>{post.prepTimeMinutes} min read</Text>
+          <Text>{item.readingTimeMinutes} min read</Text>
         </List.Item>
         <Divider orientation="vertical" />
         <List.Item icon={<IconMessage size={16} />}>
-          <Text>{post.reviewCount} Comments</Text>
+          <Text>{item.reviewCount} Comments</Text>
         </List.Item>
       </List>
     </Box>

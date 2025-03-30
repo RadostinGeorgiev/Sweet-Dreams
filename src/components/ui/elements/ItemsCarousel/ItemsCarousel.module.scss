@@ -1,0 +1,151 @@
+.controls {
+  transition: opacity 500ms ease;
+  opacity: 0;
+
+  &[data-inactive] {
+    opacity: 1;
+    cursor: default;
+  }
+  .control {
+    --carousel-control-size: calc(4rem * var(--mantine-scale));
+    background: var(--background-color-hero);
+    color: white;
+    border: none;
+    border-radius: 0;
+    size: 4em;
+    z-index: 202;
+  }
+}
+
+.root {
+  &:hover {
+    .controls {
+      opacity: 1;
+    }
+  }
+}
+
+.item {
+  position: relative;
+}
+
+.item-text {
+  position: absolute;
+  left: 0;
+  bottom: 1em;
+  padding: 0 2em;
+  z-index: 201;
+}
+
+.item-meta {
+  background: var(--background-color-hero);
+  float: left;
+  margin-right: 1.25em;
+
+  .day {
+    color: var(--white-color);
+  }
+
+  .month {
+    color: var(--white-color);
+    opacity: 0.5;
+  }
+}
+
+.item-text {
+  overflow: hidden;
+
+  .label {
+    margin-bottom: 0.625em;
+
+    list-style: none;
+    display: inline-block;
+    margin-right: 1em;
+    color: var(--primary-color);
+    text-transform: uppercase;
+    position: relative;
+  }
+
+  .title {
+    color: var(--white-color);
+    font-size: 1.25rem;
+    line-height: 1.25;
+
+    a {
+      color: inherit;
+    }
+  }
+
+  .widget {
+    margin-bottom: 0.625em;
+
+    li {
+      list-style: none;
+      display: inline-block;
+      margin-right: 25px;
+      font-size: 12px;
+      color: var(--text-color);
+      position: relative;
+
+      span {
+        color: var(--heading-color);
+      }
+
+      &:after {
+        position: absolute;
+        right: -1em;
+        top: -1px;
+        content: "|";
+        color: var(--text-color);
+      }
+
+      &:last-child {
+        margin-right: 0;
+
+        &:after {
+          display: none;
+        }
+      }
+    }
+  }
+}
+
+.large {
+  height: 60dvh;
+
+  .item-meta {
+    height: 6.875rem;
+    width: 6rem;
+
+    .day {
+      font-size: 2.625rem;
+    }
+
+    .month {
+      font-size: 1.5rem;
+    }
+  }
+
+  .title {
+    color: var(--white-color);
+    font-size: 1.625rem;
+  }
+}
+
+.medium {
+  height: 60dvh;
+
+  .item-meta {
+    height: 4rem;
+    width: 4rem;
+  }
+}
+
+.small {
+  height: 30vh;
+
+  .item-meta {
+    height: 4rem;
+    width: 4rem;
+  }
+}

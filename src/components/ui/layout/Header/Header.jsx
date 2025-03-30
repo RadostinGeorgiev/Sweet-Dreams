@@ -41,7 +41,7 @@ export default function Header() {
   ));
 
   return (
-    <Container>
+    <Container size="xl" mb="md">
       <Group justify="space-between" align="center" mt="md">
         <Image
           h={60}
