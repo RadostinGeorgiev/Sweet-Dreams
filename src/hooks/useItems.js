@@ -4,6 +4,7 @@ import * as api from "../services/api";
 
 export const useGetItems = (
   endpoint,
+  selectValues = null,
   filterValue = null,
   relation = null,
   sortValue = null,
@@ -16,6 +17,7 @@ export const useGetItems = (
   const getAllItems = useCallback(
     async (endpoint, signal) => {
       const queryParams = [
+        ...(selectValues ? [`where=${encodeURIComponent(selectValues)}`] : []),
         ...(filterValue ? [`where=${encodeURIComponent(filterValue)}`] : []),
         ...(relation ? [`load=${encodeURIComponent(relation)}`] : []),
         ...(sortValue ? [`sortBy=${encodeURIComponent(sortValue)}`] : []),
@@ -25,7 +27,7 @@ export const useGetItems = (
 
       return await api.get(`${endpoint}?${queryParams}`, signal);
     },
-    [filterValue, sortValue, relation, page, pageSize]
+    [selectValues, filterValue, sortValue, relation, page, pageSize]
   );
 
   const collectionSize = useCallback(async () => {
