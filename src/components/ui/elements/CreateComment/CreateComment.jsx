@@ -24,7 +24,7 @@ const schema = z.object({
     .min(2, { message: "Your comment must be at least 2 characters" }),
 });
 
-export default function CreateCommentForm({ article, onAddComment, parent }) {
+export default function CreateCommentForm({ subject, onAddComment, parent }) {
   const form = useForm({
     initialValues: {
       content: "",
@@ -39,7 +39,7 @@ export default function CreateCommentForm({ article, onAddComment, parent }) {
 
   const handleSubmit = async (values) => {
     const credentials = {
-      _postId: article?._id || parent?._postId,
+      _postId: subject?._id || parent?._postId,
       _parentId: parent?._id || null,
       // _authorId: user._id,
       content: values.content,

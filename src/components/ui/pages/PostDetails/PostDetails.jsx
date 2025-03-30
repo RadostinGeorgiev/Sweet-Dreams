@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react";
 import { useParams } from "react-router";
 
 import {
@@ -21,22 +20,14 @@ import {
   // IconArrowRight,
 } from "@tabler/icons-react";
 
-import { useGetItem, useGetItems } from "../../../../hooks/useItems";
+import { useGetItem } from "../../../../hooks/useItems";
 import { endpoints } from "../../../../../config";
 
 import styles from "./PostDetails.module.scss";
-import CommentsList from "../../containers/CommentsList/CommentsList";
-import CreateCommentForm from "../../elements/CreateComment/CreateComment";
-import { useAuth } from "../../../../hooks/useAuth";
+import Comments from "../../layout/Comments";
 
 export default function PostDetails() {
-  const [filter, setFilter] = useState(null);
-  const [showCommentForm, setShowCommentForm] = useState(true);
-  const [replyTo, setReplyTo] = useState(null);
-  const { isLogged } = useAuth();
   const { id } = useParams();
-
-  const loggedIn = isLogged();
 
   const {
     data: article,
@@ -44,29 +35,8 @@ export default function PostDetails() {
     error: postError,
   } = useGetItem(endpoints.blog, id);
 
-  useEffect(() => {
-    if (article?._id) {
-      setFilter(`_postId=${article?._id}`);
-    }
-  }, [article?._id]);
-
-  const {
-    data: comments,
-    setData: setComments,
-    loading: commentsLoading,
-    error: commentsError,
-  } = useGetItems(
-    endpoints.comments,
-    filter,
-    "author=_ownerId:users",
-    null,
-    1,
-    100
-  );
-
-  if (postLoading || commentsLoading) return <div>Loading...</div>;
-  if (postError || commentsError)
-    return <div>Error: {postError || commentsError}</div>;
+  if (postLoading) return <div>Loading...</div>;
+  if (postError) return <div>Error: {postError}</div>;
 
   if (article.length === 0) return;
 
@@ -83,20 +53,6 @@ export default function PostDetails() {
   // function handleNextClick() {
   //   console.log(article._id);
   // }
-
-  const handleReply = (comment) => {
-    setReplyTo(comment);
-    setShowCommentForm(false);
-  };
-
-  const handleCancelReply = () => {
-    setReplyTo(null);
-    setShowCommentForm(true);
-  };
-
-  const handleAddComment = (comment) => {
-    setComments((prev) => [...prev, comment]);
-  };
 
   return (
     <section className="single-post spad">
@@ -181,21 +137,7 @@ export default function PostDetails() {
           </Button>
         </Group> */}
 
-        <CommentsList
-          comments={comments}
-          onReply={handleReply}
-          onCancelReply={handleCancelReply}
-          onAddComment={handleAddComment}
-          isLogged={loggedIn}
-        />
-
-        {loggedIn && showCommentForm && (
-          <CreateCommentForm
-            article={article}
-            onAddComment={handleAddComment}
-            parent={replyTo}
-          />
-        )}
+        <Comments article={article} />
       </Container>
     </section>
   );
