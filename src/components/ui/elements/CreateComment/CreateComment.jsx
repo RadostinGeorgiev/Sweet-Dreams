@@ -12,11 +12,11 @@ import {
 import { zodResolver } from "mantine-form-zod-resolver";
 import { z } from "zod";
 
+import { useAuth } from "../../../../hooks/useAuth";
 import { useCreateItem } from "../../../../hooks/useItems";
 import { endpoints } from "../../../../../config";
 
 import styles from "./CreateComment.module.scss";
-import { useAuth } from "../../../../hooks/useAuth";
 
 const schema = z.object({
   content: z
@@ -70,7 +70,7 @@ export default function CreateCommentForm({ article, onAddComment, parent }) {
       <form onSubmit={form.onSubmit(handleSubmit)}>
         <Group justify="space-between" wrap="nowrap" mb="md">
           {parent && (
-            <Text size="sm" c="dimmed" mb="md">
+            <Text size="sm" mb="md" className={styles.reply}>
               Replying to {parent.author?.firstName}
             </Text>
           )}

@@ -5,12 +5,16 @@ import { CommentCard } from "../../elements/CommentCard/CommentCard";
 import CreateCommentForm from "../../elements/CreateComment/CreateComment";
 import styles from "./CommentsList.module.scss";
 
-export default function CommentsList({ comments, onReply, onAddComment }) {
+export default function CommentsList({
+  comments,
+  onReply,
+  onCancelReply,
+  onAddComment,
+  isLogged,
+}) {
   const [replyId, setReplyId] = useState(null);
 
   const handleLocalReply = (comment) => {
-    console.log("local reply comment._id:", comment._id);
-
     setReplyId(comment);
     onReply(comment);
   };
@@ -22,6 +26,7 @@ export default function CommentsList({ comments, onReply, onAddComment }) {
 
   const handleLocalCancel = () => {
     setReplyId(null);
+    onCancelReply?.();
   };
 
   const commentGroups = comments.reduce((acc, comment) => {
@@ -49,6 +54,7 @@ export default function CommentsList({ comments, onReply, onAddComment }) {
                 isReplying={replyId === comment._id}
                 onReply={handleLocalReply}
                 onCancelReply={handleLocalCancel}
+                isLogged={isLogged}
               />
 
               {replyId === comment._id && (

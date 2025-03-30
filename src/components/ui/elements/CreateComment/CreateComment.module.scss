@@ -1,6 +1,9 @@
 .form {
   max-width: 800px;
 
+  .reply {
+    color: var(--color-primary);
+  }
   .comment {
     width: 100%;
   }

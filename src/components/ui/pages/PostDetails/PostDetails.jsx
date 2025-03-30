@@ -85,9 +85,12 @@ export default function PostDetails() {
   // }
 
   const handleReply = (comment) => {
-    console.log("post details-on reply:", comment);
-
     setReplyTo(comment);
+    setShowCommentForm(false);
+  };
+
+  const handleCancelReply = () => {
+    setReplyTo(null);
     setShowCommentForm(true);
   };
 
@@ -181,7 +184,9 @@ export default function PostDetails() {
         <CommentsList
           comments={comments}
           onReply={handleReply}
+          onCancelReply={handleCancelReply}
           onAddComment={handleAddComment}
+          isLogged={loggedIn}
         />
 
         {loggedIn && showCommentForm && (
@@ -189,7 +194,6 @@ export default function PostDetails() {
             article={article}
             onAddComment={handleAddComment}
             parent={replyTo}
-            onCancelReply={() => setReplyTo(null)}
           />
         )}
       </Container>
