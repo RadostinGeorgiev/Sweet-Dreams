@@ -8,8 +8,10 @@ export function CommentCard({
   isReplying,
   onReply,
   onCancelReply,
+  depth,
   isLogged,
 }) {
+  const maxDepth = 3;
   const formattedDate = new Intl.DateTimeFormat("en-US", {
     month: "long",
     day: "numeric",
@@ -40,16 +42,18 @@ export function CommentCard({
 
           {isLogged && (
             <Group mt="sm">
-              <Button
-                variant="subtle"
-                size="compact-sm"
-                rightSection={<IconArrowRight size={14} />}
-                onClick={() => {
-                  isReplying ? onCancelReply() : onReply(comment._id);
-                }}
-              >
-                {isReplying ? "Cancel" : "Reply"}
-              </Button>
+              {depth < maxDepth && (
+                <Button
+                  variant="subtle"
+                  size="compact-sm"
+                  rightSection={<IconArrowRight size={14} />}
+                  onClick={() => {
+                    isReplying ? onCancelReply() : onReply(comment._id);
+                  }}
+                >
+                  {isReplying ? "Cancel" : "Reply"}
+                </Button>
+              )}
               <Button
                 variant="subtle"
                 size="compact-sm"

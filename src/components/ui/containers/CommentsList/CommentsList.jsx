@@ -54,6 +54,7 @@ export default function CommentsList({
                 isReplying={replyId === comment._id}
                 onReply={handleLocalReply}
                 onCancelReply={handleLocalCancel}
+                depth={depth}
                 isLogged={isLogged}
               />
 
