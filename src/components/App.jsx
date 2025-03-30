@@ -1,12 +1,9 @@
-import { useEffect, useState } from "react";
-import { Routes, Route, useLocation, useNavigate } from "react-router";
-
+import { Routes, Route } from "react-router";
 import { AppShell } from "@mantine/core";
+
+import { DataProvider, useData } from "../context/DataContext";
+
 import "@mantine/core/styles.css";
-
-import { useGetItems } from "../hooks/useItems";
-import { endpoints } from "../../config";
-
 import "./App.scss";
 
 import Header from "./ui/layout/Header/Header";
@@ -21,109 +18,55 @@ import Recipes from "./ui/layout/Recipes";
 import RecipeDetails from "./ui/pages/RecipeDetails/RecipeDetails";
 import CookingTips from "./CookingTips";
 import ProjectDescription from "./ui/pages/ProjectDescription";
+import NotFoundPage from "./ui/pages/NotFoundPage/NotFoundPage";
+import RecipeList from "./ui/containers/RecipeList/RecipeList";
 
 export default function App() {
-  const location = useLocation();
-  const navigate = useNavigate();
+  const { articles, recipes, handleAddUser, isLoading, error } = useData();
 
-  const [sortValue] = useState("createdAt");
-
-  useEffect(() => {
-    if (location.pathname !== "/") {
-      navigate("/", { replace: true });
-    }
-  }, []);
-
-  const {
-    data: articles,
-    loading: articlesLoading,
-    error: articlesError,
-  } = useGetItems(
-    endpoints.blog,
-    null,
-    "author=_ownerId:authors",
-    sortValue,
-    1,
-    6,
-    null
-  );
-
-  const {
-    data: recipes,
-    loading: recipesLoading,
-    error: recipesError,
-  } = useGetItems(
-    endpoints.recipes,
-    null,
-    "author=_ownerId:authors",
-    sortValue,
-    1,
-    10,
-    null
-  );
-
-  const {
-    data: users,
-    setData: setUsers,
-    loading: usersLoading,
-    error: usersError,
-  } = useGetItems(endpoints.authors);
-
-  if (articlesLoading || usersLoading || recipesLoading)
-    return <div>Loading...</div>;
-  if (articlesError || usersError || recipesError)
-    return <div>Error: {articlesError || usersError || recipesError}</div>;
-
-  const handleAddUser = (newUser) => {
-    setUsers((users) => [...users, newUser]);
-  };
+  if (isLoading) return <div>Loading...</div>;
+  if (error) return <div>Error: {error}</div>;
 
   return (
-    <AppShell header={{ height: 100 }} footer={{ height: 60 }}>
-      <AppShell.Header>
-        <Header />
-      </AppShell.Header>
+    <DataProvider>
+      <AppShell header={{ height: 100 }} footer={{ height: 60 }}>
+        <AppShell.Header>
+          <Header />
+        </AppShell.Header>
 
-      <AppShell.Main>
-        <Routes>
-          <Route
-            path="/"
-            element={
-              <HomePage
-                articles={Object.values(articles)}
-                images={Object.values(recipes)?.images}
-              />
-            }
-          />
-          <Route path="/login" element={<LoginForm />} />
-          <Route
-            path="/register"
-            element={<RegisterForm onAddUser={handleAddUser} />}
-          />
-
-          <Route element={<Blog />}>
+        <AppShell.Main>
+          <Routes>
+            <Route path="/" element={<HomePage articles={articles} />} />
+            <Route path="/login" element={<LoginForm />} />
             <Route
-              path="/blog"
-              element={
-                <BlogList
-                  articles={Object.values(articles)}
-                  users={Object.values(users)}
-                />
-              }
+              path="/register"
+              element={<RegisterForm onAddUser={handleAddUser} />}
             />
-            <Route path="/blog/:id" element={<PostDetails />} />
-          </Route>
 
-          <Route path="/recipes" element={<Recipes />} />
-          <Route path="/recipes/:id" element={<RecipeDetails />} />
-          <Route path="/tips" element={<CookingTips />} />
-          <Route path="/project" element={<ProjectDescription />} />
-        </Routes>
-      </AppShell.Main>
+            <Route element={<Blog />}>
+              <Route path="/blog" element={<BlogList articles={articles} />} />
+              <Route path="/blog/:id" element={<PostDetails />} />
+            </Route>
 
-      <AppShell.Footer>
-        <Footer />
-      </AppShell.Footer>
-    </AppShell>
+            <Route element={<Recipes />}>
+              <Route
+                path="/recipes"
+                element={<RecipeList recipes={recipes} />}
+              />
+              <Route path="/recipes/:id" element={<RecipeDetails />} />
+            </Route>
+
+            <Route path="/tips" element={<CookingTips />} />
+            <Route path="/project" element={<ProjectDescription />} />
+
+            <Route path="*" element={<NotFoundPage />} />
+          </Routes>
+        </AppShell.Main>
+
+        <AppShell.Footer>
+          <Footer />
+        </AppShell.Footer>
+      </AppShell>
+    </DataProvider>
   );
 }
