@@ -1,4 +1,4 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext } from "react";
 
 const DataContext = createContext({
   articles: [],
@@ -9,6 +9,7 @@ const DataContext = createContext({
   handleAddUser: () => {},
 });
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const useData = () => {
   const context = useContext(DataContext);
   if (!context) {
