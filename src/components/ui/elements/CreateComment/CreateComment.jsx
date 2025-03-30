@@ -39,7 +39,7 @@ export default function CreateCommentForm({ article, onAddComment, parent }) {
 
   const handleSubmit = async (values) => {
     const credentials = {
-      _postId: article._id,
+      _postId: article?._id || parent?._postId,
       _parentId: parent?._id || null,
       // _authorId: user._id,
       content: values.content,
@@ -92,7 +92,7 @@ export default function CreateCommentForm({ article, onAddComment, parent }) {
           tt="uppercase"
           disabled={!form.isValid()}
         >
-          Post comment
+          {parent ? "Post reply" : "Post comment"}
         </Button>
 
         {commentError && (

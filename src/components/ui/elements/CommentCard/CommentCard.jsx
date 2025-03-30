@@ -3,7 +3,7 @@ import { IconArrowRight, IconHeart } from "@tabler/icons-react";
 
 import styles from "./CommentCard.module.scss";
 
-export function CommentCard({ comment, onReply }) {
+export function CommentCard({ comment, isReplying, onReply, onCancelReply }) {
   const formattedDate = new Intl.DateTimeFormat("en-US", {
     month: "long",
     day: "numeric",
@@ -37,12 +37,12 @@ export function CommentCard({ comment, onReply }) {
               size="compact-sm"
               rightSection={<IconArrowRight size={14} />}
               onClick={() => {
-                console.log("Click on:", comment);
+                console.log("On reply:", comment._id);
 
-                onReply(comment);
+                isReplying ? onCancelReply() : onReply(comment._id);
               }}
             >
-              Reply
+              {isReplying ? "Cancel" : "Reply"}
             </Button>
             <Button
               variant="subtle"

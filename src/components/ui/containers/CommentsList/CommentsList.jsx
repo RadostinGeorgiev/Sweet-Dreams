@@ -1,10 +1,29 @@
+import React, { useState } from "react";
 import { Stack, List, ListItem, Text } from "@mantine/core";
 
 import { CommentCard } from "../../elements/CommentCard/CommentCard";
+import CreateCommentForm from "../../elements/CreateComment/CreateComment";
 import styles from "./CommentsList.module.scss";
-import React from "react";
 
-export default function CommentsList({ comments, onReply }) {
+export default function CommentsList({ comments, onReply, onAddComment }) {
+  const [replyId, setReplyId] = useState(null);
+
+  const handleLocalReply = (comment) => {
+    console.log("local reply comment._id:", comment._id);
+
+    setReplyId(comment);
+    onReply(comment);
+  };
+
+  const handleSubmitReply = (comment) => {
+    onAddComment(comment);
+    setReplyId(null);
+  };
+
+  const handleLocalCancel = () => {
+    setReplyId(null);
+  };
+
   const commentGroups = comments.reduce((acc, comment) => {
     const parentId = comment._parentId || null;
     if (!acc[parentId]) acc[parentId] = [];
@@ -25,7 +44,22 @@ export default function CommentsList({ comments, onReply }) {
                 marginLeft: `${depth * 80}px`,
               }}
             >
-              <CommentCard comment={comment} onReply={onReply} />
+              <CommentCard
+                comment={comment}
+                isReplying={replyId === comment._id}
+                onReply={handleLocalReply}
+                onCancelReply={handleLocalCancel}
+              />
+
+              {replyId === comment._id && (
+                <div className={styles.replyFormContainer}>
+                  <CreateCommentForm
+                    onAddComment={handleSubmitReply}
+                    parent={comment}
+                    onCancel={handleLocalCancel}
+                  />
+                </div>
+              )}
             </ListItem>
 
             {renderComments(comment._id, depth + 1)}

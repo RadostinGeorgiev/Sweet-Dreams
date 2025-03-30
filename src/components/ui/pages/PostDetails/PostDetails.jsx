@@ -85,7 +85,7 @@ export default function PostDetails() {
   // }
 
   const handleReply = (comment) => {
-    console.log("Reply to:", comment.author.firstName);
+    console.log("post details-on reply:", comment);
 
     setReplyTo(comment);
     setShowCommentForm(true);
@@ -178,7 +178,11 @@ export default function PostDetails() {
           </Button>
         </Group> */}
 
-        <CommentsList comments={comments} onReply={handleReply} />
+        <CommentsList
+          comments={comments}
+          onReply={handleReply}
+          onAddComment={handleAddComment}
+        />
 
         {loggedIn && showCommentForm && (
           <CreateCommentForm
