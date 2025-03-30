@@ -36,7 +36,11 @@ export function CommentCard({ comment, onReply }) {
               variant="subtle"
               size="compact-sm"
               rightSection={<IconArrowRight size={14} />}
-              onClick={onReply}
+              onClick={() => {
+                console.log("Click on:", comment);
+
+                onReply(comment);
+              }}
             >
               Reply
             </Button>

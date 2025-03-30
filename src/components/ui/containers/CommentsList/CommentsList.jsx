@@ -3,7 +3,7 @@ import { Stack, List, ListItem, Text } from "@mantine/core";
 import { CommentCard } from "../../elements/CommentCard/CommentCard";
 import styles from "./CommentsList.module.scss";
 
-export default function CommentsList({ comments }) {
+export default function CommentsList({ comments, onReply }) {
   return (
     <Stack justify="flex-start" mt="lg" className={styles.list}>
       <Text span size="md" tt="uppercase" c="dimmed">
@@ -13,7 +13,7 @@ export default function CommentsList({ comments }) {
       <List>
         {comments.map((comment) => (
           <ListItem key={comment._id} className={styles.item}>
-            <CommentCard comment={comment} />
+            <CommentCard comment={comment} onReply={onReply} />
           </ListItem>
         ))}
       </List>

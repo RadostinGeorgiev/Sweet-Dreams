@@ -2,10 +2,11 @@ import { useForm } from "@mantine/form";
 import {
   Title,
   Paper,
+  Group,
+  Text,
   Textarea,
   Button,
   Notification,
-  Group,
 } from "@mantine/core";
 
 import { zodResolver } from "mantine-form-zod-resolver";
@@ -23,7 +24,7 @@ const schema = z.object({
     .min(2, { message: "Your comment must be at least 2 characters" }),
 });
 
-export default function CreateCommentForm({ article, onAddComment }) {
+export default function CreateCommentForm({ article, onAddComment, parent }) {
   const form = useForm({
     initialValues: {
       content: "",
@@ -39,7 +40,7 @@ export default function CreateCommentForm({ article, onAddComment }) {
   const handleSubmit = async (values) => {
     const credentials = {
       _postId: article._id,
-      _parentId: null,
+      _parentId: parent?._id || null,
       // _authorId: user._id,
       content: values.content,
     };
@@ -68,6 +69,11 @@ export default function CreateCommentForm({ article, onAddComment }) {
 
       <form onSubmit={form.onSubmit(handleSubmit)}>
         <Group justify="space-between" wrap="nowrap" mb="md">
+          {parent && (
+            <Text size="sm" c="dimmed" mb="md">
+              Replying to {parent.author?.firstName}
+            </Text>
+          )}
           <Textarea
             autosize
             minRows={2}

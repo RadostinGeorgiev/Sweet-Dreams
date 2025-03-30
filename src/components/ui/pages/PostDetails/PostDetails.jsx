@@ -31,7 +31,8 @@ import { useAuth } from "../../../../hooks/useAuth";
 
 export default function PostDetails() {
   const [filter, setFilter] = useState(null);
-  const [showCommentForm] = useState(true);
+  const [showCommentForm, setShowCommentForm] = useState(true);
+  const [replyTo, setReplyTo] = useState(null);
   const { isLogged } = useAuth();
   const { id } = useParams();
 
@@ -83,8 +84,15 @@ export default function PostDetails() {
   //   console.log(article._id);
   // }
 
+  const handleReply = (comment) => {
+    console.log("Reply to:", comment.author.firstName);
+
+    setReplyTo(comment);
+    setShowCommentForm(true);
+  };
+
   const handleAddComment = (comment) => {
-    setComments((comments) => [...comments, comment]);
+    setComments((prev) => [...prev, comment]);
   };
 
   return (
@@ -170,11 +178,14 @@ export default function PostDetails() {
           </Button>
         </Group> */}
 
-        <CommentsList comments={comments} />
+        <CommentsList comments={comments} onReply={handleReply} />
+
         {loggedIn && showCommentForm && (
           <CreateCommentForm
             article={article}
             onAddComment={handleAddComment}
+            parent={replyTo}
+            onCancelReply={() => setReplyTo(null)}
           />
         )}
       </Container>
