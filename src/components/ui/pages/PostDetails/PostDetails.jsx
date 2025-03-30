@@ -27,10 +27,15 @@ import { endpoints } from "../../../../../config";
 import styles from "./PostDetails.module.scss";
 import CommentsList from "../../containers/CommentsList/CommentsList";
 import CreateCommentForm from "../../elements/CreateComment/CreateComment";
+import { useAuth } from "../../../../hooks/useAuth";
 
 export default function PostDetails() {
   const [filter, setFilter] = useState(null);
+  const [showCommentForm] = useState(true);
+  const { isLogged } = useAuth();
   const { id } = useParams();
+
+  const loggedIn = isLogged();
 
   const {
     data: article,
@@ -46,12 +51,13 @@ export default function PostDetails() {
 
   const {
     data: comments,
+    setData: setComments,
     loading: commentsLoading,
     error: commentsError,
   } = useGetItems(
     endpoints.comments,
     filter,
-    "author=_authorId:authors",
+    "author=_ownerId:users",
     null,
     1,
     100
@@ -76,6 +82,10 @@ export default function PostDetails() {
   // function handleNextClick() {
   //   console.log(article._id);
   // }
+
+  const handleAddComment = (comment) => {
+    setComments((comments) => [...comments, comment]);
+  };
 
   return (
     <section className="single-post spad">
@@ -161,7 +171,12 @@ export default function PostDetails() {
         </Group> */}
 
         <CommentsList comments={comments} />
-        <CreateCommentForm />
+        {loggedIn && showCommentForm && (
+          <CreateCommentForm
+            article={article}
+            onAddComment={handleAddComment}
+          />
+        )}
       </Container>
     </section>
   );

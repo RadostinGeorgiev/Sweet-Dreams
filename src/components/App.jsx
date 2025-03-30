@@ -41,7 +41,7 @@ export default function App() {
   } = useGetItems(
     endpoints.blog,
     null,
-    "author=_authorId:authors",
+    "author=_ownerId:authors",
     sortValue,
     1,
     6,
@@ -55,7 +55,7 @@ export default function App() {
   } = useGetItems(
     endpoints.recipes,
     null,
-    "author=_authorId:authors",
+    "author=_ownerId:authors",
     sortValue,
     1,
     10,
@@ -67,7 +67,7 @@ export default function App() {
     setData: setUsers,
     loading: usersLoading,
     error: usersError,
-  } = useGetItems(endpoints.users);
+  } = useGetItems(endpoints.authors);
 
   if (articlesLoading || usersLoading || recipesLoading)
     return <div>Loading...</div>;

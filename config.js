@@ -4,7 +4,7 @@ const endpoints = {
   register: "/users/register",
   login: "/users/login",
   logout: "/users/logout",
-  users: "/data/authors",
+  authors: "/data/authors",
   blog: "/data/blog",
   recipes: "/data/recipes",
   comments: "/data/comments",

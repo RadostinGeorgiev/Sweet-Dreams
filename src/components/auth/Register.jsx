@@ -18,6 +18,8 @@ import { IconXboxXFilled, IconCircleCheckFilled } from "@tabler/icons-react";
 import { zodResolver } from "mantine-form-zod-resolver";
 import { z } from "zod";
 
+import { useCreateItem } from "../../hooks/useItems";
+import { endpoints } from "../../../config";
 import { useAuth } from "../../hooks/useAuth";
 
 const schema = z
@@ -41,6 +43,9 @@ const schema = z
 
 export default function RegisterForm({ onAddUser }) {
   const { register, registerError } = useAuth();
+  const { error: authorError, create: createAuthor } = useCreateItem(
+    endpoints.authors
+  );
   const [userNotification, setUserNotification] = useState(null);
 
   const navigate = useNavigate();
@@ -59,18 +64,30 @@ export default function RegisterForm({ onAddUser }) {
   });
 
   const handleSubmit = async (values) => {
-    const credentials = {
+    const userCredentials = {
       firstName: values.firstName,
       lastName: values.lastName,
       email: values.email,
       password: values.password,
       subscribe: values.subscribe,
+      image: `/images/avatars/${Math.floor(Math.random() * 30) + 1}.jpg`,
+    };
+
+    const registeredUser = await register(userCredentials);
+    if (!registeredUser) {
+      throw new Error("User registration failed - no ID returned");
+    }
+    const authorCredentials = {
+      firstName: values.firstName,
+      lastName: values.lastName,
+      email: values.email,
+      image: registeredUser.image,
       role: "user",
     };
 
-    const registeredUser = await register(credentials);
+    const newAuthor = await createAuthor(authorCredentials);
 
-    if (registeredUser) {
+    if (registeredUser && newAuthor) {
       const notification = {
         user: registeredUser,
         message: `Welcome ${registeredUser.firstName}!`,
@@ -138,7 +155,14 @@ export default function RegisterForm({ onAddUser }) {
           {...form.getInputProps("subscribe", { type: "checkbox" })}
         />
 
-        <Button type="submit" fullWidth radius="0" mt="lg" tt="uppercase">
+        <Button
+          type="submit"
+          fullWidth
+          radius="0"
+          mt="lg"
+          tt="uppercase"
+          disabled={!form.isValid()}
+        >
           Register
         </Button>
 
@@ -160,14 +184,14 @@ export default function RegisterForm({ onAddUser }) {
             </Text>
           </Notification>
         )}
-        {registerError && (
+        {(registerError || authorError) && (
           <Notification
             icon={<IconXboxXFilled size={24} />}
             title="Error"
             color="red"
             mt="md"
           >
-            {registerError}
+            {registerError || authorError}
           </Notification>
         )}
       </form>

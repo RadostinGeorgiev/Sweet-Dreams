@@ -89,6 +89,10 @@ export default function LoginForm() {
             title="Error"
             color="red"
             mt="md"
+            withCloseButton
+            onClose={() => {
+              navigate("/register");
+            }}
           >
             {loginError}
           </Notification>

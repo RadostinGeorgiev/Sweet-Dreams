@@ -1,5 +1,3 @@
-import { useEffect } from "react";
-
 import { useForm } from "@mantine/form";
 import {
   Title,
@@ -13,18 +11,19 @@ import {
 import { zodResolver } from "mantine-form-zod-resolver";
 import { z } from "zod";
 
-import { useFetch } from "../../../../hooks/useFetch";
-import { authServices } from "../../../../services/auth.service";
+import { useCreateItem } from "../../../../hooks/useItems";
+import { endpoints } from "../../../../../config";
 
 import styles from "./CreateComment.module.scss";
+import { useAuth } from "../../../../hooks/useAuth";
 
 const schema = z.object({
-  firstName: z
+  content: z
     .string()
     .min(2, { message: "Your comment must be at least 2 characters" }),
 });
 
-export default function CreateCommentForm({ onAddComment }) {
+export default function CreateCommentForm({ article, onAddComment }) {
   const form = useForm({
     initialValues: {
       content: "",
@@ -32,58 +31,69 @@ export default function CreateCommentForm({ onAddComment }) {
     validate: zodResolver(schema),
   });
 
-  const {
-    data: comment,
-    error: commentError,
-    execute: createComment,
-  } = useFetch(authServices.register);
+  const { getUserData } = useAuth();
+  const user = getUserData();
+
+  const { error: commentError, create } = useCreateItem(endpoints.comments);
 
   const handleSubmit = async (values) => {
     const credentials = {
-      _postId: "5",
+      _postId: article._id,
       _parentId: null,
-      _authorId: "8",
+      // _authorId: user._id,
       content: values.content,
     };
+
     try {
-      await createComment(credentials);
+      const result = await create(credentials);
+
+      if (result) {
+        const comment = {
+          ...result,
+          author: user,
+        };
+        onAddComment(comment);
+        form.reset();
+      }
     } catch (error) {
-      console.error("Failed to create the comment:", error);
+      console.error("Failed to create comment:", error);
     }
   };
-
-  useEffect(() => {
-    if (comment) {
-      console.log("The comment was created successfully:", comment);
-      onAddComment(comment);
-      form.reset();
-    }
-  }, [comment]);
 
   return (
     <Paper p="md" mt="md" className={styles.form}>
       <Title size="h3" mb="md">
         Leave a comment
       </Title>
+
       <form onSubmit={form.onSubmit(handleSubmit)}>
         <Group justify="space-between" wrap="nowrap" mb="md">
           <Textarea
             autosize
             minRows={2}
-            placeholder="Comment"
+            maxRows={6}
+            placeholder="Write your comment here..."
             {...form.getInputProps("content")}
             required
             className={styles.comment}
           />
         </Group>
 
-        <Button type="submit" radius="0" mt="lg" tt="uppercase">
+        <Button
+          type="submit"
+          radius="0"
+          mt="lg"
+          tt="uppercase"
+          disabled={!form.isValid()}
+        >
           Post comment
         </Button>
 
         {commentError && (
-          <Notification color="red" mt="md">
-            {commentError}
+          <Notification color="red" mt="md" withCloseButton>
+            {typeof commentError === "string"
+              ? commentError
+              : "Failed to post comment"}
           </Notification>
         )}
       </form>

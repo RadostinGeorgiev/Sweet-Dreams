@@ -20,7 +20,7 @@ export default function RecipeList() {
   } = useGetItems(
     endpoints.recipes,
     null,
-    "author=_authorId:authors",
+    "author=_ownerId:authors",
     sortValue,
     1,
     pageSize

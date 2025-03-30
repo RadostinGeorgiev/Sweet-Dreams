@@ -8,14 +8,16 @@ export function CommentCard({ comment, onReply }) {
     month: "long",
     day: "numeric",
     year: "numeric",
-  }).format(new Date(comment.createdAt));
+    hour: "2-digit",
+    minute: "2-digit",
+  }).format(new Date(comment._createdOn));
 
   return (
     <Card radius="0" className={styles.card}>
       <Group align="start">
         <Avatar
-          src={comment.author.image}
-          alt={`${comment.author.firstName} ${comment.author.lastName}`}
+          src={comment.author?.image}
+          alt={`${comment.author?.firstName} ${comment.author?.lastName}`}
           radius="0"
           size="xl"
         />
@@ -23,7 +25,7 @@ export function CommentCard({ comment, onReply }) {
           <Group gap="xs">
             <Text
               fw={500}
-            >{`${comment.author.firstName} ${comment.author.lastName}`}</Text>
+            >{`${comment.author?.firstName} ${comment.author?.lastName}`}</Text>
             <Text size="sm" c="dimmed">
               {formattedDate}
             </Text>

@@ -66,7 +66,7 @@ export const useGetItem = (endpoint, id) => {
 
 export const useCreateItem = (endpoint) => {
   const createItem = useCallback(async (endpoint, item, signal) => {
-    return await api.post(`${endpoint}/create`, item, signal);
+    return await api.post(`${endpoint}`, item, signal);
   }, []);
 
   const { data, loading, error, execute } = useFetch(createItem);
