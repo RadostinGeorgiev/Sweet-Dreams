@@ -1,9 +1,13 @@
+import { useState } from "react";
 import { Routes, Route } from "react-router";
+
 import { AppShell } from "@mantine/core";
-
-import { DataProvider, useData } from "../context/DataContext";
-
 import "@mantine/core/styles.css";
+
+import { DataProvider } from "../context/DataContext";
+import { useGetItems } from "../hooks/useItems";
+import { endpoints } from "../../config";
+
 import "./App.scss";
 
 import Header from "./ui/layout/Header/Header";
@@ -22,13 +26,54 @@ import NotFoundPage from "./ui/pages/NotFoundPage/NotFoundPage";
 import RecipeList from "./ui/containers/RecipeList/RecipeList";
 
 export default function App() {
-  const { articles, recipes, handleAddUser, isLoading, error } = useData();
+  const [sortValue] = useState("createdAt");
 
-  if (isLoading) return <div>Loading...</div>;
-  if (error) return <div>Error: {error}</div>;
+  const {
+    data: articles,
+    loading: articlesLoading,
+    error: articlesError,
+  } = useGetItems(
+    endpoints.blog,
+    null,
+    "author=_ownerId:authors",
+    sortValue,
+    1,
+    6,
+    null
+  );
+
+  const {
+    data: recipes,
+    loading: recipesLoading,
+    error: recipesError,
+  } = useGetItems(
+    endpoints.recipes,
+    null,
+    "author=_ownerId:authors",
+    sortValue,
+    1,
+    10,
+    null
+  );
+
+  const {
+    data: users,
+    setData: setUsers,
+    loading: usersLoading,
+    error: usersError,
+  } = useGetItems(endpoints.authors);
+
+  if (articlesLoading || usersLoading || recipesLoading)
+    return <div>Loading...</div>;
+  if (articlesError || usersError || recipesError)
+    return <div>Error: {articlesError || usersError || recipesError}</div>;
+
+  const handleAddUser = (newUser) => {
+    setUsers((users) => [...users, newUser]);
+  };
 
   return (
-    <DataProvider>
+    <DataProvider data={{ articles, recipes, users }}>
       <AppShell header={{ height: 100 }} footer={{ height: 60 }}>
         <AppShell.Header>
           <Header />
@@ -36,7 +81,15 @@ export default function App() {
 
         <AppShell.Main>
           <Routes>
-            <Route path="/" element={<HomePage articles={articles} />} />
+            <Route
+              path="/"
+              element={
+                <HomePage
+                  articles={Object.values(articles)}
+                  images={Object.values(recipes)?.images}
+                />
+              }
+            />
             <Route path="/login" element={<LoginForm />} />
             <Route
               path="/register"
@@ -44,15 +97,20 @@ export default function App() {
             />
 
             <Route element={<Blog />}>
-              <Route path="/blog" element={<BlogList articles={articles} />} />
+              <Route
+                path="/blog"
+                element={
+                  <BlogList
+                    articles={Object.values(articles)}
+                    users={Object.values(users)}
+                  />
+                }
+              />
               <Route path="/blog/:id" element={<PostDetails />} />
             </Route>
 
             <Route element={<Recipes />}>
-              <Route
-                path="/recipes"
-                element={<RecipeList recipes={recipes} />}
-              />
+              <Route path="/recipes" element={<RecipeList />} />
               <Route path="/recipes/:id" element={<RecipeDetails />} />
             </Route>
 
