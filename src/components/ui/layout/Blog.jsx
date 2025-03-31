@@ -1,7 +1,7 @@
 import { Container, Grid } from "@mantine/core";
 
 import { Outlet } from "react-router";
-import AsideContent from "../containers/AsideContent";
+import AsideContent from "../containers/AsideContent/AsideContent";
 
 export default function Blog() {
   return (
