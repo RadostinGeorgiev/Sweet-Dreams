@@ -9,7 +9,6 @@ import {
   Flex,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { Dropzone, IMAGE_MIME_TYPE } from "@mantine/dropzone";
 // import { IconCircleCheckFilled } from "@tabler/icons-react";
 
 import { zodResolver } from "mantine-form-zod-resolver";
@@ -151,13 +150,6 @@ export default function PostCreateForm() {
           mb="sm"
           {...form.getInputProps("content")}
           required
-        />
-
-        <Dropzone
-          onDrop={(files) => console.log("accepted files", files)}
-          onReject={(files) => console.log("rejected files", files)}
-          maxSize={MAX_FILE_SIZE}
-          accept={IMAGE_MIME_TYPE}
         />
 
         <Button
