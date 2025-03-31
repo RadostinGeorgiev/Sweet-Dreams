@@ -43,10 +43,11 @@ const schema = z
 
 export default function RegisterForm({ onAddUser }) {
   const { register, registerError } = useAuth();
+  const [userNotification, setUserNotification] = useState(null);
+
   const { error: authorError, create: createAuthor } = useCreateItem(
     endpoints.authors
   );
-  const [userNotification, setUserNotification] = useState(null);
 
   const navigate = useNavigate();
 

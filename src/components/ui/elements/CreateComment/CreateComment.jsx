@@ -35,7 +35,9 @@ export default function CreateCommentForm({ subject, onAddComment, parent }) {
   const { getUserData } = useAuth();
   const user = getUserData();
 
-  const { error: commentError, create } = useCreateItem(endpoints.comments);
+  const { error: commentError, create: createComment } = useCreateItem(
+    endpoints.comments
+  );
 
   const handleSubmit = async (values) => {
     const credentials = {
@@ -46,7 +48,7 @@ export default function CreateCommentForm({ subject, onAddComment, parent }) {
     };
 
     try {
-      const result = await create(credentials);
+      const result = await createComment(credentials);
 
       if (result) {
         const comment = {

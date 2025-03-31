@@ -1,3 +1,7 @@
+import { useState } from "react";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { storage } from "../../../../firebase";
+
 import {
   Button,
   TextInput,
@@ -7,13 +11,21 @@ import {
   TagsInput,
   Textarea,
   Flex,
+  LoadingOverlay,
+  FileInput,
+  Image,
+  Notification,
+  Text,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
-// import { IconCircleCheckFilled } from "@tabler/icons-react";
+import { IconCircleCheckFilled, IconXboxXFilled } from "@tabler/icons-react";
 
 import { zodResolver } from "mantine-form-zod-resolver";
-// import { Link } from "react-router";
 import { z } from "zod";
+
+import { useCreateItem } from "../../../../hooks/useItems";
+import { endpoints } from "../../../../../config";
+import { Navigate } from "react-router";
 
 const MAX_FILE_SIZE = 1024 * 1024; // 1MB
 const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp"];
@@ -27,69 +39,97 @@ const schema = z.object({
   }),
   imageFile: z
     .instanceof(File)
-    .refine((file) => file.size <= MAX_FILE_SIZE, "The file must be less 1MB")
+    .refine((file) => file?.size <= MAX_FILE_SIZE, "The file must be less 1MB")
     .refine(
-      (file) => ACCEPTED_IMAGE_TYPES.includes(file.type),
+      (file) => ACCEPTED_IMAGE_TYPES.includes(file?.type),
       "The supported formats are .jpg, .png and .webp"
     )
+    .nullable()
     .optional(),
   image: z.string().optional(),
 });
 
 export default function PostCreateForm() {
+  const [isUploading, setIsUploading] = useState(false);
+  const [previewUrl, setPreviewUrl] = useState("");
+  const [articleNotification, setArticleNotification] = useState(null);
+
   const form = useForm({
     initialValues: {
       title: "",
       category: [],
       tags: [],
       content: "",
-      image: "",
+      cuisine: "",
+      imageFile: null,
     },
     validate: zodResolver(schema),
   });
 
+  const { error: articleError, create: createArticle } = useCreateItem(
+    endpoints.blog
+  );
+
+  const handleImageChange = (file) => {
+    form.setFieldValue("imageFile", file || null);
+    if (file) {
+      setPreviewUrl(URL.createObjectURL(file));
+    } else {
+      setPreviewUrl("");
+    }
+  };
+
+  const uploadImage = async (file) => {
+    if (!file) return null;
+
+    const storageRef = ref(storage, `blog/${Date.now()}_${file.name}`);
+    await uploadBytes(storageRef, file);
+    return await getDownloadURL(storageRef);
+  };
+
   const handleSubmit = async (values) => {
-    const postData = {
-      title: values.title,
-      category: values.category,
-      tags: values.tags || null,
-      content: values.content.split("\n").filter((p) => p.trim() !== ""),
-      readingTimeMinutes: Math.ceil(
-        values.content.trim().split(/\s+/).filter(Boolean).length / 150
-      ),
-      image: `/images/blog/${Math.floor(Math.random() * 30) + 1}.jpg`,
-      rating: 0,
-      views: 0,
-      reactions: {
-        likes: 0,
-        dislikes: 0,
-      },
-      reviewCount: 0,
-    };
+    setIsUploading(true);
 
-    console.log(postData);
+    try {
+      const imageUrl = values.imageFile
+        ? await uploadImage(values.imageFile)
+        : null;
 
-    // const registeredUser = await register(userCredentials);
-    // if (!registeredUser) {
-    //   throw new Error("User registration failed - no ID returned");
-    // }
-    // const authorCredentials = {
-    //   firstName: values.firstName,
-    //   lastName: values.lastName,
-    //   email: values.email,
-    //   image: registeredUser.image,
-    //   role: "user",
-    // };
-    // const newAuthor = await createAuthor(authorCredentials);
-    // if (registeredUser && newAuthor) {
-    //   const notification = {
-    //     user: registeredUser,
-    //     message: `Welcome ${registeredUser.firstName}!`,
-    //   };
-    //   setUserNotification(notification);
-    //   onAddUser(registeredUser);
-    //   form.reset();
-    // }
+      const data = {
+        title: values.title,
+        category: values.category,
+        tags: values.tags || null,
+        content: values.content.split("\n").filter((p) => p.trim() !== ""),
+        readingTimeMinutes: Math.ceil(
+          values.content.trim().split(/\s+/).filter(Boolean).length / 150
+        ),
+        image: imageUrl || null,
+        rating: 0,
+        views: 0,
+        reactions: {
+          likes: 0,
+          dislikes: 0,
+        },
+        reviewCount: 0,
+      };
+
+      console.log(data);
+
+      const newArticle = await createArticle(data);
+
+      if (newArticle) {
+        const notification = {
+          title: "Successfuly create",
+          message: `The article ${newArticle.title} was created sucessfuly!`,
+        };
+        setArticleNotification(notification);
+        form.reset();
+      }
+    } catch (error) {
+      console.error("Uploading error:", error);
+    } finally {
+      setIsUploading(false);
+    }
   };
 
   return (
@@ -98,8 +138,9 @@ export default function PostCreateForm() {
       shadow="lg"
       p="lg"
       mt="lg"
-      style={{ maxWidth: 600, margin: "auto" }}
+      style={{ maxWidth: 600, margin: "auto", position: "relative" }}
     >
+      <LoadingOverlay visible={isUploading} />
       <Title align="center" mb="md">
         Create Blog Post
       </Title>
@@ -152,6 +193,26 @@ export default function PostCreateForm() {
           required
         />
 
+        <FileInput
+          label="Image"
+          placeholder="Please, select the picture"
+          accept="image/jpeg,image/png,image/webp"
+          mb="sm"
+          value={form.values.imageFile}
+          onChange={handleImageChange}
+          error={form.errors.imageFile}
+        />
+
+        {previewUrl && (
+          <Image
+            src={previewUrl}
+            alt="Image Preview"
+            height={300}
+            fit="contain"
+            mb="sm"
+          />
+        )}
+
         <Button
           type="submit"
           fullWidth
@@ -163,34 +224,31 @@ export default function PostCreateForm() {
           Create Post
         </Button>
 
-        {/* {userNotification && (
+        {articleNotification && (
           <Notification
             icon={<IconCircleCheckFilled size={24} />}
-            title="Registration Successful"
+            title="Create Article Successful"
             color="teal"
             mt="md"
             withCloseButton
             onClose={() => {
-            //   setUserNotification(null);
-            //   navigate("/");
+              setArticleNotification(null);
+              Navigate("/blog");
             }}
           >
-            <Text>{userNotification.message}</Text>
-            <Text size="sm" mt="xs">
-              Email: {userNotification.user.email}
-            </Text>
+            <Text>{articleNotification.message}</Text>
           </Notification>
-        )} */}
-        {/* {(registerError || authorError) && (
+        )}
+        {articleError && (
           <Notification
             icon={<IconXboxXFilled size={24} />}
             title="Error"
             color="red"
             mt="md"
           >
-            {registerError || authorError}
+            {articleError}
           </Notification>
-        )} */}
+        )}
       </form>
     </Paper>
   );
