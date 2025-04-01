@@ -8,7 +8,7 @@ import { useGetItems } from "../../../../hooks/useItems";
 import { endpoints } from "../../../../../config";
 
 export default function BlogList() {
-  const [sortValue, setSortValue] = useState("createdAt desc");
+  const [sortValue, setSortValue] = useState("_createdOn desc");
   const pageSize = 6;
 
   const {
@@ -38,8 +38,8 @@ export default function BlogList() {
           size="md"
           label="SortBy"
           data={[
-            { value: "createdAt desc", label: "Newest" },
-            { value: "createdAt", label: "Oldest" },
+            { value: "_createdOn desc", label: "Newest" },
+            { value: "_createdOn", label: "Oldest" },
             { value: "title", label: "Title (A-Z)" },
             { value: "title desc", label: "Title (Z-A)" },
             { value: "rating desc", label: "Highest rated" },

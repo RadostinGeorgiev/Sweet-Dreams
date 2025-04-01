@@ -20,7 +20,7 @@ export default function HomePage() {
     total,
   } = useGetItems(
     endpoints.blog,
-    "_id,title,category,content,readingTimeMinutes,images,reviewCount,_ownerId,createdAt",
+    "_id,title,category,content,readingTimeMinutes,images,reviewCount,_ownerId,_createdOn",
     null,
     "author=_ownerId:authors",
     "rating",
@@ -37,7 +37,7 @@ export default function HomePage() {
     null,
     null,
     "author=_ownerId:authors",
-    "createdAt",
+    "_createdOn",
     1,
     6,
     null

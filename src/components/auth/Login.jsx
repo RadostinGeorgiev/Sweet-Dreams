@@ -16,7 +16,7 @@ import { IconXboxXFilled } from "@tabler/icons-react";
 import { zodResolver } from "mantine-form-zod-resolver";
 import { z } from "zod";
 
-import { useAuth } from "../../hooks/useAuth";
+import { useAuth } from "../../context/AuthContext";
 
 const schema = z.object({
   email: z.string().email({ message: "Invalid email" }),
@@ -24,6 +24,7 @@ const schema = z.object({
 
 export default function LoginForm() {
   const { login, loginError } = useAuth();
+
   const navigate = useNavigate();
 
   const form = useForm({
@@ -90,6 +91,9 @@ export default function LoginForm() {
             color="red"
             mt="md"
             withCloseButton
+            onClose={() => {
+              navigate("/register");
+            }}
           >
             {loginError}
           </Notification>

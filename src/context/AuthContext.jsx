@@ -1,9 +1,11 @@
-import { useEffect, useState } from "react";
-import { useFetch } from "./useFetch";
+import { createContext, useContext, useEffect, useState } from "react";
+import { useFetch } from "../hooks/useFetch";
 import { authServices } from "../services/auth.service";
 
-export const useAuth = () => {
-  const [user, setUser] = useState(authServices.getUserData()); // Слагаме user в state
+const AuthContext = createContext();
+
+export const AuthProvider = ({ children }) => {
+  const [user, setUser] = useState(authServices.getUserData());
   const [isAuthenticated, setIsAuthenticated] = useState(
     authServices.isLogged()
   );
@@ -30,7 +32,7 @@ export const useAuth = () => {
     const updatedUser = authServices.getUserData();
     setUser(updatedUser);
     setIsAuthenticated(!!updatedUser);
-  }, [user]);
+  }, []);
 
   const register = async (credentials) => {
     try {
@@ -79,24 +81,32 @@ export const useAuth = () => {
     setIsAuthenticated(false);
   };
 
-  return {
-    register,
-    login,
-    logout,
+  return (
+    <AuthContext.Provider
+      value={{
+        register,
+        login,
+        logout,
 
-    user,
-    isAuthenticated,
+        user,
+        isAuthenticated,
 
-    registerData,
-    loginData,
+        registerData,
+        loginData,
 
-    registerLoading,
-    loginLoading,
+        registerLoading,
+        loginLoading,
 
-    registerError,
-    loginError,
+        registerError,
+        loginError,
 
-    isLogged: authServices.isLogged,
-    getUserData: authServices.getUserData,
-  };
+        isLogged: authServices.isLogged,
+        getUserData: authServices.getUserData,
+      }}
+    >
+      {children}
+    </AuthContext.Provider>
+  );
 };
+
+export const useAuth = () => useContext(AuthContext);

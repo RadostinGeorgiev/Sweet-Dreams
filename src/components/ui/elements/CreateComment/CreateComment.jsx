@@ -12,7 +12,7 @@ import {
 import { zodResolver } from "mantine-form-zod-resolver";
 import { z } from "zod";
 
-import { useAuth } from "../../../../hooks/useAuth";
+import { useAuth } from "../../../../context/AuthContext";
 import { useCreateItem } from "../../../../hooks/useItems";
 import { endpoints } from "../../../../../config";
 

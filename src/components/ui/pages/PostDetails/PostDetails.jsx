@@ -44,7 +44,7 @@ export default function PostDetails() {
     month: "long",
     day: "numeric",
     year: "numeric",
-  }).format(new Date(article.createdAt));
+  }).format(new Date(article._createdOn));
 
   // function handlePreviousClick() {
   //   console.log(article._id);

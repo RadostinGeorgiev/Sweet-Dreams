@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-import { useAuth } from "../../../hooks/useAuth";
+import { useAuth } from "../../../context/AuthContext";
 import { useGetItems } from "../../../hooks/useItems";
 import { endpoints } from "../../../../config";
 

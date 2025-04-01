@@ -20,7 +20,7 @@ import { z } from "zod";
 
 import { useCreateItem } from "../../hooks/useItems";
 import { endpoints } from "../../../config";
-import { useAuth } from "../../hooks/useAuth";
+import { useAuth } from "../../context/AuthContext";
 
 const schema = z
   .object({
@@ -41,7 +41,7 @@ const schema = z
     path: ["confirmPassword"],
   });
 
-export default function RegisterForm({ onAddUser }) {
+export default function RegisterForm() {
   const { register, registerError } = useAuth();
   const [userNotification, setUserNotification] = useState(null);
 
@@ -78,6 +78,7 @@ export default function RegisterForm({ onAddUser }) {
     if (!registeredUser) {
       throw new Error("User registration failed - no ID returned");
     }
+
     const authorCredentials = {
       firstName: values.firstName,
       lastName: values.lastName,
@@ -94,7 +95,6 @@ export default function RegisterForm({ onAddUser }) {
         message: `Welcome ${registeredUser.firstName}!`,
       };
       setUserNotification(notification);
-      onAddUser(registeredUser);
       form.reset();
     }
   };
@@ -191,6 +191,10 @@ export default function RegisterForm({ onAddUser }) {
             title="Error"
             color="red"
             mt="md"
+            withCloseButton
+            onClose={() => {
+              navigate("/");
+            }}
           >
             {registerError || authorError}
           </Notification>

@@ -4,6 +4,7 @@ import { AppShell } from "@mantine/core";
 import "@mantine/core/styles.css";
 
 import { DataProvider } from "../context/DataContext";
+import { AuthProvider } from "../context/AuthContext";
 
 import "./App.scss";
 
@@ -25,37 +26,39 @@ import PostCreateForm from "./ui/pages/PostCreate/PostCreate";
 export default function App() {
   return (
     <DataProvider>
-      <AppShell header={{ height: 100 }} footer={{ height: 60 }}>
-        <AppShell.Header>
-          <Header />
-        </AppShell.Header>
+      <AuthProvider>
+        <AppShell header={{ height: 100 }} footer={{ height: 60 }}>
+          <AppShell.Header>
+            <Header />
+          </AppShell.Header>
 
-        <AppShell.Main>
-          <Routes>
-            <Route path="/" element={<HomePage />} />
-            <Route path="/login" element={<LoginForm />} />
-            <Route path="/register" element={<RegisterForm />} />
+          <AppShell.Main>
+            <Routes>
+              <Route path="/" element={<HomePage />} />
+              <Route path="/login" element={<LoginForm />} />
+              <Route path="/register" element={<RegisterForm />} />
 
-            <Route element={<Blog />}>
-              <Route path="/blog" element={<BlogList />} />
-              <Route path="/blog/:id" element={<PostDetails />} />
-              <Route path="/blog/create" element={<PostCreateForm />} />
-            </Route>
+              <Route element={<Blog />}>
+                <Route path="/blog" element={<BlogList />} />
+                <Route path="/blog/:id" element={<PostDetails />} />
+                <Route path="/blog/create" element={<PostCreateForm />} />
+              </Route>
 
-            <Route path="/recipes" element={<Recipes />} />
-            <Route path="/recipes/:id" element={<RecipeDetails />} />
+              <Route path="/recipes" element={<Recipes />} />
+              <Route path="/recipes/:id" element={<RecipeDetails />} />
 
-            <Route path="/tips" element={<CookingTips />} />
-            <Route path="/project" element={<ProjectDescription />} />
+              <Route path="/tips" element={<CookingTips />} />
+              <Route path="/project" element={<ProjectDescription />} />
 
-            <Route path="*" element={<NotFoundPage />} />
-          </Routes>
-        </AppShell.Main>
+              <Route path="*" element={<NotFoundPage />} />
+            </Routes>
+          </AppShell.Main>
 
-        <AppShell.Footer>
-          <Footer />
-        </AppShell.Footer>
-      </AppShell>
+          <AppShell.Footer>
+            <Footer />
+          </AppShell.Footer>
+        </AppShell>
+      </AuthProvider>
     </DataProvider>
   );
 }

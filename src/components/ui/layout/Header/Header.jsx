@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { Link } from "react-router";
+import { useEffect, useState } from "react";
+import { Link, useLocation } from "react-router";
 
 import { Image, Anchor, Container, Group, Button } from "@mantine/core";
 import { IconUserDown, IconUserPlus, IconUserShare } from "@tabler/icons-react";
@@ -8,7 +8,7 @@ import styles from "./Header.module.scss";
 
 import logo from "/images/logo.png";
 import { UserInfo } from "../../elements/UserInfo/UserInfo";
-import { useAuth } from "../../../../hooks/useAuth";
+import { useAuth } from "../../../../context/AuthContext";
 
 const mainLinks = [
   { link: "/", label: "Home" },
@@ -19,11 +19,18 @@ const mainLinks = [
 ];
 
 export default function Header() {
-  const { logout, getUserData, isLogged } = useAuth();
+  const { user, logout, isAuthenticated } = useAuth();
   const [active, setActive] = useState(0);
+  const location = useLocation();
 
-  const user = getUserData();
-  const loggedIn = isLogged();
+  useEffect(() => {
+    const index = mainLinks.findIndex(
+      (item) => item.link === location.pathname
+    );
+    if (index !== -1) {
+      setActive(index);
+    }
+  }, [location.pathname]);
 
   const menuItems = mainLinks.map((item, index) => (
     <Anchor
@@ -58,7 +65,7 @@ export default function Header() {
             flexDirection: "column",
           }}
         >
-          {loggedIn ? (
+          {isAuthenticated ? (
             <Group justify="flex-end" align="center">
               <UserInfo user={user} />
               <Button

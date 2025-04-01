@@ -7,7 +7,7 @@ import { useGetItems } from "../../../../hooks/useItems";
 import { endpoints } from "../../../../../config";
 
 export default function RecipeList() {
-  const [sortValue, setSortValue] = useState("createdAt desc");
+  const [sortValue, setSortValue] = useState("_createdOn desc");
   const pageSize = 10;
 
   const {
@@ -37,8 +37,8 @@ export default function RecipeList() {
           size="md"
           label="SortBy"
           data={[
-            { value: "createdAt desc", label: "Newest" },
-            { value: "createdAt", label: "Oldest" },
+            { value: "_createdOn desc", label: "Newest" },
+            { value: "_createdOn", label: "Oldest" },
             { value: "name", label: "Title (A-Z)" },
             { value: "name desc", label: "Title (Z-A)" },
             { value: "difficulty desc", label: "Мost difficult" },

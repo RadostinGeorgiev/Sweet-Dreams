@@ -26,7 +26,7 @@ export default function BlogCard({ article, layout = "vertical" }) {
     month: "long",
     day: "numeric",
     year: "numeric",
-  }).format(new Date(article.createdAt));
+  }).format(new Date(article._createdOn));
 
   return (
     <Flex
