@@ -25,7 +25,7 @@ export const useGetItems = (
         `pageSize=${pageSize}`,
       ].join("&");
 
-      return await api.get(endpoint, queryParams, signal);
+      return await api.get(`${endpoint}?${queryParams}`, signal);
     },
     [selectValues, filterValue, sortValue, relation, page, pageSize]
   );
@@ -60,7 +60,7 @@ export const useGetItem = (
       ...(selectValues ? [`select=${encodeURIComponent(selectValues)}`] : []),
       ...(relation ? [`load=${encodeURIComponent(relation)}`] : []),
     ].join("&");
-    return await api.get(`${endpoint}/${id}`, queryParams, signal);
+    return await api.get(`${endpoint}/${id}?${queryParams}`, signal);
   }, []);
 
   const { data, loading, error, execute } = useFetch(getItemById);
