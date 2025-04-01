@@ -43,7 +43,7 @@ export default function CreateCommentForm({ subject, onAddComment, parent }) {
     const credentials = {
       _postId: subject?._id || parent?._postId,
       _parentId: parent?._id || null,
-      // _authorId: user._id,
+      // _ownerId: user._id,
       content: values.content,
     };
 

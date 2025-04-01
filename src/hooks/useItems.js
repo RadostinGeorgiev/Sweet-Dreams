@@ -25,7 +25,7 @@ export const useGetItems = (
         `pageSize=${pageSize}`,
       ].join("&");
 
-      return await api.get(`${endpoint}?${queryParams}`, signal);
+      return await api.get(endpoint, queryParams, signal);
     },
     [selectValues, filterValue, sortValue, relation, page, pageSize]
   );
@@ -49,10 +49,18 @@ export const useGetItems = (
   return { data, setData, loading, error, page, setPage, total };
 };
 
-export const useGetItem = (endpoint, id) => {
+export const useGetItem = (
+  endpoint,
+  selectValues = null,
+  relation = null,
+  id
+) => {
   const getItemById = useCallback(async (endpoint, id, signal) => {
-    const params = new URLSearchParams({ load: "author=_authorId:authors" });
-    return await api.get(`${endpoint}/${id}?${params.toString()}`, signal);
+    const queryParams = [
+      ...(selectValues ? [`select=${encodeURIComponent(selectValues)}`] : []),
+      ...(relation ? [`load=${encodeURIComponent(relation)}`] : []),
+    ].join("&");
+    return await api.get(`${endpoint}/${id}`, queryParams, signal);
   }, []);
 
   const { data, loading, error, execute } = useFetch(getItemById);
