@@ -51,9 +51,9 @@ export const useGetItems = (
 
 export const useGetItem = (
   endpoint,
+  id,
   selectValues = null,
-  relation = null,
-  id
+  relation = null
 ) => {
   const getItemById = useCallback(
     async (endpoint, id, signal) => {
