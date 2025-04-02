@@ -7,12 +7,12 @@ import {
   Group,
   Flex,
   Text,
-  Button,
   Paper,
   Title,
   List,
   // Accordion,
-  Badge,
+  ListItem,
+  Button,
 } from "@mantine/core";
 
 import {
@@ -62,7 +62,7 @@ export default function RecipeDetails() {
         radius="0"
         style={{
           position: "relative",
-          backgroundSize: "cover",
+          backgroundSize: "initial",
           backgroundPosition: "center",
           padding: "2rem",
         }}
@@ -70,7 +70,6 @@ export default function RecipeDetails() {
 
       <Container size="md" py="xl">
         <Stack gap={0}>
-          {/* Заглавие  */}
           <Paper shadow="lg" radius={0} className={styles["recipe-title"]}>
             <Flex
               gap="md"
@@ -94,14 +93,12 @@ export default function RecipeDetails() {
             </Flex>
           </Paper>
 
-          {/* Описание */}
-          {/* {recipe.content.map((paragraph, index) => (
+          {recipe.description.map((paragraph, index) => (
             <Text size="md" mb="xl" key={index}>
               {paragraph}
             </Text>
-          ))} */}
+          ))}
 
-          {/* Мета информация */}
           <Paper radius={0} withBorder className={styles.options}>
             <Flex
               gap="xl"
@@ -111,12 +108,11 @@ export default function RecipeDetails() {
               p="md"
             >
               <Group gap="xl">
-                {/* Порции */}
                 <Group gap="xs">
                   <IconUsers size={24} />
                   <div>
                     <Text fw={700} tt="uppercase" size="sm">
-                      SERVES
+                      Serves
                     </Text>
                     <Text size="sm" c="dimmed">
                       {recipe.servings}
@@ -124,12 +120,11 @@ export default function RecipeDetails() {
                   </div>
                 </Group>
 
-                {/* Време за подготовка */}
                 <Group gap="xs">
                   <IconClock size={24} />
                   <div>
                     <Text fw={700} tt="uppercase" size="sm">
-                      PREP TIME
+                      Prep time
                     </Text>
                     <Text size="sm" c="dimmed">
                       {`${recipe.prepTimeMinutes} minutes`}
@@ -137,12 +132,11 @@ export default function RecipeDetails() {
                   </div>
                 </Group>
 
-                {/* Време за готвене */}
                 <Group gap="xs">
                   <IconClock size={24} />
                   <div>
                     <Text fw={700} tt="uppercase" size="sm">
-                      COOK TIME
+                      Cook time
                     </Text>
                     <Text size="sm" c="dimmed">
                       {`${recipe.cookTimeMinutes} minutes`}
@@ -150,15 +144,6 @@ export default function RecipeDetails() {
                   </div>
                 </Group>
               </Group>
-
-              <Button
-                variant="outline"
-                radius={0}
-                size="s"
-                className={styles.button}
-              >
-                READ MORE
-              </Button>
             </Flex>
           </Paper>
 
@@ -183,7 +168,6 @@ export default function RecipeDetails() {
             </List>
           </Paper>
 
-          {/* Стъпки за приготвяне */}
           <Paper p="lg" radius={0} withBorder>
             <Group mb="xs" gap="xs">
               <IconListNumbers size={20} />
@@ -212,25 +196,22 @@ export default function RecipeDetails() {
             </List>
           </Paper>
 
-          {/* Допълнителни съвети */}
-          <Paper p="lg" radius={0} withBorder>
-            <Title order={4} mb="sm">
-              Полезни съвети
-            </Title>
-            <Text c="dimmed">
-              ✓ Използвайте прясно яйца за по-кремава текстура
-            </Text>
-            <Text c="dimmed">✓ Не преварвайте пастата</Text>
-          </Paper>
-
-          {/* Тагове */}
-          <Group gap="sm">
-            <Badge variant="light" radius="xs" color="orange">
-              Италианска кухня
-            </Badge>
-            <Badge variant="light" radius="xs" color="teal">
-              Бързи рецепти
-            </Badge>
+          <Group justify="space-between">
+            <List className={styles.widget}>
+              {recipe.tags.map((tag, index) => (
+                <ListItem key={index}>
+                  <Button
+                    variant="outline"
+                    size="compact-xs"
+                    radius="0"
+                    tt="uppercase"
+                    className={styles.property}
+                  >
+                    {tag}
+                  </Button>
+                </ListItem>
+              ))}
+            </List>
           </Group>
         </Stack>
 

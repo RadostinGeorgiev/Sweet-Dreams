@@ -15,3 +15,14 @@
     margin-left: 5em;
   }
 }
+
+.widget {
+  margin-top: 0.625em;
+  list-style: none;
+  display: flex;
+  gap: 1em;
+
+  .property {
+    color: var(--color-text);
+  }
+}

@@ -1,14 +1,29 @@
 import { useState } from "react";
+import { Link } from "react-router";
 
-import { Grid, Group, Select, Pagination } from "@mantine/core";
+import {
+  Flex,
+  Grid,
+  Group,
+  Text,
+  Select,
+  Pagination,
+  Button,
+} from "@mantine/core";
+import { IconWriting } from "@tabler/icons-react";
 
 import BlogCard from "../../elements/BlogCard/BlogCard";
 import Loading from "../../elements/Loading";
 
+import { useAuth } from "../../../../context/AuthContext";
 import { useGetItems } from "../../../../hooks/useItems";
 import { endpoints } from "../../../../../config";
 
+import styles from "./BlogList.module.scss";
+
 export default function BlogList() {
+  const { isLogged } = useAuth();
+  const loggedIn = isLogged();
   const [sortValue, setSortValue] = useState("_createdOn desc");
   const pageSize = 6;
 
@@ -34,23 +49,41 @@ export default function BlogList() {
 
   return (
     <>
-      <Group justify="end" mt="lg">
-        <Select
-          size="md"
-          label="SortBy"
-          data={[
-            { value: "_createdOn desc", label: "Newest" },
-            { value: "_createdOn", label: "Oldest" },
-            { value: "title", label: "Title (A-Z)" },
-            { value: "title desc", label: "Title (Z-A)" },
-            { value: "rating desc", label: "Highest rated" },
-            { value: "rating", label: "Lowest rated" },
-            { value: "views desc", label: "Popularity" },
-          ]}
-          value={sortValue}
-          onChange={setSortValue}
-        />
-      </Group>
+      <Flex justify="space-between" align="center" mt="lg" mb="lg">
+        <Flex justify="start" align="center" gap="sm">
+          <Text fw={700} ml="xl" ta="right">
+            SortBy
+          </Text>
+          <Select
+            size="md"
+            data={[
+              { value: "_createdOn desc", label: "Newest" },
+              { value: "_createdOn", label: "Oldest" },
+              { value: "title", label: "Title (A-Z)" },
+              { value: "title desc", label: "Title (Z-A)" },
+              { value: "rating desc", label: "Highest rated" },
+              { value: "rating", label: "Lowest rated" },
+              { value: "views desc", label: "Popularity" },
+            ]}
+            value={sortValue}
+            onChange={setSortValue}
+          />
+        </Flex>
+
+        {loggedIn && (
+          <Button
+            variant="filled"
+            size="compact-md"
+            radius="0"
+            leftSection={<IconWriting size={16} />}
+            className={styles.button}
+            component={Link}
+            to="/blog/create"
+          >
+            Create Blog Post
+          </Button>
+        )}
+      </Flex>
       <Grid gutter="md">
         {articles?.map((article) => {
           return (

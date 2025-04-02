@@ -22,6 +22,7 @@ import CookingTips from "./CookingTips";
 import ProjectDescription from "./ui/pages/ProjectDescription";
 import NotFoundPage from "./ui/pages/NotFoundPage/NotFoundPage";
 import PostCreateForm from "./ui/pages/PostCreate/PostCreate";
+import RecipeCreateForm from "./ui/pages/RecipeCreate/RecipeCreate";
 
 export default function App() {
   return (
@@ -46,6 +47,7 @@ export default function App() {
 
               <Route path="/recipes" element={<Recipes />} />
               <Route path="/recipes/:id" element={<RecipeDetails />} />
+              <Route path="/recipes/create" element={<RecipeCreateForm />} />
 
               <Route path="/tips" element={<CookingTips />} />
               <Route path="/project" element={<ProjectDescription />} />

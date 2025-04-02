@@ -1,13 +1,29 @@
 import { useState } from "react";
-import { Grid, Group, Select, Pagination } from "@mantine/core";
+import { Link } from "react-router";
+
+import {
+  Grid,
+  Group,
+  Flex,
+  Text,
+  Select,
+  Pagination,
+  Button,
+} from "@mantine/core";
+import { IconWriting } from "@tabler/icons-react";
 
 import RecipeCard from "../../elements/RecipeCard/RecipeCard";
 import Loading from "../../elements/Loading";
 
+import { useAuth } from "../../../../context/AuthContext";
 import { useGetItems } from "../../../../hooks/useItems";
 import { endpoints } from "../../../../../config";
 
+import styles from "./RecipeList.module.scss";
+
 export default function RecipeList() {
+  const { isLogged } = useAuth();
+  const loggedIn = isLogged();
   const [sortValue, setSortValue] = useState("_createdOn desc");
   const pageSize = 10;
 
@@ -33,25 +49,42 @@ export default function RecipeList() {
 
   return (
     <>
-      <Group justify="end" mt="lg">
-        <Select
-          size="md"
-          label="SortBy"
-          data={[
-            { value: "_createdOn desc", label: "Newest" },
-            { value: "_createdOn", label: "Oldest" },
-            { value: "name", label: "Title (A-Z)" },
-            { value: "name desc", label: "Title (Z-A)" },
-            { value: "difficulty desc", label: "Мost difficult" },
-            { value: "difficulty", label: "Easiest" },
-            { value: "cookTimeMinutes", label: "Cooking time" },
-            { value: "rating desc", label: "Highest rated" },
-            { value: "rating", label: "Lowest rated" },
-          ]}
-          value={sortValue}
-          onChange={setSortValue}
-        />
-      </Group>
+      <Flex justify="space-between" align="center" mt="lg" mb="lg">
+        <Flex justify="start" align="center" gap="sm">
+          <Text fw={700} ml="xl" ta="right">
+            SortBy
+          </Text>
+          <Select
+            size="md"
+            data={[
+              { value: "_createdOn desc", label: "Newest" },
+              { value: "_createdOn", label: "Oldest" },
+              { value: "name", label: "Title (A-Z)" },
+              { value: "name desc", label: "Title (Z-A)" },
+              { value: "difficulty desc", label: "Мost difficult" },
+              { value: "difficulty", label: "Easiest" },
+              { value: "cookTimeMinutes", label: "Cooking time" },
+              { value: "rating desc", label: "Highest rated" },
+              { value: "rating", label: "Lowest rated" },
+            ]}
+            value={sortValue}
+            onChange={setSortValue}
+          />
+        </Flex>
+        {loggedIn && (
+          <Button
+            variant="filled"
+            size="compact-md"
+            radius="0"
+            leftSection={<IconWriting size={16} />}
+            className={styles.button}
+            component={Link}
+            to="/recipes/create"
+          >
+            Create Recipe
+          </Button>
+        )}
+      </Flex>
       <Grid gutter="xs">
         {recipes?.map((recipe) => (
           <Grid.Col key={recipe._id} span={6}>

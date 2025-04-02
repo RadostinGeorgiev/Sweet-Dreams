@@ -55,14 +55,17 @@ export const useGetItem = (
   selectValues = null,
   relation = null
 ) => {
-  const getItemById = useCallback(async (endpoint, id, signal) => {
-    const queryParams = [
-      ...(selectValues ? [`select=${encodeURIComponent(selectValues)}`] : []),
-      ...(relation ? [`load=${encodeURIComponent(relation)}`] : []),
-    ].join("&");
+  const getItemById = useCallback(
+    async (endpoint, id, signal) => {
+      const queryParams = [
+        ...(selectValues ? [`select=${encodeURIComponent(selectValues)}`] : []),
+        ...(relation ? [`load=${encodeURIComponent(relation)}`] : []),
+      ].join("&");
 
-    return await api.get(`${endpoint}/${id}?${queryParams}`, signal);
-  }, []);
+      return await api.get(`${endpoint}/${id}?${queryParams}`, signal);
+    },
+    [selectValues, relation]
+  );
 
   const { data, loading, error, execute } = useFetch(getItemById);
 
