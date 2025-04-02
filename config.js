@@ -1,4 +1,5 @@
-const host = "https://sweet-dreams-server.onrender.com";
+const host = "https://sweet-dreams-server-production.up.railway.app";
+// const host = "https://sweet-dreams-server.onrender.com";
 
 const endpoints = {
   register: "/users/register",

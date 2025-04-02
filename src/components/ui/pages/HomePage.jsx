@@ -7,6 +7,7 @@ import { endpoints } from "../../../../config";
 import ItemsMasonry from "../containers/ItemsMasonry/ItemsMasonry";
 import ItemsCarousel from "../elements/ItemsCarousel/ItemsCarousel";
 import GalleryCarousel from "../elements/GalleryCarousel";
+import Loading from "../elements/Loading";
 
 export default function HomePage() {
   const pageSize = 20;
@@ -59,7 +60,7 @@ export default function HomePage() {
   );
 
   if (topRatedBlogLoading || recipesLoading || imagesLoading)
-    return <div>Loading...</div>;
+    return <Loading />;
   if (topRatedBlogError || recipesError || imagesError)
     return <div>Error: {topRatedBlogError || recipesError || imagesError}</div>;
 
@@ -72,6 +73,7 @@ export default function HomePage() {
         totalPages={Math.ceil(total / pageSize)}
         onPageChange={setPage}
       />
+
       <Container size="xl" mt="xl">
         <ItemsMasonry subject={recipes} />
       </Container>

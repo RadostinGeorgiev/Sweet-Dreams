@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Grid, Group, Select, Pagination } from "@mantine/core";
 
 import RecipeCard from "../../elements/RecipeCard/RecipeCard";
+import Loading from "../../elements/Loading";
 
 import { useGetItems } from "../../../../hooks/useItems";
 import { endpoints } from "../../../../../config";
@@ -27,7 +28,7 @@ export default function RecipeList() {
     pageSize
   );
 
-  if (recipesLoading) return <div>Loading...</div>;
+  if (recipesLoading) return <Loading />;
   if (recipesError) return <div>Error: {recipesError}</div>;
 
   return (

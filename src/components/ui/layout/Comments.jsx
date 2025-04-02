@@ -6,6 +6,7 @@ import { endpoints } from "../../../../config";
 
 import CommentsList from "../containers/CommentsList/CommentsList";
 import CreateCommentForm from "../elements/CreateComment/CreateComment";
+import Loading from "../elements/Loading";
 
 export default function Comments({ subject }) {
   const [filter, setFilter] = useState(null);
@@ -35,7 +36,7 @@ export default function Comments({ subject }) {
     }
   }, [subject?._id]);
 
-  if (commentsLoading) return <div>Loading...</div>;
+  if (commentsLoading) return <Loading />;
   if (commentsError) return <div>Error: {commentsError}</div>;
 
   const handleReply = (comment) => {

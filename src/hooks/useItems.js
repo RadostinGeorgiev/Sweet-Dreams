@@ -93,3 +93,20 @@ export const useCreateItem = (endpoint) => {
 
   return { data, creating: loading, error, create };
 };
+
+export const useDeleteItem = (endpoint) => {
+  const deleteItem = useCallback(async (endpoint, id, signal) => {
+    return await api.del(`${endpoint}/${id}`, signal);
+  }, []);
+
+  const { loading, error, execute } = useFetch(deleteItem);
+
+  const del = useCallback(
+    async (itemData) => {
+      return execute(endpoint, itemData);
+    },
+    [endpoint, execute]
+  );
+
+  return { creating: loading, error, del };
+};

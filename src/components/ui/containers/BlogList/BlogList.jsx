@@ -3,6 +3,7 @@ import { useState } from "react";
 import { Grid, Group, Select, Pagination } from "@mantine/core";
 
 import BlogCard from "../../elements/BlogCard/BlogCard";
+import Loading from "../../elements/Loading";
 
 import { useGetItems } from "../../../../hooks/useItems";
 import { endpoints } from "../../../../../config";
@@ -28,7 +29,7 @@ export default function BlogList() {
     pageSize
   );
 
-  if (articlesLoading) return <div>Loading...</div>;
+  if (articlesLoading) return <Loading />;
   if (articlesError) return <div>Error: {articlesError}</div>;
 
   return (

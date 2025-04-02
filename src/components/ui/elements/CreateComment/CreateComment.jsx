@@ -47,19 +47,15 @@ export default function CreateCommentForm({ subject, onAddComment, parent }) {
       content: values.content,
     };
 
-    try {
-      const result = await createComment(credentials);
+    const result = await createComment(credentials);
 
-      if (result) {
-        const comment = {
-          ...result,
-          author: user,
-        };
-        onAddComment(comment);
-        form.reset();
-      }
-    } catch (error) {
-      console.error("Failed to create comment:", error);
+    if (result) {
+      const comment = {
+        ...result,
+        author: user,
+      };
+      onAddComment(comment);
+      form.reset();
     }
   };
 

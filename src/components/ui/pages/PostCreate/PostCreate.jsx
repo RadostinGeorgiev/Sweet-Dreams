@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { storage } from "../../../../firebase";
 
@@ -25,7 +26,6 @@ import { z } from "zod";
 
 import { useCreateItem } from "../../../../hooks/useItems";
 import { endpoints } from "../../../../../config";
-import { Navigate } from "react-router";
 
 const MAX_FILE_SIZE = 1024 * 1024; // 1MB
 const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp"];
@@ -37,22 +37,26 @@ const schema = z.object({
   content: z.string().min(6, {
     message: "The content of the post must be at least 6 characters",
   }),
-  imageFile: z
-    .instanceof(File)
-    .refine((file) => file?.size <= MAX_FILE_SIZE, "The file must be less 1MB")
+  imagesFiles: z
+    .array(z.instanceof(File))
+    .min(1, "At least one image is required")
     .refine(
-      (file) => ACCEPTED_IMAGE_TYPES.includes(file?.type),
-      "The supported formats are .jpg, .png and .webp"
+      (files) => files.every((file) => file.size <= MAX_FILE_SIZE),
+      "File must be less than 1MB"
     )
-    .nullable()
-    .optional(),
-  image: z.string().optional(),
+    .refine(
+      (files) =>
+        files.every((file) => ACCEPTED_IMAGE_TYPES.includes(file.type)),
+      "Only .jpg, .png, .webp allowed"
+    ),
 });
 
 export default function PostCreateForm() {
   const [isUploading, setIsUploading] = useState(false);
-  const [previewUrl, setPreviewUrl] = useState("");
+  const [previewUrls, setPreviewUrls] = useState([]);
   const [articleNotification, setArticleNotification] = useState(null);
+
+  const navigate = useNavigate();
 
   const form = useForm({
     initialValues: {
@@ -61,7 +65,7 @@ export default function PostCreateForm() {
       tags: [],
       content: "",
       cuisine: "",
-      imageFile: null,
+      imagesFiles: [],
     },
     validate: zodResolver(schema),
   });
@@ -70,30 +74,30 @@ export default function PostCreateForm() {
     endpoints.blog
   );
 
-  const handleImageChange = (file) => {
-    form.setFieldValue("imageFile", file || null);
-    if (file) {
-      setPreviewUrl(URL.createObjectURL(file));
+  const handleImageChange = (files) => {
+    form.setFieldValue("imagesFiles", files || []);
+    if (files) {
+      setPreviewUrls(files.map((file) => URL.createObjectURL(file)));
     } else {
-      setPreviewUrl("");
+      setPreviewUrls([]);
     }
   };
 
-  const uploadImage = async (file) => {
-    if (!file) return null;
-
-    const storageRef = ref(storage, `blog/${Date.now()}_${file.name}`);
-    await uploadBytes(storageRef, file);
-    return await getDownloadURL(storageRef);
+  const uploadImages = async (files) => {
+    return Promise.all(
+      files.map(async (file) => {
+        const storageRef = ref(storage, `blog/${Date.now()}_${file.name}`);
+        await uploadBytes(storageRef, file);
+        return getDownloadURL(storageRef);
+      })
+    );
   };
 
   const handleSubmit = async (values) => {
     setIsUploading(true);
 
     try {
-      const imageUrl = values.imageFile
-        ? await uploadImage(values.imageFile)
-        : null;
+      const imagesUrls = await uploadImages(values.imagesFiles);
 
       const data = {
         title: values.title,
@@ -103,7 +107,7 @@ export default function PostCreateForm() {
         readingTimeMinutes: Math.ceil(
           values.content.trim().split(/\s+/).filter(Boolean).length / 150
         ),
-        image: imageUrl || null,
+        images: imagesUrls,
         rating: 0,
         views: 0,
         reactions: {
@@ -194,24 +198,26 @@ export default function PostCreateForm() {
         />
 
         <FileInput
-          label="Image"
-          placeholder="Please, select the picture"
-          accept="image/jpeg,image/png,image/webp"
-          mb="sm"
-          value={form.values.imageFile}
+          label="Images"
+          placeholder="Select images"
+          accept="image/*"
+          multiple
+          required
+          value={form.values.imagesFiles}
           onChange={handleImageChange}
-          error={form.errors.imageFile}
+          error={form.errors.imagesFiles}
         />
 
-        {previewUrl && (
+        {previewUrls.map((url, index) => (
           <Image
-            src={previewUrl}
-            alt="Image Preview"
+            key={index}
+            src={url}
+            alt={`Preview ${index + 1}`}
             height={300}
-            fit="contain"
+            fit="cover"
             mb="sm"
           />
-        )}
+        ))}
 
         <Button
           type="submit"
@@ -233,7 +239,7 @@ export default function PostCreateForm() {
             withCloseButton
             onClose={() => {
               setArticleNotification(null);
-              Navigate("/blog");
+              navigate("/blog");
             }}
           >
             <Text>{articleNotification.message}</Text>

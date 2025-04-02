@@ -1,4 +1,4 @@
-import { useParams } from "react-router";
+import { useNavigate, useParams } from "react-router";
 
 import {
   Container,
@@ -16,18 +16,24 @@ import {
   IconEye,
   IconThumbUp,
   IconThumbDown,
+  IconPencilCog,
+  IconTrash,
   // IconArrowLeft,
   // IconArrowRight,
 } from "@tabler/icons-react";
 
-import { useGetItem } from "../../../../hooks/useItems";
+import { useDeleteItem, useGetItem } from "../../../../hooks/useItems";
 import { endpoints } from "../../../../../config";
 
 import styles from "./PostDetails.module.scss";
 import Comments from "../../layout/Comments";
+import { useAuth } from "../../../../context/AuthContext";
+import Loading from "../../elements/Loading";
 
 export default function PostDetails() {
+  const { user } = useAuth();
   const { id } = useParams();
+  const navigate = useNavigate();
 
   const {
     data: article,
@@ -35,7 +41,9 @@ export default function PostDetails() {
     error: postError,
   } = useGetItem(endpoints.blog, id);
 
-  if (postLoading) return <div>Loading...</div>;
+  const { del: deleteArticle } = useDeleteItem(endpoints.blog);
+
+  if (postLoading) return <Loading />;
   if (postError) return <div>Error: {postError}</div>;
 
   if (article.length === 0) return;
@@ -46,6 +54,8 @@ export default function PostDetails() {
     year: "numeric",
   }).format(new Date(article._createdOn));
 
+  const isOwner = user?._id === article?._ownerId;
+
   // function handlePreviousClick() {
   //   console.log(article._id);
   // }
@@ -53,6 +63,15 @@ export default function PostDetails() {
   // function handleNextClick() {
   //   console.log(article._id);
   // }
+
+  function handleEditClick() {
+    console.log("Edit", article._id);
+  }
+  async function handleDeleteClick() {
+    const result = await deleteArticle(id);
+    console.log(`Article ${result.title} was deleted successfully`);
+    navigate("/blog");
+  }
 
   return (
     <section className="single-post spad">
@@ -85,7 +104,6 @@ export default function PostDetails() {
         </Title>
 
         <Stack gap={0} mt="md">
-          {/* Описание */}
           {article.content.map((paragraph, index) => (
             <Text size="md" mb="lg" key={index}>
               {paragraph}
@@ -111,6 +129,35 @@ export default function PostDetails() {
             <Text size="sm">{article.reactions.dislikes}</Text>
           </Group>
         </Group>
+
+        {isOwner && (
+          <Group justify="flex-end" gap="md" mt="xl">
+            <Button
+              variant="outline"
+              radius="0"
+              size="s"
+              p="xs"
+              color="blue"
+              leftSection={<IconPencilCog size={24} />}
+              className={styles.button}
+              onClick={handleEditClick}
+            >
+              Edit
+            </Button>
+            <Button
+              variant="filled"
+              radius="0"
+              size="s"
+              p="xs"
+              color="red"
+              leftSection={<IconTrash size={24} />}
+              className={styles.button}
+              onClick={handleDeleteClick}
+            >
+              Delete
+            </Button>
+          </Group>
+        )}
 
         {/* <Group justify="space-between" mt="xl">
           <Button

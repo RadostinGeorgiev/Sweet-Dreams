@@ -30,9 +30,15 @@ import MetaDate from "../../elements/MetaDate/MetaDate";
 import Comments from "../../layout/Comments";
 
 import styles from "./RecipeDetails.module.scss";
+import Loading from "../../elements/Loading";
+import { useEffect, useState } from "react";
 
 export default function RecipeDetails() {
+  const [date, setDate] = useState();
   const { id } = useParams();
+
+  console.log("id", id);
+  console.log("endpoints", endpoints.recipes);
 
   const {
     data: recipe,
@@ -40,12 +46,22 @@ export default function RecipeDetails() {
     error: recipeError,
   } = useGetItem(endpoints.recipes, id);
 
-  if (recipeLoading) return <div>Loading...</div>;
+  const isoDate = new Date(1743530400000);
+  const formatter = new Intl.DateTimeFormat("en-US", { month: "short" });
+
+  setDate({
+    day: isoDate.getDate(),
+    month: formatter.format(isoDate),
+  });
+
+  useEffect(() => {
+    console.log("recipe:", recipe);
+  }, []);
+
+  if (recipeLoading) return <Loading />;
   if (recipeError) return <div>Error: {recipeError}</div>;
 
   if (recipe.length === 0) return;
-
-  const date = { day: "01", month: "Jan" };
 
   return (
     <section className="single-post spad">
