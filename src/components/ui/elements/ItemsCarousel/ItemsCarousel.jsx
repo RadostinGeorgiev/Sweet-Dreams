@@ -82,7 +82,7 @@ export default function ItemsCarousel({ subject, endpoint }) {
 }
 
 function CarouselItem({ item, size }) {
-  const isoDate = new Date("2024-11-24T10:30:00.000Z");
+  const isoDate = new Date(item?._createdOn);
   const formatter = new Intl.DateTimeFormat("en-US", { month: "short" });
 
   const date = {

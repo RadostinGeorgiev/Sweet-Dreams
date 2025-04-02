@@ -5,7 +5,7 @@ import { authServices } from "../services/auth.service";
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(authServices.getUserData());
+  const [user, setUser] = useState(authServices.getUserData() || null);
   const [isAuthenticated, setIsAuthenticated] = useState(
     authServices.isLogged()
   );

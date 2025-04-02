@@ -31,37 +31,28 @@ import Comments from "../../layout/Comments";
 
 import styles from "./RecipeDetails.module.scss";
 import Loading from "../../elements/Loading";
-import { useEffect, useState } from "react";
 
 export default function RecipeDetails() {
-  const [date, setDate] = useState();
   const { id } = useParams();
-
-  console.log("id", id);
-  console.log("endpoints", endpoints.recipes);
 
   const {
     data: recipe,
     loading: recipeLoading,
     error: recipeError,
-  } = useGetItem(endpoints.recipes, id);
-
-  const isoDate = new Date(1743530400000);
-  const formatter = new Intl.DateTimeFormat("en-US", { month: "short" });
-
-  setDate({
-    day: isoDate.getDate(),
-    month: formatter.format(isoDate),
-  });
-
-  useEffect(() => {
-    console.log("recipe:", recipe);
-  }, []);
+  } = useGetItem(endpoints.recipes, id, null, "author=_ownerId:authors");
 
   if (recipeLoading) return <Loading />;
   if (recipeError) return <div>Error: {recipeError}</div>;
 
   if (recipe.length === 0) return;
+
+  const isoDate = new Date(recipe?._createdOn);
+  const formatter = new Intl.DateTimeFormat("en-US", { month: "short" });
+
+  const date = {
+    day: isoDate.getDate(),
+    month: formatter.format(isoDate),
+  };
 
   return (
     <section className="single-post spad">
@@ -95,7 +86,7 @@ export default function RecipeDetails() {
                 background="--background-color-gray"
               />
               <PostTitle
-                post={recipe}
+                item={recipe}
                 size="large"
                 variant="caption"
                 className={`${styles["recipe-title"]}`}
