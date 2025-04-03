@@ -95,6 +95,23 @@ export const useCreateItem = (endpoint) => {
   return { data, creating: loading, error, create };
 };
 
+export const useEditItem = (endpoint) => {
+  const editItem = useCallback(async (endpoint, id, data, signal) => {
+    return await api.post(`${endpoint}/${id}`, data, signal);
+  }, []);
+
+  const { data, loading, error, execute } = useFetch(editItem);
+
+  const edit = useCallback(
+    async (itemData) => {
+      return execute(endpoint, itemData);
+    },
+    [endpoint, execute]
+  );
+
+  return { data, editing: loading, error, edit };
+};
+
 export const useDeleteItem = (endpoint) => {
   const deleteItem = useCallback(async (endpoint, id, signal) => {
     return await api.del(`${endpoint}/${id}`, signal);
