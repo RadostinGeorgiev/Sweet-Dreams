@@ -1,4 +1,4 @@
-import { useParams } from "react-router";
+import { useNavigate, useParams } from "react-router";
 
 import {
   Container,
@@ -20,20 +20,25 @@ import {
   IconUsers,
   IconChecklist,
   IconListNumbers,
+  IconPencilCog,
+  IconTrash,
 } from "@tabler/icons-react";
 
-import { useGetItem } from "../../../../hooks/useItems";
+import { useAuth } from "../../../../context/AuthContext";
+import { useGetItem, useDeleteItem } from "../../../../hooks/useItems";
 import { endpoints } from "../../../../../config";
 
 import PostTitle from "../../elements/PostTitle/PostTitle";
 import MetaDate from "../../elements/MetaDate/MetaDate";
+import Loading from "../../elements/Loading";
 import Comments from "../../layout/Comments";
 
 import styles from "./RecipeDetails.module.scss";
-import Loading from "../../elements/Loading";
 
 export default function RecipeDetails() {
+  const { user } = useAuth();
   const { id } = useParams();
+  const navigate = useNavigate();
 
   const {
     data: recipe,
@@ -45,6 +50,8 @@ export default function RecipeDetails() {
     null,
     "author=_ownerId:authors@_ownerId"
   );
+
+  const { del: deleteRecipe } = useDeleteItem(endpoints.recipes);
 
   if (recipeLoading) return <Loading />;
   if (recipeError) return <div>Error: {recipeError}</div>;
@@ -58,6 +65,20 @@ export default function RecipeDetails() {
     day: isoDate.getDate(),
     month: formatter.format(isoDate),
   };
+
+  const isOwner = user?._id === recipe?._ownerId;
+
+  function handleEditClick() {
+    navigate(`/recipes/edit/${recipe._id}`, {
+      state: { recipe },
+    });
+  }
+
+  async function handleDeleteClick() {
+    const result = await deleteRecipe(id);
+    console.log(`Recipe ${result.name} was deleted successfully`);
+    navigate("/recipes");
+  }
 
   return (
     <section className="single-post spad">
@@ -219,6 +240,35 @@ export default function RecipeDetails() {
             </List>
           </Group>
         </Stack>
+
+        {isOwner && (
+          <Group justify="flex-end" gap="md" mt="xl">
+            <Button
+              variant="outline"
+              radius="0"
+              size="s"
+              p="xs"
+              color="blue"
+              leftSection={<IconPencilCog size={24} />}
+              className={styles.button}
+              onClick={handleEditClick}
+            >
+              Edit
+            </Button>
+            <Button
+              variant="filled"
+              radius="0"
+              size="s"
+              p="xs"
+              color="red"
+              leftSection={<IconTrash size={24} />}
+              className={styles.button}
+              onClick={handleDeleteClick}
+            >
+              Delete
+            </Button>
+          </Group>
+        )}
 
         <Comments subject={recipe} />
       </Container>

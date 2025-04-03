@@ -23,6 +23,7 @@ import {
   ActionIcon,
   FileInput,
   Notification,
+  CloseButton,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import {
@@ -62,7 +63,7 @@ const schema = z.object({
     ),
 });
 
-export default function RecipeCreateForm() {
+export default function RecipeForm() {
   const [isUploading, setIsUploading] = useState(false);
   const [previewUrls, setPreviewUrls] = useState([]);
   const [recipeNotification, setRecipeNotification] = useState(null);
@@ -159,8 +160,6 @@ export default function RecipeCreateForm() {
         reviewCount: 0,
       };
 
-      console.log(data);
-
       const newRecipe = await createRecipe(data);
 
       if (newRecipe) {
@@ -186,7 +185,16 @@ export default function RecipeCreateForm() {
       mt="lg"
       style={{ maxWidth: 600, margin: "auto", position: "relative" }}
     >
+      <CloseButton
+        onClick={() => navigate(-1)}
+        pos="absolute"
+        top={20}
+        right={20}
+        zIndex={1}
+      />
+
       <LoadingOverlay visible={isUploading} />
+
       <Title align="center" mb="md">
         Create Recipe
       </Title>
@@ -376,7 +384,7 @@ export default function RecipeCreateForm() {
             withCloseButton
             onClose={() => {
               setRecipeNotification(null);
-              navigate("/blog");
+              navigate("/recipes");
             }}
           >
             <Text>{recipeNotification.message}</Text>

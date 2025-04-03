@@ -22,13 +22,14 @@ import {
   // IconArrowRight,
 } from "@tabler/icons-react";
 
-import { useDeleteItem, useGetItem } from "../../../../hooks/useItems";
+import { useAuth } from "../../../../context/AuthContext";
+import { useGetItem, useDeleteItem } from "../../../../hooks/useItems";
 import { endpoints } from "../../../../../config";
 
-import styles from "./PostDetails.module.scss";
 import Comments from "../../layout/Comments";
-import { useAuth } from "../../../../context/AuthContext";
 import Loading from "../../elements/Loading";
+
+import styles from "./PostDetails.module.scss";
 
 export default function PostDetails() {
   const { user } = useAuth();
@@ -57,7 +58,6 @@ export default function PostDetails() {
   const isOwner = user?._id === article?._ownerId;
 
   function handleEditClick() {
-    console.log("Edit:", article);
     navigate(`/blog/edit/${article._id}`, {
       state: { article },
     });
