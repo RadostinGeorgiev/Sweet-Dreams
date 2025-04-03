@@ -29,6 +29,7 @@ import styles from "./PostDetails.module.scss";
 import Comments from "../../layout/Comments";
 import { useAuth } from "../../../../context/AuthContext";
 import Loading from "../../elements/Loading";
+import PostForm from "../PostForm/PostForm";
 
 export default function PostDetails() {
   const { user } = useAuth();
@@ -56,17 +57,11 @@ export default function PostDetails() {
 
   const isOwner = user?._id === article?._ownerId;
 
-  // function handlePreviousClick() {
-  //   console.log(article._id);
-  // }
-
-  // function handleNextClick() {
-  //   console.log(article._id);
-  // }
-
   function handleEditClick() {
     console.log("Edit", article._id);
+    <PostForm data={article} />;
   }
+
   async function handleDeleteClick() {
     const result = await deleteArticle(id);
     console.log(`Article ${result.title} was deleted successfully`);
@@ -158,31 +153,6 @@ export default function PostDetails() {
             </Button>
           </Group>
         )}
-
-        {/* <Group justify="space-between" mt="xl">
-          <Button
-            variant="transparent"
-            radius="0"
-            size="s"
-            p="xs"
-            leftSection={<IconArrowLeft size={24} />}
-            className={styles.button}
-            onClick={handlePreviousClick}
-          >
-            Previous
-          </Button>
-          <Button
-            variant="transparent"
-            radius="0"
-            size="s"
-            p="xs"
-            rightSection={<IconArrowRight size={24} />}
-            className={styles.button}
-            onClick={handleNextClick}
-          >
-            Go to Next
-          </Button>
-        </Group> */}
 
         <Comments subject={article} />
       </Container>

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { storage } from "../../../../firebase";
@@ -51,28 +51,34 @@ const schema = z.object({
     ),
 });
 
-export default function PostCreateForm() {
+export default function PostForm({ data }) {
+  const [isEdited, setIsEdited] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const [previewUrls, setPreviewUrls] = useState([]);
   const [articleNotification, setArticleNotification] = useState(null);
 
   const navigate = useNavigate();
 
+  const { error: createError, create: createArticle } = useCreateItem(
+    endpoints.blog
+  );
+  const { error: editError, create: editArticle } = useCreateItem(
+    endpoints.blog
+  );
+
+  if (data) setIsEdited(true);
+
   const form = useForm({
     initialValues: {
-      title: "",
-      category: [],
-      tags: [],
-      content: "",
-      cuisine: "",
+      title: data?.title || "",
+      category: data?.category || [],
+      tags: data?.tags || [],
+      content: data?.content || "",
+      cuisine: data?.cuisine || "",
       imagesFiles: [],
     },
     validate: zodResolver(schema),
   });
-
-  const { error: articleError, create: createArticle } = useCreateItem(
-    endpoints.blog
-  );
 
   const handleImageChange = (files) => {
     form.setFieldValue("imagesFiles", files || []);
@@ -97,7 +103,10 @@ export default function PostCreateForm() {
     setIsUploading(true);
 
     try {
-      const imagesUrls = await uploadImages(values.imagesFiles);
+      const imagesUrls =
+        form.values.imagesFiles.length > 0
+          ? await uploadImages(values.imagesFiles)
+          : data?.images || [];
 
       const data = {
         title: values.title,
@@ -108,23 +117,25 @@ export default function PostCreateForm() {
           values.content.trim().split(/\s+/).filter(Boolean).length / 150
         ),
         images: imagesUrls,
-        rating: 0,
-        views: 0,
-        reactions: {
-          likes: 0,
-          dislikes: 0,
-        },
-        reviewCount: 0,
+
+        rating: isEdited ? data?.rating : 0,
+        views: isEdited ? data?.views : 0,
+        reactions: isEdited ? data?.reactions : { likes: 0, dislikes: 0 },
+        reviewCount: isEdited ? data?.reviewCount : 0,
       };
 
       console.log(data);
 
-      const newArticle = await createArticle(data);
+      const result = isEdited
+        ? await editArticle(data._id, data)
+        : await createArticle(data);
 
-      if (newArticle) {
+      if (result) {
         const notification = {
           title: "Successfuly create",
-          message: `The article ${newArticle.title} was created sucessfuly!`,
+          message: `The article ${result.title} was ${
+            isEdited ? "updated" : "created"
+          } sucessfuly!`,
         };
         setArticleNotification(notification);
         form.reset();
@@ -136,6 +147,12 @@ export default function PostCreateForm() {
     }
   };
 
+  useEffect(() => {
+    if (isEdited && data?.images) {
+      setPreviewUrls(data.images);
+    }
+  }, [isEdited, data]);
+
   return (
     <Paper
       withBorder
@@ -146,7 +163,7 @@ export default function PostCreateForm() {
     >
       <LoadingOverlay visible={isUploading} />
       <Title align="center" mb="md">
-        Create Blog Post
+        {`${isEdited ? "Edit" : "Create"} Blog Post`}
       </Title>
       <form onSubmit={form.onSubmit(handleSubmit)}>
         <TextInput
@@ -227,7 +244,7 @@ export default function PostCreateForm() {
           tt="uppercase"
           disabled={!form.isValid()}
         >
-          Create Post
+          {isEdited ? "Update Post" : "Create Post"}
         </Button>
 
         {articleNotification && (
@@ -245,14 +262,14 @@ export default function PostCreateForm() {
             <Text>{articleNotification.message}</Text>
           </Notification>
         )}
-        {articleError && (
+        {(createError || editError) && (
           <Notification
             icon={<IconXboxXFilled size={24} />}
             title="Error"
             color="red"
             mt="md"
           >
-            {articleError}
+            {createError || editError}
           </Notification>
         )}
       </form>
