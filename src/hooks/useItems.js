@@ -96,15 +96,15 @@ export const useCreateItem = (endpoint) => {
 };
 
 export const useEditItem = (endpoint) => {
-  const editItem = useCallback(async (endpoint, id, data, signal) => {
-    return await api.post(`${endpoint}/${id}`, data, signal);
+  const editItem = useCallback(async (endpoint, id, item, signal) => {
+    return await api.put(`${endpoint}/${id}`, item, signal);
   }, []);
 
   const { data, loading, error, execute } = useFetch(editItem);
 
   const edit = useCallback(
-    async (itemData) => {
-      return execute(endpoint, itemData);
+    async (id, itemData) => {
+      return execute(endpoint, id, itemData);
     },
     [endpoint, execute]
   );

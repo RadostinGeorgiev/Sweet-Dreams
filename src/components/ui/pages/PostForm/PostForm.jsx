@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router";
+import { useLocation, useNavigate } from "react-router";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { storage } from "../../../../firebase";
 
@@ -17,14 +17,19 @@ import {
   Image,
   Notification,
   Text,
+  ActionIcon,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { IconCircleCheckFilled, IconXboxXFilled } from "@tabler/icons-react";
+import {
+  IconCircleCheckFilled,
+  IconMinus,
+  IconXboxXFilled,
+} from "@tabler/icons-react";
 
 import { zodResolver } from "mantine-form-zod-resolver";
 import { z } from "zod";
 
-import { useCreateItem } from "../../../../hooks/useItems";
+import { useCreateItem, useEditItem } from "../../../../hooks/useItems";
 import { endpoints } from "../../../../../config";
 
 const MAX_FILE_SIZE = 1024 * 1024; // 1MB
@@ -38,58 +43,75 @@ const schema = z.object({
     message: "The content of the post must be at least 6 characters",
   }),
   imagesFiles: z
-    .array(z.instanceof(File))
+    .array(z.union([z.instanceof(File), z.string().url()])) // Приема File или валиден URL
     .min(1, "At least one image is required")
     .refine(
-      (files) => files.every((file) => file.size <= MAX_FILE_SIZE),
-      "File must be less than 1MB"
-    )
-    .refine(
       (files) =>
-        files.every((file) => ACCEPTED_IMAGE_TYPES.includes(file.type)),
-      "Only .jpg, .png, .webp allowed"
+        files.every((file) => {
+          if (typeof file === "string") return true; // URL е валиден
+          return (
+            file.size <= MAX_FILE_SIZE &&
+            ACCEPTED_IMAGE_TYPES.includes(file.type)
+          );
+        }),
+      {
+        message:
+          "Invalid images - must be either existing URLs or valid new files (max 1MB, only .jpg, .png, .webp)",
+      }
     ),
 });
 
-export default function PostForm({ data }) {
-  const [isEdited, setIsEdited] = useState(false);
+export default function PostForm({ isEdited }) {
   const [isUploading, setIsUploading] = useState(false);
   const [previewUrls, setPreviewUrls] = useState([]);
   const [articleNotification, setArticleNotification] = useState(null);
 
   const navigate = useNavigate();
+  const location = useLocation();
+  const data = location.state?.article;
+
+  if (isEdited && !data) {
+    navigate("/recipes");
+  }
 
   const { error: createError, create: createArticle } = useCreateItem(
     endpoints.blog
   );
-  const { error: editError, create: editArticle } = useCreateItem(
-    endpoints.blog
-  );
-
-  if (data) setIsEdited(true);
+  const { error: editError, edit: editArticle } = useEditItem(endpoints.blog);
 
   const form = useForm({
     initialValues: {
       title: data?.title || "",
       category: data?.category || [],
       tags: data?.tags || [],
-      content: data?.content || "",
+      content: data?.content?.join("\n") || "",
       cuisine: data?.cuisine || "",
-      imagesFiles: [],
+      imagesFiles: data?.images || [],
     },
     validate: zodResolver(schema),
   });
 
-  const handleImageChange = (files) => {
-    form.setFieldValue("imagesFiles", files || []);
-    if (files) {
-      setPreviewUrls(files.map((file) => URL.createObjectURL(file)));
-    } else {
-      setPreviewUrls([]);
-    }
+  const handleImageChange = (newFiles) => {
+    if (!newFiles) return;
+
+    const validNewFiles = Array.from(newFiles).filter(
+      (file) => file instanceof File
+    );
+
+    const allFiles = [
+      ...form.values.imagesFiles.filter((file) => typeof file === "string"),
+      ...validNewFiles,
+    ];
+
+    form.setFieldValue("imagesFiles", allFiles);
+
+    const urls = allFiles.map((file) =>
+      typeof file === "string" ? file : URL.createObjectURL(file)
+    );
+    setPreviewUrls(urls);
   };
 
-  const uploadImages = async (files) => {
+  const handleUploadImages = async (files) => {
     return Promise.all(
       files.map(async (file) => {
         const storageRef = ref(storage, `blog/${Date.now()}_${file.name}`);
@@ -99,24 +121,42 @@ export default function PostForm({ data }) {
     );
   };
 
+  const handleRemoveImage = (index) => {
+    const updatedFiles = [...form.values.imagesFiles];
+    updatedFiles.splice(index, 1);
+
+    form.setFieldValue("imagesFiles", updatedFiles);
+    setPreviewUrls(
+      updatedFiles.map((file) =>
+        typeof file === "string" ? file : URL.createObjectURL(file)
+      )
+    );
+  };
+
   const handleSubmit = async (values) => {
     setIsUploading(true);
 
     try {
-      const imagesUrls =
-        form.values.imagesFiles.length > 0
-          ? await uploadImages(values.imagesFiles)
-          : data?.images || [];
+      const newFiles = values.imagesFiles.filter(
+        (file) => file instanceof File
+      );
+      const existingUrls = values.imagesFiles.filter(
+        (file) => typeof file === "string"
+      );
 
-      const data = {
+      const uploadedUrls =
+        newFiles.length > 0 ? await handleUploadImages(newFiles) : [];
+
+      const articleData = {
         title: values.title,
         category: values.category,
         tags: values.tags || null,
         content: values.content.split("\n").filter((p) => p.trim() !== ""),
+        cuisine: values.cuisine,
         readingTimeMinutes: Math.ceil(
           values.content.trim().split(/\s+/).filter(Boolean).length / 150
         ),
-        images: imagesUrls,
+        images: [...existingUrls, ...uploadedUrls],
 
         rating: isEdited ? data?.rating : 0,
         views: isEdited ? data?.views : 0,
@@ -124,11 +164,11 @@ export default function PostForm({ data }) {
         reviewCount: isEdited ? data?.reviewCount : 0,
       };
 
-      console.log(data);
+      console.log(articleData);
 
       const result = isEdited
-        ? await editArticle(data._id, data)
-        : await createArticle(data);
+        ? await editArticle(data._id, articleData)
+        : await createArticle(articleData);
 
       if (result) {
         const notification = {
@@ -220,20 +260,29 @@ export default function PostForm({ data }) {
           accept="image/*"
           multiple
           required
-          value={form.values.imagesFiles}
+          value={form.values.imagesFiles.filter((f) => f instanceof File)}
           onChange={handleImageChange}
           error={form.errors.imagesFiles}
         />
 
         {previewUrls.map((url, index) => (
-          <Image
-            key={index}
-            src={url}
-            alt={`Preview ${index + 1}`}
-            height={300}
-            fit="contain"
-            mb="sm"
-          />
+          <Flex align="center" gap="lg" key={index}>
+            <Image
+              src={typeof url === "string" ? url : URL.createObjectURL(url)}
+              alt={`Preview ${index + 1}`}
+              height={300}
+              fit="contain"
+              mb="sm"
+            />
+            <ActionIcon
+              variant="outline"
+              size="sm"
+              radius="0"
+              onClick={() => handleRemoveImage(index)}
+            >
+              <IconMinus size="1em" />
+            </ActionIcon>
+          </Flex>
         ))}
 
         <Button
@@ -250,7 +299,7 @@ export default function PostForm({ data }) {
         {articleNotification && (
           <Notification
             icon={<IconCircleCheckFilled size={24} />}
-            title="Create Article Successful"
+            title={` Article ${isEdited ? "Updated" : "Created"} Successful`}
             color="teal"
             mt="md"
             withCloseButton

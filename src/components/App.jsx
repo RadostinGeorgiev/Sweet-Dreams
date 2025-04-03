@@ -43,6 +43,7 @@ export default function App() {
                 <Route path="/blog" element={<BlogList />} />
                 <Route path="/blog/:id" element={<PostDetails />} />
                 <Route path="/blog/create" element={<PostForm />} />
+                <Route path="/blog/edit/:id" element={<PostForm isEdited />} />
               </Route>
 
               <Route path="/recipes" element={<Recipes />} />

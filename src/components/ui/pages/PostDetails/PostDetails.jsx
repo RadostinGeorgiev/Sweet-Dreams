@@ -29,7 +29,6 @@ import styles from "./PostDetails.module.scss";
 import Comments from "../../layout/Comments";
 import { useAuth } from "../../../../context/AuthContext";
 import Loading from "../../elements/Loading";
-import PostForm from "../PostForm/PostForm";
 
 export default function PostDetails() {
   const { user } = useAuth();
@@ -58,8 +57,10 @@ export default function PostDetails() {
   const isOwner = user?._id === article?._ownerId;
 
   function handleEditClick() {
-    console.log("Edit", article._id);
-    <PostForm data={article} />;
+    console.log("Edit:", article);
+    navigate(`/blog/edit/${article._id}`, {
+      state: { article },
+    });
   }
 
   async function handleDeleteClick() {
