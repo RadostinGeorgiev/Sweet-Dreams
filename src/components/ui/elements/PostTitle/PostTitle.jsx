@@ -19,7 +19,11 @@ export default function PostTitle({ item, variant, size }) {
         </List.Item>
         <Divider orientation="vertical" />
         <List.Item icon={<IconClock size={16} />}>
-          <Text>{item?.readingTimeMinutes} min read</Text>
+          <Text>{item?.prepTimeMinutes} min prep</Text>
+        </List.Item>
+        <Divider orientation="vertical" />
+        <List.Item icon={<IconClock size={16} />}>
+          <Text>{item?.cookTimeMinutes} min cook</Text>
         </List.Item>
         <Divider orientation="vertical" />
         <List.Item icon={<IconMessage size={16} />}>

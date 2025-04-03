@@ -29,14 +29,14 @@ import {
   IconCircleCheckFilled,
   IconPlus,
   IconMinus,
-  // IconXboxXFilled,
+  IconXboxXFilled,
 } from "@tabler/icons-react";
 
 import { zodResolver } from "mantine-form-zod-resolver";
 import { z } from "zod";
 
-// import { useCreateItem } from "../../../../hooks/useItems";
-// import { endpoints } from "../../../../../config";
+import { useCreateItem } from "../../../../hooks/useItems";
+import { endpoints } from "../../../../../config";
 
 const MAX_FILE_SIZE = 1024 * 1024; // 1MB
 const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp"];
@@ -65,7 +65,7 @@ const schema = z.object({
 export default function RecipeCreateForm() {
   const [isUploading, setIsUploading] = useState(false);
   const [previewUrls, setPreviewUrls] = useState([]);
-  const [articleNotification, setArticleNotification] = useState(null);
+  const [recipeNotification, setRecipeNotification] = useState(null);
   const [ingredients, setIngredients] = useState([]);
   const [ingredient, setIngredient] = useState("");
 
@@ -91,9 +91,9 @@ export default function RecipeCreateForm() {
     validate: zodResolver(schema),
   });
 
-  // const { error: recipeError, create: createRecipe } = useCreateItem(
-  //   endpoints.recipes
-  // );
+  const { error: recipeError, create: createRecipe } = useCreateItem(
+    endpoints.recipes
+  );
 
   const handleAddIngredient = () => {
     if (ingredient.trim()) {
@@ -161,16 +161,16 @@ export default function RecipeCreateForm() {
 
       console.log(data);
 
-      // const newArticle = await createArticle(data);
+      const newRecipe = await createRecipe(data);
 
-      // if (newArticle) {
-      //   const notification = {
-      //     title: "Successfuly create",
-      //     message: `The article ${newArticle.title} was created sucessfuly!`,
-      //   };
-      //   setArticleNotification(notification);
-      //   form.reset();
-      // }
+      if (newRecipe) {
+        const notification = {
+          title: "Successfuly create",
+          message: `The recipe ${newRecipe.name} was created sucessfuly!`,
+        };
+        setRecipeNotification(notification);
+        form.reset();
+      }
     } catch (error) {
       console.error("Uploading error:", error);
     } finally {
@@ -367,7 +367,7 @@ export default function RecipeCreateForm() {
           Create Recipe
         </Button>
 
-        {articleNotification && (
+        {recipeNotification && (
           <Notification
             icon={<IconCircleCheckFilled size={24} />}
             title="Create Article Successful"
@@ -375,23 +375,23 @@ export default function RecipeCreateForm() {
             mt="md"
             withCloseButton
             onClose={() => {
-              setArticleNotification(null);
+              setRecipeNotification(null);
               navigate("/blog");
             }}
           >
-            <Text>{articleNotification.message}</Text>
+            <Text>{recipeNotification.message}</Text>
           </Notification>
         )}
-        {/* {articleError && (
+        {recipeError && (
           <Notification
             icon={<IconXboxXFilled size={24} />}
             title="Error"
             color="red"
             mt="md"
           >
-            {articleError}
+            {recipeError}
           </Notification>
-        )} */}
+        )}
       </form>
     </Paper>
   );

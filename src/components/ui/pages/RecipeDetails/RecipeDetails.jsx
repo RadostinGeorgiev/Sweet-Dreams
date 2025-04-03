@@ -39,7 +39,12 @@ export default function RecipeDetails() {
     data: recipe,
     loading: recipeLoading,
     error: recipeError,
-  } = useGetItem(endpoints.recipes, id, null, "author=_ownerId:authors");
+  } = useGetItem(
+    endpoints.recipes,
+    id,
+    null,
+    "author=_ownerId:authors@_ownerId"
+  );
 
   if (recipeLoading) return <Loading />;
   if (recipeError) return <div>Error: {recipeError}</div>;
@@ -66,7 +71,7 @@ export default function RecipeDetails() {
           backgroundPosition: "center",
           padding: "2rem",
         }}
-      ></BackgroundImage>
+      />
 
       <Container size="md" py="xl">
         <Stack gap={0}>

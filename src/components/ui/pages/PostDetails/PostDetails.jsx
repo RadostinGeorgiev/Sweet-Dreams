@@ -39,7 +39,7 @@ export default function PostDetails() {
     data: article,
     loading: postLoading,
     error: postError,
-  } = useGetItem(endpoints.blog, id);
+  } = useGetItem(endpoints.blog, id, null, "author=_ownerId:authors@_ownerId");
 
   const { del: deleteArticle } = useDeleteItem(endpoints.blog);
 
