@@ -4,38 +4,49 @@ import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { storage } from "../../../../firebase";
 
 import {
-  Button,
-  TextInput,
-  MultiSelect,
-  Paper,
-  Title,
-  TagsInput,
-  Textarea,
-  Flex,
   LoadingOverlay,
-  FileInput,
-  Image,
-  Notification,
+  Box,
+  Flex,
+  Group,
+  Paper,
+  List,
+  ListItem,
+  Title,
   Text,
+  TextInput,
+  TagsInput,
+  Select,
+  MultiSelect,
+  Textarea,
+  Image,
+  Button,
+  ActionIcon,
+  FileInput,
+  Notification,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { IconCircleCheckFilled, IconXboxXFilled } from "@tabler/icons-react";
+import {
+  IconCircleCheckFilled,
+  IconPlus,
+  IconMinus,
+  // IconXboxXFilled,
+} from "@tabler/icons-react";
 
 import { zodResolver } from "mantine-form-zod-resolver";
 import { z } from "zod";
 
-import { useCreateItem } from "../../../../hooks/useItems";
-import { endpoints } from "../../../../../config";
+// import { useCreateItem } from "../../../../hooks/useItems";
+// import { endpoints } from "../../../../../config";
 
 const MAX_FILE_SIZE = 1024 * 1024; // 1MB
 const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp"];
 
 const schema = z.object({
-  title: z
-    .string()
-    .min(6, { message: "The title of the post must be at least 6 characters" }),
-  content: z.string().min(6, {
-    message: "The content of the post must be at least 6 characters",
+  name: z.string().min(6, {
+    message: "The name of the recipe must be at least 6 characters",
+  }),
+  description: z.string().min(6, {
+    message: "The description of the recipe must be at least 6 characters",
   }),
   imagesFiles: z
     .array(z.instanceof(File))
@@ -55,25 +66,45 @@ export default function RecipeCreateForm() {
   const [isUploading, setIsUploading] = useState(false);
   const [previewUrls, setPreviewUrls] = useState([]);
   const [articleNotification, setArticleNotification] = useState(null);
+  const [ingredients, setIngredients] = useState([]);
+  const [ingredient, setIngredient] = useState("");
 
   const navigate = useNavigate();
 
   const form = useForm({
     initialValues: {
-      title: "",
+      name: "",
       category: [],
       description: [],
       ingredients: [],
-      content: "",
+      instructions: [],
+      prepTimeMinutes: 0,
+      cookTimeMinutes: 0,
+      servings: 0,
+      caloriesPerServing: 0,
       cuisine: "",
+      difficulty: "",
+      tags: [],
+
       imagesFiles: [],
     },
     validate: zodResolver(schema),
   });
 
-  const { error: articleError, create: createArticle } = useCreateItem(
-    endpoints.blog
-  );
+  // const { error: recipeError, create: createRecipe } = useCreateItem(
+  //   endpoints.recipes
+  // );
+
+  const handleAddIngredient = () => {
+    if (ingredient.trim()) {
+      setIngredients([...ingredients, ingredient.trim()]);
+      setIngredient("");
+    }
+  };
+
+  const handleRemoveIngredient = (index) => {
+    setIngredients(ingredients.filter((_, i) => i !== index));
+  };
 
   const handleImageChange = (files) => {
     form.setFieldValue("imagesFiles", files || []);
@@ -101,12 +132,23 @@ export default function RecipeCreateForm() {
       const imagesUrls = await uploadImages(values.imagesFiles);
 
       const data = {
-        name: values.title,
+        name: values.name,
         category: values.category,
-        description: values.content.split("\n").filter((p) => p.trim() !== ""),
-        readingTimeMinutes: Math.ceil(
-          values.content.trim().split(/\s+/).filter(Boolean).length / 150
-        ),
+        description: values.description
+          .split("\n")
+          .filter((p) => p.trim() !== ""),
+        ingredients: ingredients,
+        instructions: values.instructions
+          .split("\n")
+          .filter((p) => p.trim() !== ""),
+
+        prepTimeMinutes: Number(values.prepTimeMinutes),
+        cookTimeMinutes: Number(values.cookTimeMinutes),
+        servings: Number(values.servings),
+        caloriesPerServing: Number(values.caloriesPerServing),
+        cuisine: values.cuisine,
+        difficulty: values.difficulty,
+        tags: values.tags || null,
         images: imagesUrls,
         rating: 0,
         views: 0,
@@ -119,16 +161,16 @@ export default function RecipeCreateForm() {
 
       console.log(data);
 
-      const newArticle = await createArticle(data);
+      // const newArticle = await createArticle(data);
 
-      if (newArticle) {
-        const notification = {
-          title: "Successfuly create",
-          message: `The article ${newArticle.title} was created sucessfuly!`,
-        };
-        setArticleNotification(notification);
-        form.reset();
-      }
+      // if (newArticle) {
+      //   const notification = {
+      //     title: "Successfuly create",
+      //     message: `The article ${newArticle.title} was created sucessfuly!`,
+      //   };
+      //   setArticleNotification(notification);
+      //   form.reset();
+      // }
     } catch (error) {
       console.error("Uploading error:", error);
     } finally {
@@ -156,6 +198,7 @@ export default function RecipeCreateForm() {
           {...form.getInputProps("name")}
           required
         />
+
         <MultiSelect
           label="Categories"
           placeholder="Please select categories"
@@ -182,21 +225,115 @@ export default function RecipeCreateForm() {
           required
         />
 
-        <Flex gap="md" justify="space-between" align="flex-start" mb="sm">
-          <TagsInput
-            label="Tags"
-            placeholder="Please fill in the tags and press Enter"
-            {...form.getInputProps("tags")}
+        <Group mt="md" align="flex-end">
+          <TextInput
+            label="Ingredient"
+            placeholder="Example: 200g sugar"
+            value={ingredient}
+            onChange={(e) => setIngredient(e.currentTarget.value)}
             style={{ flex: 1 }}
           />
+          <ActionIcon
+            variant="filled"
+            size="lg"
+            radius="0"
+            onClick={handleAddIngredient}
+            disabled={!ingredient.trim()}
+          >
+            <IconPlus size="1em" />
+          </ActionIcon>
+        </Group>
 
+        {ingredients.length > 0 && (
+          <Box maw="80%" mt="sm" mb="xl">
+            <Text mt="md" size="sm" fw={500}>
+              Ingredients:
+            </Text>
+            <List pl="xl">
+              {ingredients.map((ingredient, index) => (
+                <ListItem key={index}>
+                  <Group gap="xl">
+                    <Text size="sm">{ingredient}</Text>
+
+                    <ActionIcon
+                      variant="outline"
+                      size="sm"
+                      radius="0"
+                      onClick={() => handleRemoveIngredient(index)}
+                    >
+                      <IconMinus size="1em" />
+                    </ActionIcon>
+                  </Group>
+                </ListItem>
+              ))}
+            </List>
+          </Box>
+        )}
+
+        <Textarea
+          label="Recipe instructions"
+          placeholder="Enter the instructions for preparation and implementation"
+          minRows={2}
+          maxRows={20}
+          mb="sm"
+          {...form.getInputProps("instructions")}
+          required
+        />
+
+        <Flex gap="md" justify="space-between" align="flex-start" mb="sm">
           <TextInput
-            label="Cuisine"
-            placeholder="Cuisine"
-            {...form.getInputProps("cuisine")}
+            label="Prep Time"
+            placeholder="Preparation time in minutes"
+            {...form.getInputProps("prepTimeMinutes")}
+            style={{ flex: 1 }}
+          />
+          <TextInput
+            label="Cook Time"
+            placeholder="Cook time in minutes"
+            {...form.getInputProps("cookTimeMinutes")}
             style={{ flex: 1 }}
           />
         </Flex>
+
+        <Flex gap="md" justify="space-between" align="flex-start" mb="sm">
+          <TextInput
+            label="Servings"
+            placeholder="Servings"
+            {...form.getInputProps("servings")}
+            style={{ flex: 1 }}
+          />
+          <TextInput
+            label="Calories"
+            placeholder="Calories per serving"
+            {...form.getInputProps("caloriesPerServing")}
+            style={{ flex: 1 }}
+          />
+        </Flex>
+
+        <Flex gap="md" justify="space-between" align="flex-start" mb="sm">
+          <TextInput
+            label="Cuisine"
+            placeholder="Nationality of the cuisine"
+            {...form.getInputProps("cuisine")}
+            style={{ flex: 1 }}
+          />
+          <Select
+            label="Difficulty"
+            placeholder="Please select the difficulty"
+            data={["Easy", "Medium", "Hard", "Master Chef", "Michelin star"]}
+            mb="sm"
+            {...form.getInputProps("difficulty")}
+            required
+            style={{ flex: 1 }}
+          />
+        </Flex>
+
+        <TagsInput
+          label="Tags"
+          placeholder="Please fill in the tags and press Enter"
+          {...form.getInputProps("tags")}
+          style={{ flex: 1 }}
+        />
 
         <FileInput
           label="Images"
@@ -208,7 +345,6 @@ export default function RecipeCreateForm() {
           onChange={handleImageChange}
           error={form.errors.imagesFiles}
         />
-
         {previewUrls.map((url, index) => (
           <Image
             key={index}
@@ -228,7 +364,7 @@ export default function RecipeCreateForm() {
           tt="uppercase"
           disabled={!form.isValid()}
         >
-          Create Post
+          Create Recipe
         </Button>
 
         {articleNotification && (
@@ -246,7 +382,7 @@ export default function RecipeCreateForm() {
             <Text>{articleNotification.message}</Text>
           </Notification>
         )}
-        {articleError && (
+        {/* {articleError && (
           <Notification
             icon={<IconXboxXFilled size={24} />}
             title="Error"
@@ -255,7 +391,7 @@ export default function RecipeCreateForm() {
           >
             {articleError}
           </Notification>
-        )}
+        )} */}
       </form>
     </Paper>
   );

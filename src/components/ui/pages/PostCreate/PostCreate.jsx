@@ -214,7 +214,7 @@ export default function PostCreateForm() {
             src={url}
             alt={`Preview ${index + 1}`}
             height={300}
-            fit="cover"
+            fit="contain"
             mb="sm"
           />
         ))}

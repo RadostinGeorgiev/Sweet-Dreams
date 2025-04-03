@@ -39,7 +39,11 @@ export default function BlogCard({ article, layout = "vertical" }) {
       className={`${styles.card} ${styles[layout]}`}
     >
       <Box className={styles["item-image"]}>
-        <Image src={article?.images?.[0]} className={styles.image} />
+        <Image
+          src={article?.images?.[0]}
+          fit="cover"
+          className={styles.image}
+        />
         <Text span size="md" tt="uppercase" c="dimmed" className={styles.date}>
           {`${formattedDate} ――`}
         </Text>

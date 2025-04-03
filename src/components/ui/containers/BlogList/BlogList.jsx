@@ -38,7 +38,7 @@ export default function BlogList() {
     endpoints.blog,
     null,
     null,
-    "author=_ownerId:authors",
+    "author=_ownerId:authors@_ownerId",
     sortValue,
     1,
     pageSize
