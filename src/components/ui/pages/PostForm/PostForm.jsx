@@ -23,6 +23,7 @@ import { useForm } from "@mantine/form";
 import {
   IconCircleCheckFilled,
   IconMinus,
+  IconX,
   IconXboxXFilled,
 } from "@tabler/icons-react";
 
@@ -201,6 +202,20 @@ export default function PostForm({ isEdited }) {
       mt="lg"
       style={{ maxWidth: 600, margin: "auto", position: "relative" }}
     >
+      <Button
+        variant="subtle"
+        color="gray"
+        onClick={() => navigate("/blog")}
+        style={{
+          position: "absolute",
+          top: 10,
+          right: 10,
+          zIndex: 1,
+        }}
+      >
+        <IconX size={18} />
+      </Button>
+
       <LoadingOverlay visible={isUploading} />
       <Title align="center" mb="md">
         {`${isEdited ? "Edit" : "Create"} Blog Post`}
