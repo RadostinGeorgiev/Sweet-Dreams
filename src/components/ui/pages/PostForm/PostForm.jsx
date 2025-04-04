@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useLocation, useNavigate } from "react-router";
+import { useNavigate, useLocation } from "react-router";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { storage } from "../../../../firebase";
 
@@ -44,12 +44,12 @@ const schema = z.object({
     message: "The content of the post must be at least 6 characters",
   }),
   imagesFiles: z
-    .array(z.union([z.instanceof(File), z.string().url()])) // Приема File или валиден URL
+    .array(z.union([z.instanceof(File), z.string().url()]))
     .min(1, "At least one image is required")
     .refine(
       (files) =>
         files.every((file) => {
-          if (typeof file === "string") return true; // URL е валиден
+          if (typeof file === "string") return true;
           return (
             file.size <= MAX_FILE_SIZE &&
             ACCEPTED_IMAGE_TYPES.includes(file.type)
@@ -72,7 +72,7 @@ export default function PostForm({ isEdited }) {
   const data = location.state?.article;
 
   if (isEdited && !data) {
-    navigate("/recipes");
+    navigate("/blog");
   }
 
   const { error: createError, create: createArticle } = useCreateItem(
@@ -91,6 +91,12 @@ export default function PostForm({ isEdited }) {
     },
     validate: zodResolver(schema),
   });
+
+  useEffect(() => {
+    if (isEdited && data?.images) {
+      setPreviewUrls(data.images);
+    }
+  }, [isEdited, data]);
 
   const handleImageChange = (newFiles) => {
     if (!newFiles) return;
@@ -165,15 +171,13 @@ export default function PostForm({ isEdited }) {
         reviewCount: isEdited ? data?.reviewCount : 0,
       };
 
-      console.log(articleData);
-
       const result = isEdited
         ? await editArticle(data._id, articleData)
         : await createArticle(articleData);
 
       if (result) {
         const notification = {
-          title: "Successfuly create",
+          title: `Successfuly ${isEdited ? "update" : "create"}`,
           message: `The article ${result.title} was ${
             isEdited ? "updated" : "created"
           } sucessfuly!`,
@@ -187,12 +191,6 @@ export default function PostForm({ isEdited }) {
       setIsUploading(false);
     }
   };
-
-  useEffect(() => {
-    if (isEdited && data?.images) {
-      setPreviewUrls(data.images);
-    }
-  }, [isEdited, data]);
 
   return (
     <Paper
@@ -257,7 +255,7 @@ export default function PostForm({ isEdited }) {
         <Textarea
           label="Post content"
           placeholder="Enter the content of the post"
-          minRows={2}
+          minRows={3}
           maxRows={20}
           mb="sm"
           {...form.getInputProps("content")}

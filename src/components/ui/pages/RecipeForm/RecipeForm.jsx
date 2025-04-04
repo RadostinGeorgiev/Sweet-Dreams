@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { useNavigate } from "react-router";
+import { useEffect, useState } from "react";
+import { useNavigate, useLocation } from "react-router";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { storage } from "../../../../firebase";
 
@@ -36,7 +36,7 @@ import {
 import { zodResolver } from "mantine-form-zod-resolver";
 import { z } from "zod";
 
-import { useCreateItem } from "../../../../hooks/useItems";
+import { useCreateItem, useEditItem } from "../../../../hooks/useItems";
 import { endpoints } from "../../../../../config";
 
 const MAX_FILE_SIZE = 1024 * 1024; // 1MB
@@ -50,20 +50,25 @@ const schema = z.object({
     message: "The description of the recipe must be at least 6 characters",
   }),
   imagesFiles: z
-    .array(z.instanceof(File))
+    .array(z.union([z.instanceof(File), z.string().url()]))
     .min(1, "At least one image is required")
     .refine(
-      (files) => files.every((file) => file.size <= MAX_FILE_SIZE),
-      "File must be less than 1MB"
-    )
-    .refine(
       (files) =>
-        files.every((file) => ACCEPTED_IMAGE_TYPES.includes(file.type)),
-      "Only .jpg, .png, .webp allowed"
+        files.every((file) => {
+          if (typeof file === "string") return true;
+          return (
+            file.size <= MAX_FILE_SIZE &&
+            ACCEPTED_IMAGE_TYPES.includes(file.type)
+          );
+        }),
+      {
+        message:
+          "Invalid images - must be either existing URLs or valid new files (max 1MB, only .jpg, .png, .webp)",
+      }
     ),
 });
 
-export default function RecipeForm() {
+export default function RecipeForm({ isEdited }) {
   const [isUploading, setIsUploading] = useState(false);
   const [previewUrls, setPreviewUrls] = useState([]);
   const [recipeNotification, setRecipeNotification] = useState(null);
@@ -71,30 +76,48 @@ export default function RecipeForm() {
   const [ingredient, setIngredient] = useState("");
 
   const navigate = useNavigate();
+  const location = useLocation();
+  const data = location.state?.recipe;
+
+  if (isEdited && !data) {
+    navigate("/recipes");
+  }
+
+  const { error: createError, create: createRecipe } = useCreateItem(
+    endpoints.recipes
+  );
+  const { error: editError, edit: editRecipe } = useEditItem(endpoints.recipes);
 
   const form = useForm({
     initialValues: {
-      name: "",
-      category: [],
-      description: [],
-      ingredients: [],
-      instructions: [],
-      prepTimeMinutes: 0,
-      cookTimeMinutes: 0,
-      servings: 0,
-      caloriesPerServing: 0,
-      cuisine: "",
-      difficulty: "",
-      tags: [],
-
-      imagesFiles: [],
+      name: data?.name || "",
+      category: data?.category || [],
+      description: data?.description?.join("\n") || [],
+      ingredients: data?.ingredients?.join("\n") || [],
+      instructions: data?.instructions?.join("\n") || [],
+      prepTimeMinutes: data?.prepTimeMinutes || 0,
+      cookTimeMinutes: data?.cookTimeMinutes || 0,
+      servings: data?.servings || 0,
+      caloriesPerServing: data?.caloriesPerServing || 0,
+      cuisine: data?.cuisine || "",
+      difficulty: data?.difficulty || "",
+      tags: data?.tags || [],
+      imagesFiles: data?.images || [],
     },
     validate: zodResolver(schema),
   });
 
-  const { error: recipeError, create: createRecipe } = useCreateItem(
-    endpoints.recipes
-  );
+  useEffect(() => {
+    if (isEdited && data?.ingredients) {
+      setIngredients(data.ingredients);
+    }
+  }, [isEdited, data]);
+
+  useEffect(() => {
+    if (isEdited && data?.images) {
+      setPreviewUrls(data.images);
+    }
+  }, [isEdited, data]);
 
   const handleAddIngredient = () => {
     if (ingredient.trim()) {
@@ -107,16 +130,27 @@ export default function RecipeForm() {
     setIngredients(ingredients.filter((_, i) => i !== index));
   };
 
-  const handleImageChange = (files) => {
-    form.setFieldValue("imagesFiles", files || []);
-    if (files) {
-      setPreviewUrls(files.map((file) => URL.createObjectURL(file)));
-    } else {
-      setPreviewUrls([]);
-    }
+  const handleImageChange = (newFiles) => {
+    if (!newFiles) return;
+
+    const validNewFiles = Array.from(newFiles).filter(
+      (file) => file instanceof File
+    );
+
+    const allFiles = [
+      ...form.values.imagesFiles.filter((file) => typeof file === "string"),
+      ...validNewFiles,
+    ];
+
+    form.setFieldValue("imagesFiles", allFiles);
+
+    const urls = allFiles.map((file) =>
+      typeof file === "string" ? file : URL.createObjectURL(file)
+    );
+    setPreviewUrls(urls);
   };
 
-  const uploadImages = async (files) => {
+  const handleUploadImages = async (files) => {
     return Promise.all(
       files.map(async (file) => {
         const storageRef = ref(storage, `blog/${Date.now()}_${file.name}`);
@@ -126,13 +160,33 @@ export default function RecipeForm() {
     );
   };
 
+  const handleRemoveImage = (index) => {
+    const updatedFiles = [...form.values.imagesFiles];
+    updatedFiles.splice(index, 1);
+
+    form.setFieldValue("imagesFiles", updatedFiles);
+    setPreviewUrls(
+      updatedFiles.map((file) =>
+        typeof file === "string" ? file : URL.createObjectURL(file)
+      )
+    );
+  };
+
   const handleSubmit = async (values) => {
     setIsUploading(true);
 
     try {
-      const imagesUrls = await uploadImages(values.imagesFiles);
+      const newFiles = values.imagesFiles.filter(
+        (file) => file instanceof File
+      );
+      const existingUrls = values.imagesFiles.filter(
+        (file) => typeof file === "string"
+      );
 
-      const data = {
+      const uploadedUrls =
+        newFiles.length > 0 ? await handleUploadImages(newFiles) : [];
+
+      const recipeData = {
         name: values.name,
         category: values.category,
         description: values.description
@@ -150,22 +204,24 @@ export default function RecipeForm() {
         cuisine: values.cuisine,
         difficulty: values.difficulty,
         tags: values.tags || null,
-        images: imagesUrls,
-        rating: 0,
-        views: 0,
-        reactions: {
-          likes: 0,
-          dislikes: 0,
-        },
-        reviewCount: 0,
+        images: [...existingUrls, ...uploadedUrls],
+
+        rating: isEdited ? data?.rating : 0,
+        views: isEdited ? data?.views : 0,
+        reactions: isEdited ? data?.reactions : { likes: 0, dislikes: 0 },
+        reviewCount: isEdited ? data?.reviewCount : 0,
       };
 
-      const newRecipe = await createRecipe(data);
+      const result = isEdited
+        ? await editRecipe(data._id, recipeData)
+        : await createRecipe(recipeData);
 
-      if (newRecipe) {
+      if (result) {
         const notification = {
-          title: "Successfuly create",
-          message: `The recipe ${newRecipe.name} was created sucessfuly!`,
+          title: `Successfuly ${isEdited ? "update" : "create"}`,
+          message: `The recipe ${result.title} was ${
+            isEdited ? "updated" : "created"
+          } sucessfuly!`,
         };
         setRecipeNotification(notification);
         form.reset();
@@ -196,7 +252,7 @@ export default function RecipeForm() {
       <LoadingOverlay visible={isUploading} />
 
       <Title align="center" mb="md">
-        Create Recipe
+        {`${isEdited ? "Edit" : "Create"} Recipe`}
       </Title>
       <form onSubmit={form.onSubmit(handleSubmit)}>
         <TextInput
@@ -226,7 +282,7 @@ export default function RecipeForm() {
         <Textarea
           label="Recipe description"
           placeholder="Enter the short description of the recipe"
-          minRows={2}
+          minRows={3}
           maxRows={20}
           mb="sm"
           {...form.getInputProps("description")}
@@ -281,7 +337,7 @@ export default function RecipeForm() {
         <Textarea
           label="Recipe instructions"
           placeholder="Enter the instructions for preparation and implementation"
-          minRows={2}
+          minRows={3}
           maxRows={20}
           mb="sm"
           {...form.getInputProps("instructions")}
@@ -349,19 +405,28 @@ export default function RecipeForm() {
           accept="image/*"
           multiple
           required
-          value={form.values.imagesFiles}
+          value={form.values.imagesFiles.filter((f) => f instanceof File)}
           onChange={handleImageChange}
           error={form.errors.imagesFiles}
         />
         {previewUrls.map((url, index) => (
-          <Image
-            key={index}
-            src={url}
-            alt={`Preview ${index + 1}`}
-            height={300}
-            fit="cover"
-            mb="sm"
-          />
+          <Flex align="center" gap="lg" key={index}>
+            <Image
+              src={typeof url === "string" ? url : URL.createObjectURL(url)}
+              alt={`Preview ${index + 1}`}
+              height={300}
+              fit="contain"
+              mb="sm"
+            />
+            <ActionIcon
+              variant="outline"
+              size="sm"
+              radius="0"
+              onClick={() => handleRemoveImage(index)}
+            >
+              <IconMinus size="1em" />
+            </ActionIcon>
+          </Flex>
         ))}
 
         <Button
@@ -372,7 +437,7 @@ export default function RecipeForm() {
           tt="uppercase"
           disabled={!form.isValid()}
         >
-          Create Recipe
+          {isEdited ? "Update Recipe" : "Create Recipe"}
         </Button>
 
         {recipeNotification && (
@@ -390,14 +455,14 @@ export default function RecipeForm() {
             <Text>{recipeNotification.message}</Text>
           </Notification>
         )}
-        {recipeError && (
+        {(createError || editError) && (
           <Notification
             icon={<IconXboxXFilled size={24} />}
             title="Error"
             color="red"
             mt="md"
           >
-            {recipeError}
+            {createError || editError}
           </Notification>
         )}
       </form>
