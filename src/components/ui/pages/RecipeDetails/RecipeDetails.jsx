@@ -22,10 +22,18 @@ import {
   IconListNumbers,
   IconPencilCog,
   IconTrash,
+  IconStar,
+  IconEye,
+  IconThumbUp,
+  IconThumbDown,
 } from "@tabler/icons-react";
 
 import { useAuth } from "../../../../context/AuthContext";
-import { useGetItem, useDeleteItem } from "../../../../hooks/useItems";
+import {
+  useGetItem,
+  useDeleteItem,
+  useUpdateItem,
+} from "../../../../hooks/useItems";
 import { endpoints } from "../../../../../config";
 
 import PostTitle from "../../elements/PostTitle/PostTitle";
@@ -34,14 +42,17 @@ import Loading from "../../elements/Loading";
 import Comments from "../../layout/Comments";
 
 import styles from "./RecipeDetails.module.scss";
+import { useEffect, useState } from "react";
 
 export default function RecipeDetails() {
-  const { user } = useAuth();
+  const { user, isAuthenticated } = useAuth();
   const { id } = useParams();
   const navigate = useNavigate();
+  const [formatedDate, setFormatedDate] = useState("");
 
   const {
     data: recipe,
+    setData: setRecipe,
     loading: recipeLoading,
     error: recipeError,
   } = useGetItem(
@@ -52,21 +63,51 @@ export default function RecipeDetails() {
   );
 
   const { del: deleteRecipe } = useDeleteItem(endpoints.recipes);
+  const { update: updateRecipe } = useUpdateItem(endpoints.recipes);
 
-  if (recipeLoading) return <Loading />;
-  if (recipeError) return <div>Error: {recipeError}</div>;
+  useEffect(() => {
+    if (!recipe) return;
 
-  if (recipe.length === 0) return;
+    const isoDate = new Date(recipe?._createdOn);
+    const formatter = new Intl.DateTimeFormat("en-US", { month: "short" });
 
-  const isoDate = new Date(recipe?._createdOn);
-  const formatter = new Intl.DateTimeFormat("en-US", { month: "short" });
+    const date = {
+      day: isoDate.getDate(),
+      month: formatter.format(isoDate),
+    };
 
-  const date = {
-    day: isoDate.getDate(),
-    month: formatter.format(isoDate),
+    setFormatedDate(date);
+  }, [recipe?._createdOn]);
+
+  useEffect(() => {
+    if (!recipe?._id) return;
+
+    const updateViews = async () => {
+      try {
+        const result = await updateRecipe(recipe._id, {
+          views: recipe.views + 1,
+        });
+        setRecipe(result);
+      } catch (error) {
+        console.error("View count update failed:", error);
+      }
+    };
+
+    updateViews();
+  }, [recipe?._id]);
+
+  const calculateRating = (reactions) => {
+    const total = reactions.likes + reactions.dislikes;
+    return total > 0
+      ? Math.round(((6 * reactions.likes) / total) * 10) / 10
+      : 0;
   };
 
   const isOwner = user?._id === recipe?._ownerId;
+
+  if (recipeLoading) return <Loading />;
+  if (recipeError) return <div>Error: {recipeError}</div>;
+  if (recipe.length === 0) return;
 
   function handleEditClick() {
     navigate(`/recipes/edit/${recipe._id}`, {
@@ -78,6 +119,26 @@ export default function RecipeDetails() {
     const result = await deleteRecipe(id);
     console.log(`Recipe ${result.name} was deleted successfully`);
     navigate("/recipes");
+  }
+
+  async function handleReaction(reaction) {
+    const updatedReactions = {
+      ...recipe.reactions,
+      [reaction]: recipe.reactions[reaction] + 1,
+    };
+
+    const updatedRating = calculateRating(updatedReactions);
+    const updatedData = { reactions: updatedReactions, rating: updatedRating };
+
+    setRecipe((prev) => ({ ...prev, ...updatedData }));
+
+    try {
+      const result = await updateRecipe(id, updatedData);
+      setRecipe((prev) => ({ ...prev, ...result }));
+    } catch (error) {
+      setRecipe((prev) => ({ ...prev }));
+      console.error("Update failed:", error);
+    }
   }
 
   return (
@@ -105,7 +166,7 @@ export default function RecipeDetails() {
               wrap="wrap"
             >
               <MetaDate
-                date={date}
+                date={formatedDate}
                 size="large"
                 color="--color-heading"
                 background="--background-color-gray"
@@ -240,6 +301,37 @@ export default function RecipeDetails() {
             </List>
           </Group>
         </Stack>
+
+        <Group justify="flex-end" gap="lg" c="dimmed">
+          <Group gap="xs" className={styles.statistics}>
+            <IconStar size={24} />
+            <Text size="sm">{recipe.rating.toFixed(2)}</Text>
+          </Group>
+          <Group gap="xs" className={styles.statistics}>
+            <IconEye size={24} />
+            <Text size="sm">{recipe.views}</Text>
+          </Group>
+          <Button
+            variant="subtle"
+            size="compact-md"
+            leftSection={<IconThumbUp size={18} />}
+            onClick={() => handleReaction("likes")}
+            className={styles.reactions}
+            disabled={!isAuthenticated}
+          >
+            {recipe.reactions.likes}
+          </Button>
+          <Button
+            variant="subtle"
+            size="compact-md"
+            leftSection={<IconThumbDown size={18} />}
+            onClick={() => handleReaction("dislikes")}
+            className={styles.reactions}
+            disabled={!isAuthenticated}
+          >
+            {recipe.reactions.dislikes}
+          </Button>
+        </Group>
 
         {isOwner && (
           <Group justify="flex-end" gap="md" mt="xl">

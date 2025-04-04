@@ -18,8 +18,8 @@ import BlogList from "./ui/containers/BlogList/BlogList";
 import PostDetails from "./ui/pages/PostDetails/PostDetails";
 import Recipes from "./ui/layout/Recipes";
 import RecipeDetails from "./ui/pages/RecipeDetails/RecipeDetails";
-import CookingTips from "./CookingTips";
-import ProjectDescription from "./ui/pages/ProjectDescription";
+// import CookingTips from "./CookingTips";
+// import ProjectDescription from "./ui/pages/ProjectDescription";
 import NotFoundPage from "./ui/pages/NotFoundPage/NotFoundPage";
 import PostForm from "./ui/pages/PostForm/PostForm";
 import RecipeForm from "./ui/pages/RecipeForm/RecipeForm";
@@ -54,8 +54,8 @@ export default function App() {
                 element={<RecipeForm isEdited />}
               />
 
-              <Route path="/tips" element={<CookingTips />} />
-              <Route path="/project" element={<ProjectDescription />} />
+              {/* <Route path="/tips" element={<CookingTips />} />
+              <Route path="/project" element={<ProjectDescription />} /> */}
 
               <Route path="*" element={<NotFoundPage />} />
             </Routes>

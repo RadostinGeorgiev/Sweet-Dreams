@@ -35,7 +35,7 @@ import Loading from "../../elements/Loading";
 import styles from "./PostDetails.module.scss";
 
 export default function PostDetails() {
-  const { user } = useAuth();
+  const { user, isAuthenticated } = useAuth();
   const { id } = useParams();
   const navigate = useNavigate();
   const [formatedDate, setFormatedDate] = useState("");
@@ -61,18 +61,6 @@ export default function PostDetails() {
       }).format(new Date(article?._createdOn))
     );
   }, [article?._createdOn]);
-  console.log("id:", id);
-  console.log("article", article);
-  console.log("article", article?._createdOn);
-
-  const isOwner = user?._id === article?._ownerId;
-
-  const calculateRating = (reactions) => {
-    const total = reactions.likes + reactions.dislikes;
-    return total > 0
-      ? Math.round(((6 * reactions.likes) / total) * 10) / 10
-      : 0;
-  };
 
   useEffect(() => {
     if (!article?._id) return;
@@ -90,6 +78,15 @@ export default function PostDetails() {
 
     updateViews();
   }, [article?._id]);
+
+  const calculateRating = (reactions) => {
+    const total = reactions.likes + reactions.dislikes;
+    return total > 0
+      ? Math.round(((6 * reactions.likes) / total) * 10) / 10
+      : 0;
+  };
+
+  const isOwner = user?._id === article?._ownerId;
 
   if (postLoading) return <Loading />;
   if (postError) return <div>Error: {postError}</div>;
@@ -180,6 +177,7 @@ export default function PostDetails() {
             leftSection={<IconThumbUp size={18} />}
             onClick={() => handleReaction("likes")}
             className={styles.reactions}
+            disabled={!isAuthenticated}
           >
             {article.reactions.likes}
           </Button>
@@ -189,6 +187,7 @@ export default function PostDetails() {
             leftSection={<IconThumbDown size={18} />}
             onClick={() => handleReaction("dislikes")}
             className={styles.reactions}
+            disabled={!isAuthenticated}
           >
             {article.reactions.dislikes}
           </Button>
