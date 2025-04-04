@@ -6,7 +6,7 @@ import { endpoints } from "../../../../config";
 
 import ItemsMasonry from "../containers/ItemsMasonry/ItemsMasonry";
 import ItemsCarousel from "../elements/ItemsCarousel/ItemsCarousel";
-import GalleryCarousel from "../elements/GalleryCarousel";
+import GalleryCarousel from "../elements/GalleryCarousel/GalleryCarousel";
 import Loading from "../elements/Loading";
 
 export default function HomePage() {
@@ -74,7 +74,7 @@ export default function HomePage() {
         onPageChange={setPage}
       />
 
-      <Container size="xl" mt="xl">
+      <Container size="xl" mt="5em">
         <ItemsMasonry subject={recipes} />
       </Container>
       <GalleryCarousel images={images} />

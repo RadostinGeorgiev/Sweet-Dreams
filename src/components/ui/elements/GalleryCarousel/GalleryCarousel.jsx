@@ -2,10 +2,22 @@ import { Carousel } from "@mantine/carousel";
 import { Image } from "@mantine/core";
 
 import { Link } from "react-router";
+import styles from "./GalleryCarousel.module.scss";
 
 export default function GalleryCarousel({ images }) {
   return (
-    <Carousel height={300} slideSize="md" slideGap="xs" loop dragFree>
+    <Carousel
+      className={styles.root}
+      classNames={{
+        controls: styles.controls,
+        control: styles.control,
+      }}
+      height={300}
+      slideSize="md"
+      slideGap="xs"
+      loop
+      dragFree
+    >
       {images?.map((src) => {
         return (
           <Carousel.Slide key={src._id}>

@@ -27,7 +27,7 @@ export default function RecipeCard({ recipe, layout = "vertical" }) {
       className={`${styles.card} ${styles[layout]}`}
     >
       <Box className={styles["item-image"]}>
-        <Image className={styles.image} src={recipe.images[0]} />
+        <Image className={styles.image} src={recipe.images[0]} fit="cover" />
       </Box>
 
       <Flex gap="0" className={styles["item-text"]}>

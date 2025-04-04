@@ -1,0 +1,27 @@
+.controls {
+  transition: opacity 500ms ease;
+  opacity: 0;
+
+  &[data-inactive] {
+    opacity: 1;
+    cursor: default;
+  }
+
+  .control {
+    --carousel-control-size: calc(3rem * var(--mantine-scale));
+    background: var(--background-color-hero);
+    color: white;
+    border: none;
+    border-radius: 0;
+    size: 4em;
+    z-index: 202;
+  }
+}
+
+.root {
+  &:hover {
+    .controls {
+      opacity: 1;
+    }
+  }
+}

@@ -29,7 +29,11 @@ export default function ItemsCarousel({ subject, endpoint }) {
 
   return (
     <Carousel
-      classNames={styles}
+      className={styles.root}
+      classNames={{
+        controls: styles.controls,
+        control: styles.control,
+      }}
       height="60vh"
       type="slide"
       slideSize={{ base: "100%", "300px": "50%", "500px": "33.333333%" }}
@@ -92,7 +96,7 @@ function CarouselItem({ item, size }) {
 
   return (
     <Card shadow="sm" padding="sm" radius="0">
-      <Card.Section className={`${styles.item}`}>
+      <Card.Section className={styles.item}>
         <BackgroundImage
           src={item.images[0]}
           className={`${styles[size]} ${styles.item}`}

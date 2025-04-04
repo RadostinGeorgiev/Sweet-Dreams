@@ -34,7 +34,7 @@ export default function BlogCard({ article, layout = "vertical" }) {
       gap="md"
       align="stretch"
       w="100%"
-      p="md"
+      pr="md"
       radius="0"
       className={`${styles.card} ${styles[layout]}`}
     >
