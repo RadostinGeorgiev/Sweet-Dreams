@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router";
 
 import {
@@ -18,8 +19,6 @@ import {
   IconThumbDown,
   IconPencilCog,
   IconTrash,
-  // IconArrowLeft,
-  // IconArrowRight,
 } from "@tabler/icons-react";
 
 import { useAuth } from "../../../../context/AuthContext";
@@ -39,6 +38,7 @@ export default function PostDetails() {
   const { user } = useAuth();
   const { id } = useParams();
   const navigate = useNavigate();
+  const [formatedDate, setFormatedDate] = useState("");
 
   const {
     data: article,
@@ -50,18 +50,50 @@ export default function PostDetails() {
   const { del: deleteArticle } = useDeleteItem(endpoints.blog);
   const { update: updateArticle } = useUpdateItem(endpoints.blog);
 
-  if (postLoading) return <Loading />;
-  if (postError) return <div>Error: {postError}</div>;
+  useEffect(() => {
+    if (!article) return;
 
-  if (article.length === 0) return;
-
-  const formattedDate = new Intl.DateTimeFormat("en-US", {
-    month: "long",
-    day: "numeric",
-    year: "numeric",
-  }).format(new Date(article._createdOn));
+    setFormatedDate(
+      new Intl.DateTimeFormat("en-US", {
+        month: "long",
+        day: "numeric",
+        year: "numeric",
+      }).format(new Date(article?._createdOn))
+    );
+  }, [article?._createdOn]);
+  console.log("id:", id);
+  console.log("article", article);
+  console.log("article", article?._createdOn);
 
   const isOwner = user?._id === article?._ownerId;
+
+  const calculateRating = (reactions) => {
+    const total = reactions.likes + reactions.dislikes;
+    return total > 0
+      ? Math.round(((6 * reactions.likes) / total) * 10) / 10
+      : 0;
+  };
+
+  useEffect(() => {
+    if (!article?._id) return;
+
+    const updateViews = async () => {
+      try {
+        const result = await updateArticle(article._id, {
+          views: article.views + 1,
+        });
+        setArticle(result);
+      } catch (error) {
+        console.error("View count update failed:", error);
+      }
+    };
+
+    updateViews();
+  }, [article?._id]);
+
+  if (postLoading) return <Loading />;
+  if (postError) return <div>Error: {postError}</div>;
+  if (article.length === 0) return;
 
   function handleEditClick() {
     navigate(`/blog/edit/${article._id}`, {
@@ -81,26 +113,14 @@ export default function PostDetails() {
       [reaction]: article.reactions[reaction] + 1,
     };
 
-    const updatedRating =
-      Math.round(
-        (10 * (6 * article.reactions.likes)) /
-          (article.reactions.likes + article.reactions.dislikes)
-      ) / 10;
+    const updatedRating = calculateRating(updatedReactions);
+    const updatedData = { reactions: updatedReactions, rating: updatedRating };
 
-    const updatedData = {
-      rating: updatedRating,
-      reactions: updatedReactions,
-    };
-
-    setArticle((prev) => ({
-      ...prev,
-      ...updatedData,
-    }));
+    setArticle((prev) => ({ ...prev, ...updatedData }));
 
     try {
       const result = await updateArticle(id, updatedData);
       setArticle((prev) => ({ ...prev, ...result }));
-      console.log("article:", result);
     } catch (error) {
       setArticle((prev) => ({ ...prev }));
       console.error("Update failed:", error);
@@ -114,7 +134,7 @@ export default function PostDetails() {
       <Container size="md" py="xl">
         <Group justify="space-between">
           <Text span size="md" tt="uppercase" c="dimmed">
-            {`${formattedDate}`}
+            {`${formatedDate}`}
           </Text>
           <List className={styles.widget}>
             {article.category.map((category, index) => (

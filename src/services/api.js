@@ -33,7 +33,9 @@ async function request(method = "GET", url, data, signal) {
     console.error("Error parsing user data:", error);
   }
 
-  if (cachedUserData && cachedUserData.accessToken) {
+  if (method === "PATCH") {
+    options.headers["X-Admin"] = "true";
+  } else if (cachedUserData && cachedUserData.accessToken) {
     options.headers["X-Authorization"] = cachedUserData.accessToken;
   }
 
