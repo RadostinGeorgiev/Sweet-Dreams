@@ -67,7 +67,7 @@ export const useGetItem = (
     [selectValues, relation]
   );
 
-  const { data, loading, error, execute } = useFetch(getItemById);
+  const { data, setData, loading, error, execute } = useFetch(getItemById);
 
   useEffect(() => {
     if (id) {
@@ -75,7 +75,7 @@ export const useGetItem = (
     }
   }, [endpoint, id, execute]);
 
-  return { data, loading, error };
+  return { data, setData, loading, error };
 };
 
 export const useCreateItem = (endpoint) => {
@@ -110,6 +110,23 @@ export const useEditItem = (endpoint) => {
   );
 
   return { data, editing: loading, error, edit };
+};
+
+export const useUpdateItem = (endpoint) => {
+  const editItem = useCallback(async (endpoint, id, item, signal) => {
+    return await api.patch(`${endpoint}/${id}`, item, signal);
+  }, []);
+
+  const { data, loading, error, execute } = useFetch(editItem);
+
+  const update = useCallback(
+    async (id, itemData) => {
+      return execute(endpoint, id, itemData);
+    },
+    [endpoint, execute]
+  );
+
+  return { data, editing: loading, error, update };
 };
 
 export const useDeleteItem = (endpoint) => {

@@ -23,7 +23,11 @@ import {
 } from "@tabler/icons-react";
 
 import { useAuth } from "../../../../context/AuthContext";
-import { useGetItem, useDeleteItem } from "../../../../hooks/useItems";
+import {
+  useGetItem,
+  useDeleteItem,
+  useUpdateItem,
+} from "../../../../hooks/useItems";
 import { endpoints } from "../../../../../config";
 
 import Comments from "../../layout/Comments";
@@ -38,11 +42,13 @@ export default function PostDetails() {
 
   const {
     data: article,
+    setData: setArticle,
     loading: postLoading,
     error: postError,
   } = useGetItem(endpoints.blog, id, null, "author=_ownerId:authors@_ownerId");
 
   const { del: deleteArticle } = useDeleteItem(endpoints.blog);
+  const { update: updateArticle } = useUpdateItem(endpoints.blog);
 
   if (postLoading) return <Loading />;
   if (postError) return <div>Error: {postError}</div>;
@@ -67,6 +73,38 @@ export default function PostDetails() {
     const result = await deleteArticle(id);
     console.log(`Article ${result.title} was deleted successfully`);
     navigate("/blog");
+  }
+
+  async function handleReaction(reaction) {
+    const updatedReactions = {
+      ...article.reactions,
+      [reaction]: article.reactions[reaction] + 1,
+    };
+
+    const updatedRating =
+      Math.round(
+        (10 * (6 * article.reactions.likes)) /
+          (article.reactions.likes + article.reactions.dislikes)
+      ) / 10;
+
+    const updatedData = {
+      rating: updatedRating,
+      reactions: updatedReactions,
+    };
+
+    setArticle((prev) => ({
+      ...prev,
+      ...updatedData,
+    }));
+
+    try {
+      const result = await updateArticle(id, updatedData);
+      setArticle((prev) => ({ ...prev, ...result }));
+      console.log("article:", result);
+    } catch (error) {
+      setArticle((prev) => ({ ...prev }));
+      console.error("Update failed:", error);
+    }
   }
 
   return (
@@ -107,23 +145,33 @@ export default function PostDetails() {
           ))}
         </Stack>
 
-        <Group justify="flex-end" gap="md" c="dimmed">
-          <Group gap="0">
-            <IconStar size={24} className={styles.icon} />
+        <Group justify="flex-end" gap="lg" c="dimmed">
+          <Group gap="xs" className={styles.statistics}>
+            <IconStar size={24} />
             <Text size="sm">{article.rating.toFixed(2)}</Text>
           </Group>
-          <Group gap="0">
-            <IconEye size={24} className={styles.icon} />
+          <Group gap="xs" className={styles.statistics}>
+            <IconEye size={24} />
             <Text size="sm">{article.views}</Text>
           </Group>
-          <Group gap="0">
-            <IconThumbUp size={24} className={styles.icon} />
-            <Text size="sm">{article.reactions.likes}</Text>
-          </Group>
-          <Group gap="0">
-            <IconThumbDown size={24} className={styles.icon} />
-            <Text size="sm">{article.reactions.dislikes}</Text>
-          </Group>
+          <Button
+            variant="subtle"
+            size="compact-md"
+            leftSection={<IconThumbUp size={18} />}
+            onClick={() => handleReaction("likes")}
+            className={styles.reactions}
+          >
+            {article.reactions.likes}
+          </Button>
+          <Button
+            variant="subtle"
+            size="compact-md"
+            leftSection={<IconThumbDown size={18} />}
+            onClick={() => handleReaction("dislikes")}
+            className={styles.reactions}
+          >
+            {article.reactions.dislikes}
+          </Button>
         </Group>
 
         {isOwner && (
