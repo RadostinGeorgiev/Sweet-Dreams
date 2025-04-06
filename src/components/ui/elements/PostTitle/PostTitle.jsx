@@ -10,7 +10,7 @@ export default function PostTitle({ item, variant, size }) {
         {item?.category[0]}
       </Text>
       <Title order={4} fw={400} className={`${styles.title}`}>
-        {item?.title}
+        {item?.name}
       </Title>
 
       <List className={styles.widget}>

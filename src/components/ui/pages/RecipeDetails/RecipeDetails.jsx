@@ -152,7 +152,7 @@ export default function RecipeDetails() {
           reviewCount: result.reviewCount,
         }));
       } catch (error) {
-        console.error("View count update failed:", error);
+        console.error("Reviews count update failed:", error);
       }
     },
     [recipe, updateRecipe]

@@ -24,12 +24,18 @@ export default function Header() {
   const location = useLocation();
 
   useEffect(() => {
-    const index = mainLinks.findIndex(
-      (item) => item.link === location.pathname
-    );
-    if (index !== -1) {
-      setActive(index);
+    const path = location.pathname;
+    let index = mainLinks.findIndex((link) => link.link === path);
+
+    if (index === -1) {
+      if (path.startsWith("/blog")) {
+        index = mainLinks.findIndex((link) => link.link === "/blog");
+      } else if (path.startsWith("/recipes")) {
+        index = mainLinks.findIndex((link) => link.link === "/recipes");
+      }
     }
+
+    setActive(index);
   }, [location.pathname]);
 
   const menuItems = mainLinks.map((item, index) => (
@@ -50,14 +56,7 @@ export default function Header() {
   return (
     <Container size="xl" mb="xl">
       <Group justify="space-between" align="center" mt="md">
-        <Image
-          h={60}
-          w="auto"
-          fit="fill"
-          src={logo}
-          alt="Logo"
-          className={styles.logo}
-        />
+        <Image h={60} w="auto" fit="fill" src={logo} alt="Logo" className={styles.logo} />
         <div
           style={{
             flex: 1,
