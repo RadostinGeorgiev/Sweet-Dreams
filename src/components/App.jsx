@@ -49,10 +49,7 @@ export default function App() {
               <Route path="/recipes" element={<Recipes />} />
               <Route path="/recipes/:id" element={<RecipeDetails />} />
               <Route path="/recipes/create" element={<RecipeForm />} />
-              <Route
-                path="/recipes/edit/:id"
-                element={<RecipeForm isEdited />}
-              />
+              <Route path="/recipes/edit/:id" element={<RecipeForm isEdited />} />
 
               {/* <Route path="/tips" element={<CookingTips />} />
               <Route path="/project" element={<ProjectDescription />} /> */}

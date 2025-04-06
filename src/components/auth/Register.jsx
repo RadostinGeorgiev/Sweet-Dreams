@@ -1,19 +1,25 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useNavigate, Link } from "react-router";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { storage } from "../../firebase";
 
 import { useForm } from "@mantine/form";
 import {
   Title,
   Paper,
+  Flex,
+  Group,
+  FileInput,
+  Avatar,
+  ActionIcon,
+  Text,
   TextInput,
   PasswordInput,
   Button,
   Checkbox,
   Notification,
-  Group,
-  Text,
 } from "@mantine/core";
-import { IconXboxXFilled, IconCircleCheckFilled } from "@tabler/icons-react";
+import { IconXboxXFilled, IconCircleCheckFilled, IconMinus } from "@tabler/icons-react";
 
 import { zodResolver } from "mantine-form-zod-resolver";
 import { z } from "zod";
@@ -24,16 +30,10 @@ import { useAuth } from "../../context/AuthContext";
 
 const schema = z
   .object({
-    firstName: z
-      .string()
-      .min(2, { message: "First name must be at least 2 characters" }),
-    lastName: z
-      .string()
-      .min(2, { message: "Last name must be at least 2 characters" }),
+    firstName: z.string().min(2, { message: "First name must be at least 2 characters" }),
+    lastName: z.string().min(2, { message: "Last name must be at least 2 characters" }),
     email: z.string().email({ message: "Invalid email" }),
-    password: z
-      .string()
-      .min(6, { message: "Password must be at least 6 characters" }),
+    password: z.string().min(6, { message: "Password must be at least 6 characters" }),
     confirmPassword: z.string(),
   })
   .refine((data) => data.password === data.confirmPassword, {
@@ -44,10 +44,12 @@ const schema = z
 export default function RegisterForm() {
   const { register, registerError } = useAuth();
   const [userNotification, setUserNotification] = useState(null);
+  const fileInputRef = useRef(null);
+  const [uploadError, setUploadError] = useState(null);
+  const [preview, setPreview] = useState(null);
+  const [avatarUrl, setAvatarUrl] = useState(null);
 
-  const { itemError: authorError, createItem: createAuthor } = useItemsCRUD(
-    endpoints.authors
-  );
+  const { itemError: authorError, createItem: createAuthor } = useItemsCRUD(endpoints.authors);
 
   const navigate = useNavigate();
 
@@ -64,6 +66,30 @@ export default function RegisterForm() {
     validate: zodResolver(schema),
   });
 
+  const handleImageChange = async (file) => {
+    if (!file) return;
+
+    try {
+      setUploadError(null);
+
+      const tempUrl = URL.createObjectURL(file);
+      setPreview(tempUrl);
+
+      const storageRef = ref(storage, `avatars/${Date.now()}_${file.name}`);
+      const snapshot = await uploadBytes(storageRef, file);
+      const downloadUrl = await getDownloadURL(snapshot.ref);
+
+      setAvatarUrl(downloadUrl);
+      setPreview(downloadUrl);
+    } catch (error) {
+      console.error("Upload failed:", error);
+      setUploadError(error.message || "Failed to upload image");
+      setPreview(null);
+    } finally {
+      if (fileInputRef.current) fileInputRef.current.value = "";
+    }
+  };
+
   const handleSubmit = async (values) => {
     const userCredentials = {
       firstName: values.firstName,
@@ -71,7 +97,7 @@ export default function RegisterForm() {
       email: values.email,
       password: values.password,
       subscribe: values.subscribe,
-      image: `/images/avatars/${Math.floor(Math.random() * 30) + 1}.jpg`,
+      image: avatarUrl || `/images/avatars/${Math.floor(Math.random() * 30) + 1}.jpg`,
     };
 
     const registeredUser = await register(userCredentials);
@@ -86,10 +112,8 @@ export default function RegisterForm() {
       image: registeredUser.image,
       role: "user",
     };
-    console.log("authorCredentials", authorCredentials);
 
     const newAuthor = await createAuthor(authorCredentials);
-    console.log("newAuthor", newAuthor);
 
     if (registeredUser && newAuthor) {
       const notification = {
@@ -102,13 +126,32 @@ export default function RegisterForm() {
   };
 
   return (
-    <Paper
-      withBorder
-      shadow="lg"
-      p="lg"
-      mt="lg"
-      style={{ maxWidth: 400, margin: "auto" }}
-    >
+    <Paper withBorder shadow="lg" p="lg" mt="lg" style={{ maxWidth: 400, margin: "auto" }}>
+      <Flex justify="center" align="flex-start" mb="md">
+        <FileInput
+          accept="image/png,image/jpeg"
+          onChange={handleImageChange}
+          ref={fileInputRef}
+          style={{ display: "none" }}
+        />
+        <Avatar
+          src={preview}
+          size={100}
+          radius="50%"
+          style={{ cursor: "pointer" }}
+          onClick={() => fileInputRef.current?.click()}
+        />
+        <ActionIcon variant="outline" size="xs" radius="0" onClick={() => setPreview(null)}>
+          <IconMinus size="0.6em" />
+        </ActionIcon>
+      </Flex>
+
+      {uploadError && (
+        <Text c="red" size="sm" ta="center" mb="md">
+          {uploadError}
+        </Text>
+      )}
+
       <Title align="center" mb="md">
         Register
       </Title>
@@ -128,12 +171,7 @@ export default function RegisterForm() {
           />
         </Group>
 
-        <TextInput
-          label="Email"
-          placeholder="Enter your email"
-          {...form.getInputProps("email")}
-          required
-        />
+        <TextInput label="Email" placeholder="Enter your email" {...form.getInputProps("email")} required />
 
         <PasswordInput
           label="Password"
@@ -158,14 +196,7 @@ export default function RegisterForm() {
           {...form.getInputProps("subscribe", { type: "checkbox" })}
         />
 
-        <Button
-          type="submit"
-          fullWidth
-          radius="0"
-          mt="lg"
-          tt="uppercase"
-          disabled={!form.isValid()}
-        >
+        <Button type="submit" fullWidth radius="0" mt="lg" tt="uppercase" disabled={!form.isValid()}>
           Register
         </Button>
 
@@ -202,7 +233,6 @@ export default function RegisterForm() {
           </Notification>
         )}
       </form>
-
       <Link to="/login" variant="body2">
         <Text mt="md" size="xs">
           Already have an account? Sign in
