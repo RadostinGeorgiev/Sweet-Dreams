@@ -2,14 +2,18 @@
 
 ![Sweet Dreams Logo](/public/images/logo1.png)
 
-Sweet Dreams is a modern web blog dedicated to the world of desserts. The platform offers a collection of delicious recipes and interesting articles related to desserts.
+Sweet Dreams is a React-based platform for sharing dessert recipes and culinary articles, featuring user authentication, content management, and community interactions. The platform offers a collection of delicious recipes and interesting articles related to desserts.
 
 ## 🔗 Links
 
 - [Live Version](https://sweet-dreams-react.netlify.app/)
 - [Server Code](https://github.com/RadostinGeorgiev/sweet-dreams-server)
 
-## 🚀 Features
+## 🛠 Key Features
+
+- **User Authentication**: Registration, login
+- **Interactive Elements**: Comments and rating system
+- **Image Uploads**: Firebase Storage integration
 
 ### 🔓 Public (Available to All Users)
 
@@ -76,16 +80,58 @@ npm start
 ## 📂 Project Structure
 
 ```
-src/
-├── components/       # React components
-├── context/          # Application contexts
-├── elements/         # Small UI elements
-├── hooks/            # Custom hooks
-├── layouts/          # Page layouts
-├── pages/            # Main pages
-├── services/         # Server communication
-├── utils/            # Helper functions
-└── App.js            # Main component
+Sweet-Dreams/
+├── public/ # Static assets
+│ ├── images/ # Application images
+│ └── index.html # Main HTML template
+│
+├── src/
+│ ├── assets/ # Shared assets
+│ │ └── styles/ # Global styles
+│ │
+│ ├── components/ # Reusable UI components
+│ │ ├── common/ # Generic components
+│ │ ├── forms/ # Form components
+│ │ └── ui/ # UI elements
+│ │
+│ ├── config/ # Configuration files
+│ │ └── endpoints.js # API endpoints
+│ │
+│ ├── context/ # React contexts
+│ │ ├── AuthContext.js # Authentication context
+│ │ └── DataContext.js # Data management context
+│ │
+│ ├── elements/ # Small UI elements
+│ │ ├── Loading.jsx # Loading spinner
+│ │ └── UserInfo.jsx # User profile component
+│ │
+│ ├── hooks/ # Custom hooks
+│ │ ├── useAuth.js # Auth related hooks
+│ │ └── useItemsCRUD.js # CRUD operations
+│ │
+│ ├── layout/ # Page layouts
+│ │ ├── Header.jsx # Navigation header
+│ │ └── Footer.jsx # Page footer
+│ │
+│ ├── pages/ # Application pages
+│ │ ├── auth/ # Authentication pages
+│ │ ├── blog/ # Blog related pages
+│ │ ├── recipes/ # Recipe related pages
+│ │ └── HomePage.jsx # Homepage
+│ │
+│ ├── services/ # API services
+│ │ ├── api.js # API configuration
+│ │ └── firebase.js # Firebase setup
+│ │
+│ ├── utils/ # Utility functions
+│ │ └── helpers.js # Helper functions
+│ │
+│ ├── App.js # Root component
+│ └── main.jsx # Application entry point
+│
+├── .env.example # Environment variables template
+├── package.json # Project dependencies
+└── README.md # Project documentation
 ```
 
 📸 Screenshots
