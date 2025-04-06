@@ -11,22 +11,22 @@ export const AuthProvider = ({ children }) => {
   );
 
   const {
-    execute: registerExecute,
     data: registerData,
     loading: registerLoading,
     error: registerError,
     setError: setRegisterError,
-  } = useFetch(authServices.register);
+    execute: registerExecute,
+  } = useFetch();
 
   const {
-    execute: loginExecute,
     data: loginData,
     loading: loginLoading,
     error: loginError,
     setError: setLoginError,
-  } = useFetch(authServices.login);
+    execute: loginExecute,
+  } = useFetch();
 
-  const { execute: logoutExecute } = useFetch(authServices.logout);
+  const { execute: logoutExecute } = useFetch();
 
   useEffect(() => {
     const updatedUser = authServices.getUserData();
@@ -36,7 +36,10 @@ export const AuthProvider = ({ children }) => {
 
   const register = async (credentials) => {
     try {
-      const response = await registerExecute(credentials);
+      const response = await registerExecute(() =>
+        authServices.register(credentials)
+      );
+
       if (!response) {
         throw new Error("Invalid credentials");
       }
@@ -56,7 +59,9 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (credentials) => {
     try {
-      const response = await loginExecute(credentials);
+      const response = await loginExecute(() =>
+        authServices.login(credentials)
+      );
       if (!response) {
         throw new Error("Invalid credentials");
       }
@@ -75,7 +80,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   const logout = async () => {
-    await logoutExecute();
+    await logoutExecute(() => authServices.logout());
 
     setUser(null);
     setIsAuthenticated(false);

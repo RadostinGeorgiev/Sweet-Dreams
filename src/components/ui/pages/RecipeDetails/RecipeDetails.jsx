@@ -29,11 +29,7 @@ import {
 } from "@tabler/icons-react";
 
 import { useAuth } from "../../../../context/AuthContext";
-import {
-  useGetItem,
-  useDeleteItem,
-  useUpdateItem,
-} from "../../../../hooks/useItems";
+import { useItemsCRUD } from "../../../../hooks/useItems";
 import { endpoints } from "../../../../../config";
 
 import PostTitle from "../../elements/PostTitle/PostTitle";
@@ -51,32 +47,39 @@ export default function RecipeDetails() {
   const [formatedDate, setFormatedDate] = useState("");
 
   const {
-    data: recipe,
-    setData: setRecipe,
-    loading: recipeLoading,
-    error: recipeError,
-  } = useGetItem(
-    endpoints.recipes,
-    id,
-    null,
-    "author=_ownerId:authors@_ownerId"
-  );
+    item: recipe,
+    setItem: setRecipe,
+    itemLoading: recipeLoading,
+    itemError: recipeError,
+    getItem: getRecipe,
+    updateItem: updateRecipe,
+    deleteItem: deleteRecipe,
+  } = useItemsCRUD(endpoints.recipes, {
+    relations: "author=_ownerId:authors@_ownerId",
+  });
 
-  const { del: deleteRecipe } = useDeleteItem(endpoints.recipes);
-  const { update: updateRecipe } = useUpdateItem(endpoints.recipes);
+  console.log(recipeLoading);
+  useEffect(() => {
+    getRecipe(id);
+  }, []);
+  console.log(recipeLoading);
 
   useEffect(() => {
-    if (!recipe) return;
+    if (!recipe?._createdOn) return;
 
-    const isoDate = new Date(recipe?._createdOn);
-    const formatter = new Intl.DateTimeFormat("en-US", { month: "short" });
+    const isoDate = new Date(recipe._createdOn);
+    if (isNaN(isoDate.getTime())) {
+      console.warn("Invalid date:", recipe._createdOn);
+      return;
+    }
 
-    const date = {
-      day: isoDate.getDate(),
-      month: formatter.format(isoDate),
-    };
-
-    setFormatedDate(date);
+    setFormatedDate(
+      new Intl.DateTimeFormat("en-US", {
+        month: "long",
+        day: "numeric",
+        year: "numeric",
+      }).format(isoDate)
+    );
   }, [recipe?._createdOn]);
 
   useEffect(() => {
@@ -98,9 +101,7 @@ export default function RecipeDetails() {
 
   const calculateRating = (reactions) => {
     const total = reactions.likes + reactions.dislikes;
-    return total > 0
-      ? Math.round(((6 * reactions.likes) / total) * 10) / 10
-      : 0;
+    return total > 0 ? Math.round(((6 * reactions.likes) / total) * 10) / 10 : 0;
   };
 
   const isOwner = user?._id === recipe?._ownerId;
@@ -158,25 +159,9 @@ export default function RecipeDetails() {
       <Container size="md" py="xl">
         <Stack gap={0}>
           <Paper shadow="lg" radius={0} className={styles["recipe-title"]}>
-            <Flex
-              gap="md"
-              justify="flex-start"
-              align="center"
-              direction="row"
-              wrap="wrap"
-            >
-              <MetaDate
-                date={formatedDate}
-                size="large"
-                color="--color-heading"
-                background="--background-color-gray"
-              />
-              <PostTitle
-                item={recipe}
-                size="large"
-                variant="caption"
-                className={`${styles["recipe-title"]}`}
-              />
+            <Flex gap="md" justify="flex-start" align="center" direction="row" wrap="wrap">
+              <MetaDate date={formatedDate} size="large" color="--color-heading" background="--background-color-gray" />
+              <PostTitle item={recipe} size="large" variant="caption" className={`${styles["recipe-title"]}`} />
             </Flex>
           </Paper>
 
@@ -187,13 +172,7 @@ export default function RecipeDetails() {
           ))}
 
           <Paper radius={0} withBorder className={styles.options}>
-            <Flex
-              gap="xl"
-              justify="center"
-              align="center"
-              direction="row"
-              p="md"
-            >
+            <Flex gap="xl" justify="center" align="center" direction="row" p="md">
               <Group gap="xl">
                 <Group gap="xs">
                   <IconUsers size={24} />
@@ -287,13 +266,7 @@ export default function RecipeDetails() {
             <List className={styles.widget}>
               {recipe.tags.map((tag, index) => (
                 <ListItem key={index}>
-                  <Button
-                    variant="outline"
-                    size="compact-xs"
-                    radius="0"
-                    tt="uppercase"
-                    className={styles.property}
-                  >
+                  <Button variant="outline" size="compact-xs" radius="0" tt="uppercase" className={styles.property}>
                     {tag}
                   </Button>
                 </ListItem>

@@ -6,7 +6,7 @@ import { IconUserDown, IconUserPlus, IconUserShare } from "@tabler/icons-react";
 
 import styles from "./Header.module.scss";
 
-import logo from "/images/logo.png";
+import logo from "/images/logo1.png";
 import { UserInfo } from "../../elements/UserInfo/UserInfo";
 import { useAuth } from "../../../../context/AuthContext";
 
@@ -48,12 +48,12 @@ export default function Header() {
   ));
 
   return (
-    <Container size="xl" mb="md">
+    <Container size="xl" mb="xl">
       <Group justify="space-between" align="center" mt="md">
         <Image
           h={60}
           w="auto"
-          fit="contain"
+          fit="fill"
           src={logo}
           alt="Logo"
           className={styles.logo}

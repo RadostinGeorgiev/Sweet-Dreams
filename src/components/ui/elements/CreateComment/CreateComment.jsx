@@ -13,7 +13,7 @@ import { zodResolver } from "mantine-form-zod-resolver";
 import { z } from "zod";
 
 import { useAuth } from "../../../../context/AuthContext";
-import { useCreateItem } from "../../../../hooks/useItems";
+import { useItemsCRUD } from "../../../../hooks/useItems";
 import { endpoints } from "../../../../../config";
 
 import styles from "./CreateComment.module.scss";
@@ -35,7 +35,7 @@ export default function CreateCommentForm({ subject, onAddComment, parent }) {
   const { getUserData } = useAuth();
   const user = getUserData();
 
-  const { error: commentError, create: createComment } = useCreateItem(
+  const { changeError: commentError, createItem: createComment } = useItemsCRUD(
     endpoints.comments
   );
 

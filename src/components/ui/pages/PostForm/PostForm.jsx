@@ -30,7 +30,7 @@ import {
 import { zodResolver } from "mantine-form-zod-resolver";
 import { z } from "zod";
 
-import { useCreateItem, useEditItem } from "../../../../hooks/useItems";
+import { useItemsCRUD } from "../../../../hooks/useItems";
 import { endpoints } from "../../../../../config";
 
 const MAX_FILE_SIZE = 1024 * 1024; // 1MB
@@ -75,10 +75,12 @@ export default function PostForm({ isEdited }) {
     navigate("/blog");
   }
 
-  const { error: createError, create: createArticle } = useCreateItem(
-    endpoints.blog
-  );
-  const { error: editError, edit: editArticle } = useEditItem(endpoints.blog);
+  const {
+    itemError: createError,
+    changeError: editError,
+    createItem: createArticle,
+    editItem: editArticle,
+  } = useItemsCRUD(endpoints.blog);
 
   const form = useForm({
     initialValues: {

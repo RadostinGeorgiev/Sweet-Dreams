@@ -18,7 +18,7 @@ import { IconXboxXFilled, IconCircleCheckFilled } from "@tabler/icons-react";
 import { zodResolver } from "mantine-form-zod-resolver";
 import { z } from "zod";
 
-import { useCreateItem } from "../../hooks/useItems";
+import { useItemsCRUD } from "../../hooks/useItems";
 import { endpoints } from "../../../config";
 import { useAuth } from "../../context/AuthContext";
 
@@ -45,7 +45,7 @@ export default function RegisterForm() {
   const { register, registerError } = useAuth();
   const [userNotification, setUserNotification] = useState(null);
 
-  const { error: authorError, create: createAuthor } = useCreateItem(
+  const { itemError: authorError, createItem: createAuthor } = useItemsCRUD(
     endpoints.authors
   );
 
@@ -86,8 +86,10 @@ export default function RegisterForm() {
       image: registeredUser.image,
       role: "user",
     };
+    console.log("authorCredentials", authorCredentials);
 
     const newAuthor = await createAuthor(authorCredentials);
+    console.log("newAuthor", newAuthor);
 
     if (registeredUser && newAuthor) {
       const notification = {

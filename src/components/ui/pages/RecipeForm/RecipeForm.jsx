@@ -36,7 +36,7 @@ import {
 import { zodResolver } from "mantine-form-zod-resolver";
 import { z } from "zod";
 
-import { useCreateItem, useEditItem } from "../../../../hooks/useItems";
+import { useItemsCRUD } from "../../../../hooks/useItems";
 import { endpoints } from "../../../../../config";
 
 const MAX_FILE_SIZE = 1024 * 1024; // 1MB
@@ -83,10 +83,12 @@ export default function RecipeForm({ isEdited }) {
     navigate("/recipes");
   }
 
-  const { error: createError, create: createRecipe } = useCreateItem(
-    endpoints.recipes
-  );
-  const { error: editError, edit: editRecipe } = useEditItem(endpoints.recipes);
+  const {
+    itemError: createError,
+    changeError: editError,
+    createItem: createRecipe,
+    editItem: editRecipe,
+  } = useItemsCRUD(endpoints.recipes);
 
   const form = useForm({
     initialValues: {
@@ -443,7 +445,7 @@ export default function RecipeForm({ isEdited }) {
         {recipeNotification && (
           <Notification
             icon={<IconCircleCheckFilled size={24} />}
-            title="Create Article Successful"
+            title={` Recipe ${isEdited ? "Updated" : "Created"} Successful`}
             color="teal"
             mt="md"
             withCloseButton

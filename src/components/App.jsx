@@ -9,14 +9,14 @@ import { AuthProvider } from "../context/AuthContext";
 import "./App.scss";
 
 import Header from "./ui/layout/Header/Header";
-import Footer from "./Footer";
+import Footer from "./ui/layout/Footer/Footer";
 import LoginForm from "./auth/Login";
 import RegisterForm from "./auth/Register";
-import HomePage from "./ui/pages/HomePage";
+import HomePage from "./ui/pages/HomePage/HomePage";
 import Blog from "./ui/layout/Blog";
 import BlogList from "./ui/containers/BlogList/BlogList";
 import PostDetails from "./ui/pages/PostDetails/PostDetails";
-import Recipes from "./ui/layout/Recipes";
+import Recipes from "./ui/layout/Recipes/Recipes";
 import RecipeDetails from "./ui/pages/RecipeDetails/RecipeDetails";
 // import CookingTips from "./CookingTips";
 // import ProjectDescription from "./ui/pages/ProjectDescription";
@@ -35,9 +35,9 @@ export default function App() {
 
           <AppShell.Main>
             <Routes>
-              <Route path="/" element={<HomePage />} />
               <Route path="/login" element={<LoginForm />} />
               <Route path="/register" element={<RegisterForm />} />
+              <Route path="/" element={<HomePage />} />
 
               <Route element={<Blog />}>
                 <Route path="/blog" element={<BlogList />} />

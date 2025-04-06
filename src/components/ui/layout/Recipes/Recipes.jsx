@@ -1,46 +1,46 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router";
 
-import { Flex, Grid, Group, Text, Select, Pagination, Button } from "@mantine/core";
+import { Button, Container, Flex, Group, Pagination, Select, Text } from "@mantine/core";
 import { IconWriting } from "@tabler/icons-react";
-
-import BlogCard from "../../elements/BlogCard/BlogCard";
-import Loading from "../../elements/Loading";
 
 import { useAuth } from "../../../../context/AuthContext";
 import { useItemsCRUD } from "../../../../hooks/useItems";
 import { endpoints } from "../../../../../config";
 
-import styles from "./BlogList.module.scss";
+import Loading from "../../elements/Loading";
+import RecipeList from "../../containers/RecipeList/RecipeList";
 
-export default function BlogList() {
+import styles from "./Recipes.module.scss";
+
+export default function Recipes() {
   const { isLogged } = useAuth();
   const loggedIn = isLogged();
   const [page, setPage] = useState(1);
   const [sortValue, setSortValue] = useState("_createdOn desc");
-  const pageSize = 6;
+  const pageSize = 10;
 
   const {
-    items: articles,
-    itemsLoading: articlesLoading,
-    itemsError: articlesError,
+    items: recipes,
+    itemsLoading: recipesLoading,
+    itemsError: recipesError,
     totalPages,
-    getItems: getArticles,
-  } = useItemsCRUD(endpoints.blog, {
+    getItems: getRecipes,
+  } = useItemsCRUD(endpoints.recipes, {
     relations: "author=_ownerId:authors@_ownerId",
     sort: sortValue,
     pageSize: pageSize,
   });
 
   useEffect(() => {
-    getArticles({ page: page, sort: sortValue });
+    getRecipes({ page: 1, sort: sortValue });
   }, [sortValue, page]);
 
-  if (articlesLoading) return <Loading />;
-  if (articlesError) return <div>Error: {articlesError}</div>;
+  if (recipesLoading) return <Loading />;
+  if (recipesError) return <div>Error: {recipesError}</div>;
 
   return (
-    <>
+    <Container size="xl" mt="md">
       <Flex justify="space-between" align="center" mt="lg" mb="lg">
         <Flex justify="start" align="center" gap="sm">
           <Text fw={700} ml="xl" ta="right">
@@ -51,11 +51,13 @@ export default function BlogList() {
             data={[
               { value: "_createdOn desc", label: "Newest" },
               { value: "_createdOn", label: "Oldest" },
-              { value: "title", label: "Title (A-Z)" },
-              { value: "title desc", label: "Title (Z-A)" },
+              { value: "name", label: "Title (A-Z)" },
+              { value: "name desc", label: "Title (Z-A)" },
+              { value: "difficulty desc", label: "Most difficult" },
+              { value: "difficulty", label: "Easiest" },
+              { value: "cookTimeMinutes", label: "Cooking time" },
               { value: "rating desc", label: "Highest rated" },
               { value: "rating", label: "Lowest rated" },
-              { value: "views desc", label: "Popularity" },
             ]}
             value={sortValue}
             onChange={setSortValue}
@@ -70,24 +72,18 @@ export default function BlogList() {
             leftSection={<IconWriting size={16} />}
             className={styles.button}
             component={Link}
-            to="/blog/create"
+            to="/recipes/create"
           >
-            Create Blog Post
+            Create Recipe
           </Button>
         )}
       </Flex>
-      <Grid gutter="md">
-        {articles?.map((article) => {
-          return (
-            <Grid.Col key={article._id} span={6}>
-              <BlogCard article={article} />
-            </Grid.Col>
-          );
-        })}
-      </Grid>
-      <Group justify="center" mt="lg">
+
+      <RecipeList recipes={recipes} columns={2} />
+
+      <Group justify="center" m="lg">
         <Pagination radius="0" total={totalPages} value={page} onChange={setPage} />
       </Group>
-    </>
+    </Container>
   );
 }

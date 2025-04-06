@@ -22,11 +22,7 @@ import {
 } from "@tabler/icons-react";
 
 import { useAuth } from "../../../../context/AuthContext";
-import {
-  useGetItem,
-  useDeleteItem,
-  useUpdateItem,
-} from "../../../../hooks/useItems";
+import { useItemsCRUD } from "../../../../hooks/useItems";
 import { endpoints } from "../../../../../config";
 
 import Comments from "../../layout/Comments";
@@ -41,17 +37,30 @@ export default function PostDetails() {
   const [formatedDate, setFormatedDate] = useState("");
 
   const {
-    data: article,
-    setData: setArticle,
-    loading: postLoading,
-    error: postError,
-  } = useGetItem(endpoints.blog, id, null, "author=_ownerId:authors@_ownerId");
-
-  const { del: deleteArticle } = useDeleteItem(endpoints.blog);
-  const { update: updateArticle } = useUpdateItem(endpoints.blog);
+    item: article,
+    setItem: setArticle,
+    itemLoading: postLoading,
+    itemError: postError,
+    getItem: getArticle,
+    updateItem: updateArticle,
+    deleteItem: deleteArticle,
+  } = useItemsCRUD(endpoints.blog, {
+    relations: "author=_ownerId:authors@_ownerId",
+  });
 
   useEffect(() => {
-    if (!article) return;
+    getArticle(id);
+  }, []);
+
+  useEffect(() => {
+    if (!article?._createdOn) return;
+
+    const date = new Date(article._createdOn);
+
+    if (isNaN(date.getTime())) {
+      console.warn("Invalid date:", article._createdOn);
+      return;
+    }
 
     setFormatedDate(
       new Intl.DateTimeFormat("en-US", {
@@ -60,7 +69,7 @@ export default function PostDetails() {
         year: "numeric",
       }).format(new Date(article?._createdOn))
     );
-  }, [article?._createdOn]);
+  }, [article?._id]);
 
   useEffect(() => {
     if (!article?._id) return;

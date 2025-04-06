@@ -2,6 +2,11 @@ import { Flex, Title, Text } from "@mantine/core";
 import styles from "./MetaDate.module.scss";
 
 export default function MetaDate({ date, size, color, background }) {
+  if (!date) return null;
+  const obj = new Date(date);
+  const day = obj.getDate();
+  const month = obj.toLocaleString("en-US", { month: "long" });
+
   return (
     <Flex
       justify="center"
@@ -22,7 +27,7 @@ export default function MetaDate({ date, size, color, background }) {
           color: `var(${color})`,
         }}
       >
-        {date.day}
+        {day}
       </Title>
       <Text
         size="sm"
@@ -33,7 +38,7 @@ export default function MetaDate({ date, size, color, background }) {
           color: `var(${color})`,
         }}
       >
-        {date.month}
+        {month}
       </Text>
     </Flex>
   );

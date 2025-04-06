@@ -15,7 +15,11 @@ import { IconStar, IconArrowRight } from "@tabler/icons-react";
 
 import styles from "./RecipeCard.module.scss";
 
-export default function RecipeCard({ recipe, layout = "vertical" }) {
+export default function RecipeCard({
+  recipe,
+  layout = "vertical",
+  size = "large",
+}) {
   return (
     <Flex
       shadow="md"
@@ -27,64 +31,96 @@ export default function RecipeCard({ recipe, layout = "vertical" }) {
       className={`${styles.card} ${styles[layout]}`}
     >
       <Box className={styles["item-image"]}>
-        <Image className={styles.image} src={recipe.images[0]} fit="cover" />
+        <Image src={recipe.images[0]} fit="cover" className={styles.image} />
       </Box>
 
       <Flex gap="0" className={styles["item-text"]}>
-        <List className={styles.widget}>
-          {recipe.category.map((category, index) => (
-            <ListItem key={index}>
-              <Button
-                variant="outline"
-                size="compact-xs"
-                radius="0"
-                tt="uppercase"
-                className={styles.property}
-              >
-                {category}
-              </Button>
-            </ListItem>
-          ))}
-        </List>
+        {size !== "small" && (
+          <List className={styles.widget}>
+            {recipe.category.map((category, index) => (
+              <ListItem key={index}>
+                <Button
+                  variant="outline"
+                  size="compact-xs"
+                  radius="0"
+                  tt="uppercase"
+                  className={styles.property}
+                >
+                  {category}
+                </Button>
+              </ListItem>
+            ))}
+          </List>
+        )}
 
         <Title order={3} fw={400} className={styles.title}>
           {recipe.name}
         </Title>
 
-        <Flex
-          gap="xl"
-          direction="row"
-          justify="space-between"
-          align="center"
-          className={styles.widget}
-        >
-          <Group gap="xs">
-            <Text tt="uppercase" size="sm" c="dimmed">
-              Difficulty
-            </Text>
-            <Text size="sm" fw={700}>
-              {recipe.difficulty}
-            </Text>
-          </Group>
+        {size === "large" && (
+          <Flex
+            gap="xl"
+            direction="row"
+            justify="space-between"
+            align="center"
+            className={styles.widget}
+          >
+            <Group gap="xs">
+              <Text tt="uppercase" size="sm" c="dimmed">
+                Difficulty
+              </Text>
+              <Text size="sm" fw={700}>
+                {recipe.difficulty}
+              </Text>
+            </Group>
 
-          <Group gap="xs">
-            <Text tt="uppercase" size="sm" c="dimmed">
-              Cooking time
-            </Text>
-            <Text size="sm" fw={700}>
-              {`${Number(recipe.cookTimeMinutes)} minutes`}
-            </Text>
-          </Group>
+            <Group gap="xs">
+              <Text tt="uppercase" size="sm" c="dimmed">
+                Serves
+              </Text>
+              <Text size="sm" fw={700}>
+                {recipe.servings}
+              </Text>
+            </Group>
 
-          <Group gap="xs">
-            <Text tt="uppercase" size="sm" c="dimmed">
-              Serves
-            </Text>
-            <Text size="sm" fw={700}>
-              {recipe.servings}
-            </Text>
-          </Group>
-        </Flex>
+            <Group gap="xs">
+              <Text tt="uppercase" size="sm" c="dimmed">
+                Calories per serving
+              </Text>
+              <Text size="sm" fw={700}>
+                {`${Number(recipe.caloriesPerServing)} kcal`}
+              </Text>
+            </Group>
+          </Flex>
+        )}
+
+        {size !== "small" && (
+          <Flex
+            gap="xl"
+            direction="row"
+            justify="flex-start"
+            align="center"
+            className={styles.widget}
+          >
+            <Group gap="xs">
+              <Text tt="uppercase" size="sm" c="dimmed">
+                Preparation
+              </Text>
+              <Text size="sm" fw={700}>
+                {recipe.prepTimeMinutes}
+              </Text>
+            </Group>
+
+            <Group gap="xs">
+              <Text tt="uppercase" size="sm" c="dimmed">
+                Cooking time
+              </Text>
+              <Text size="sm" fw={700}>
+                {`${Number(recipe.cookTimeMinutes)} minutes`}
+              </Text>
+            </Group>
+          </Flex>
+        )}
 
         <Text size="md" lineClamp={3} className={styles.description}>
           {recipe.description}

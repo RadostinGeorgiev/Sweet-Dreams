@@ -4,17 +4,15 @@ import { BackgroundImage, Card, Flex, Grid, Overlay } from "@mantine/core";
 import { Carousel } from "@mantine/carousel";
 import "@mantine/carousel/styles.css";
 
-import MetaDate from "../MetaDate/MetaDate";
-import PostTitle from "../PostTitle/PostTitle";
+import MetaDate from "../../elements/MetaDate/MetaDate";
+import PostTitle from "../../elements/PostTitle/PostTitle";
 
 import styles from "./ItemsCarousel.module.scss";
 
 export default function ItemsCarousel({ subject, endpoint }) {
   if (!subject) return;
 
-  const sortedPosts = subject
-    .slice()
-    .sort((a, b) => b.reviewCount - a.reviewCount);
+  const sortedPosts = subject.slice().sort((a, b) => b.reviewCount - a.reviewCount);
 
   function division(data, size) {
     const chunks = [];
@@ -86,25 +84,25 @@ export default function ItemsCarousel({ subject, endpoint }) {
 }
 
 function CarouselItem({ item, size }) {
-  const isoDate = new Date(item?._createdOn);
-  const formatter = new Intl.DateTimeFormat("en-US", { month: "short" });
+  if (!item?._createdOn) return;
 
-  const date = {
-    day: isoDate.getDate(),
-    month: formatter.format(isoDate),
-  };
+  const isoDate = new Date(item._createdOn);
+  if (isNaN(isoDate.getTime())) {
+    console.warn("Invalid date:", item._createdOn);
+    return;
+  }
+
+  const date = new Intl.DateTimeFormat("en-US", {
+    month: "long",
+    day: "numeric",
+    year: "numeric",
+  }).format(isoDate);
 
   return (
     <Card shadow="sm" padding="sm" radius="0">
       <Card.Section className={styles.item}>
-        <BackgroundImage
-          src={item.images[0]}
-          className={`${styles[size]} ${styles.item}`}
-        >
-          <Overlay
-            gradient="linear-gradient(transparent, rgba(0, 0, 0, 0.8))"
-            opacity={0.5}
-          />
+        <BackgroundImage src={item.images[0]} className={`${styles[size]} ${styles.item}`}>
+          <Overlay gradient="linear-gradient(transparent, rgba(0, 0, 0, 0.8))" opacity={0.5} />
 
           <Flex
             gap="md"
@@ -114,12 +112,7 @@ function CarouselItem({ item, size }) {
             wrap="wrap"
             className={styles["item-text"]}
           >
-            <MetaDate
-              date={date}
-              size={size}
-              color="--color-white"
-              background="--background-color-hero"
-            />
+            <MetaDate date={date} size={size} color="--color-white" background="--background-color-hero" />
             <PostTitle item={item} size={size} variant="carousel" />
           </Flex>
         </BackgroundImage>

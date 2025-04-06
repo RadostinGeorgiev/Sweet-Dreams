@@ -1,3 +1,13 @@
+.root {
+  margin-bottom: 4em;
+
+  &:hover {
+    .controls {
+      opacity: 1;
+    }
+  }
+}
+
 .controls {
   transition: opacity 500ms ease;
   opacity: 0;
@@ -15,13 +25,5 @@
     border-radius: 0;
     size: 4em;
     z-index: 202;
-  }
-}
-
-.root {
-  &:hover {
-    .controls {
-      opacity: 1;
-    }
   }
 }

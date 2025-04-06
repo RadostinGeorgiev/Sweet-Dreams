@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 
 import { useAuth } from "../../../context/AuthContext";
-import { useGetItems } from "../../../hooks/useItems";
+import { useItemsCRUD } from "../../../hooks/useItems";
 import { endpoints } from "../../../../config";
 
 import CommentsList from "../containers/CommentsList/CommentsList";
@@ -9,7 +9,6 @@ import CreateCommentForm from "../elements/CreateComment/CreateComment";
 import Loading from "../elements/Loading";
 
 export default function Comments({ subject }) {
-  const [filter, setFilter] = useState(null);
   const [showCommentForm, setShowCommentForm] = useState(true);
   const [replyTo, setReplyTo] = useState(null);
 
@@ -17,22 +16,21 @@ export default function Comments({ subject }) {
   const loggedIn = isLogged();
 
   const {
-    data: comments,
-    setData: setComments,
-    loading: commentsLoading,
-    error: commentsError,
-  } = useGetItems(
-    endpoints.comments,
-    filter,
-    "author=_ownerId:users",
-    null,
-    1,
-    100
-  );
+    items: comments,
+    setItems: setComments,
+    itemsLoading: commentsLoading,
+    itemsError: commentsError,
+    getItems: getComments,
+  } = useItemsCRUD(endpoints.comments, {
+    relations: "author=_ownerId:authors@_ownerId",
+  });
 
   useEffect(() => {
     if (subject?._id) {
-      setFilter(`_postId=${subject?._id}`);
+      getComments({
+        filter: `_postId="${subject._id}"`,
+        page: 1,
+      });
     }
   }, [subject?._id]);
 
