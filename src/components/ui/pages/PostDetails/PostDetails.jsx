@@ -1,25 +1,8 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router";
 
-import {
-  Container,
-  Image,
-  Title,
-  Group,
-  Stack,
-  List,
-  ListItem,
-  Text,
-  Button,
-} from "@mantine/core";
-import {
-  IconStar,
-  IconEye,
-  IconThumbUp,
-  IconThumbDown,
-  IconPencilCog,
-  IconTrash,
-} from "@tabler/icons-react";
+import { Container, Image, Title, Group, Stack, List, ListItem, Text, Button } from "@mantine/core";
+import { IconStar, IconEye, IconThumbUp, IconThumbDown, IconPencilCog, IconTrash } from "@tabler/icons-react";
 
 import { useAuth } from "../../../../context/AuthContext";
 import { useItemsCRUD } from "../../../../hooks/useItems";
@@ -39,8 +22,10 @@ export default function PostDetails() {
   const {
     item: article,
     setItem: setArticle,
-    itemLoading: postLoading,
-    itemError: postError,
+    itemLoading,
+    changeLoading,
+    itemError,
+    changeError,
     getItem: getArticle,
     updateItem: updateArticle,
     deleteItem: deleteArticle,
@@ -90,16 +75,10 @@ export default function PostDetails() {
 
   const calculateRating = (reactions) => {
     const total = reactions.likes + reactions.dislikes;
-    return total > 0
-      ? Math.round(((6 * reactions.likes) / total) * 10) / 10
-      : 0;
+    return total > 0 ? Math.round(((6 * reactions.likes) / total) * 10) / 10 : 0;
   };
 
   const isOwner = user?._id === article?._ownerId;
-
-  if (postLoading) return <Loading />;
-  if (postError) return <div>Error: {postError}</div>;
-  if (article.length === 0) return;
 
   function handleEditClick() {
     navigate(`/blog/edit/${article._id}`, {
@@ -133,6 +112,27 @@ export default function PostDetails() {
     }
   }
 
+  const handleCommentAdded = useCallback(async (id) => {
+    if (id !== article?._id) return;
+
+    try {
+      const result = await updateArticle(article._id, {
+        reviewCount: article.reviewCount + 1,
+      });
+
+      setArticle((prev) => ({
+        ...prev,
+        reviewCount: result.reviewCount,
+      }));
+    } catch (error) {
+      console.error("Reviews count update failed:", error);
+    }
+  }, []);
+
+  if (itemLoading || changeLoading) return <Loading />;
+  if (itemError || changeError) return <div>Error: {itemError || changeError}</div>;
+  if (article?.length === 0) return;
+
   return (
     <section className="single-post spad">
       <Image src={article.images[0]} h="70vh" radius="0" />
@@ -145,13 +145,7 @@ export default function PostDetails() {
           <List className={styles.widget}>
             {article.category.map((category, index) => (
               <ListItem key={index}>
-                <Button
-                  variant="outline"
-                  size="compact-xs"
-                  radius="0"
-                  tt="uppercase"
-                  className={styles.property}
-                >
+                <Button variant="outline" size="compact-xs" radius="0" tt="uppercase" className={styles.property}>
                   {category}
                 </Button>
               </ListItem>
@@ -231,7 +225,7 @@ export default function PostDetails() {
           </Group>
         )}
 
-        <Comments subject={article} />
+        <Comments subject={article} onCommentAdded={handleCommentAdded} />
       </Container>
     </section>
   );

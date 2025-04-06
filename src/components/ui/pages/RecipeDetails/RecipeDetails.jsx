@@ -38,7 +38,7 @@ import Loading from "../../elements/Loading";
 import Comments from "../../layout/Comments";
 
 import styles from "./RecipeDetails.module.scss";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 export default function RecipeDetails() {
   const { user, isAuthenticated } = useAuth();
@@ -49,8 +49,10 @@ export default function RecipeDetails() {
   const {
     item: recipe,
     setItem: setRecipe,
-    itemLoading: recipeLoading,
-    itemError: recipeError,
+    itemLoading,
+    changeLoading,
+    itemError,
+    changeError,
     getItem: getRecipe,
     updateItem: updateRecipe,
     deleteItem: deleteRecipe,
@@ -58,11 +60,9 @@ export default function RecipeDetails() {
     relations: "author=_ownerId:authors@_ownerId",
   });
 
-  console.log(recipeLoading);
   useEffect(() => {
     getRecipe(id);
   }, []);
-  console.log(recipeLoading);
 
   useEffect(() => {
     if (!recipe?._createdOn) return;
@@ -106,10 +106,6 @@ export default function RecipeDetails() {
 
   const isOwner = user?._id === recipe?._ownerId;
 
-  if (recipeLoading) return <Loading />;
-  if (recipeError) return <div>Error: {recipeError}</div>;
-  if (recipe.length === 0) return;
-
   function handleEditClick() {
     navigate(`/recipes/edit/${recipe._id}`, {
       state: { recipe },
@@ -141,6 +137,30 @@ export default function RecipeDetails() {
       console.error("Update failed:", error);
     }
   }
+
+  const handleCommentAdded = useCallback(
+    async (id) => {
+      if (id !== recipe?._id) return;
+
+      try {
+        const result = await updateRecipe(recipe._id, {
+          reviewCount: recipe.reviewCount + 1,
+        });
+
+        setRecipe((prev) => ({
+          ...prev,
+          reviewCount: result.reviewCount,
+        }));
+      } catch (error) {
+        console.error("View count update failed:", error);
+      }
+    },
+    [recipe, updateRecipe]
+  );
+
+  if (itemLoading || changeLoading) return <Loading />;
+  if (itemError || changeError) return <div>Error: {itemError || changeError}</div>;
+  if (recipe?.length === 0) return;
 
   return (
     <section className="single-post spad">
@@ -335,7 +355,7 @@ export default function RecipeDetails() {
           </Group>
         )}
 
-        <Comments subject={recipe} />
+        <Comments subject={recipe} onCommentAdded={handleCommentAdded} />
       </Container>
     </section>
   );

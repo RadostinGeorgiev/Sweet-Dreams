@@ -8,14 +8,7 @@ export const useItemsCRUD = (endpoint, initialParams = {}) => {
   const [currentPage, setCurrentPage] = useState(1);
 
   const buildQuery = useCallback((params) => {
-    const {
-      select = null,
-      filter = null,
-      relations = null,
-      sort = null,
-      page = 1,
-      pageSize = null,
-    } = params;
+    const { select = null, filter = null, relations = null, sort = null, page = 1, pageSize = null } = params;
     return [
       select && `select=${encodeURIComponent(select)}`,
       filter && `where=${encodeURIComponent(filter)}`,
@@ -28,34 +21,10 @@ export const useItemsCRUD = (endpoint, initialParams = {}) => {
       .join("&");
   }, []);
 
-  const {
-    data: items,
-    loading: itemsLoading,
-    error: itemsError,
-    execute: fetchItems,
-    setData: setItems,
-  } = useFetch();
-
-  const {
-    data: item,
-    loading: itemLoading,
-    error: itemError,
-    execute: fetchItem,
-    setData: setItem,
-  } = useFetch();
-
-  const {
-    data: count,
-    loading: countLoading,
-    error: countError,
-    execute: fetchCount,
-  } = useFetch();
-
-  const {
-    loading: changeLoading,
-    error: changeError,
-    execute: changeItem,
-  } = useFetch();
+  const { data: items, loading: itemsLoading, error: itemsError, execute: fetchItems, setData: setItems } = useFetch();
+  const { data: item, loading: itemLoading, error: itemError, execute: fetchItem, setData: setItem } = useFetch();
+  const { data: count, loading: countLoading, error: countError, execute: fetchCount } = useFetch();
+  const { loading: changeLoading, error: changeError, execute: changeItem } = useFetch();
 
   const getItemsCount = useCallback(async () => {
     return fetchCount(() => api.get(`${endpoint}?count={}`));
@@ -94,21 +63,28 @@ export const useItemsCRUD = (endpoint, initialParams = {}) => {
 
   const createItem = useCallback(
     async (itemData) => {
-      const result = await changeItem(() => api.post(endpoint, itemData));
-
-      await getItems();
-      return result;
+      return await changeItem(() => api.post(endpoint, itemData));
     },
     [endpoint, changeItem, getItems]
   );
 
+  const editItem = useCallback(
+    async (id, itemData) => {
+      const result = await changeItem(() => api.put(`${endpoint}/${id}`, itemData));
+
+      if (item?._id === id) {
+        const updatedItem = await getItem(id);
+        return updatedItem;
+      }
+
+      return result;
+    },
+    [endpoint, changeItem, getItems, getItem, item]
+  );
+
   const updateItem = useCallback(
     async (id, itemData) => {
-      const result = await changeItem(() =>
-        api.patch(`${endpoint}/${id}`, itemData)
-      );
-
-      await getItems();
+      const result = await changeItem(() => api.patch(`${endpoint}/${id}`, itemData));
 
       if (item?._id === id) {
         const updatedItem = await getItem(id);
@@ -122,10 +98,7 @@ export const useItemsCRUD = (endpoint, initialParams = {}) => {
 
   const deleteItem = useCallback(
     async (id) => {
-      const result = await changeItem(() => api.del(`${endpoint}/${id}`));
-
-      await getItems();
-      return result;
+      return await changeItem(() => api.del(`${endpoint}/${id}`));
     },
     [endpoint, changeItem, getItems]
   );
@@ -152,6 +125,7 @@ export const useItemsCRUD = (endpoint, initialParams = {}) => {
     getItems,
     getItem,
     createItem,
+    editItem,
     updateItem,
     deleteItem,
     getItemsCount,
