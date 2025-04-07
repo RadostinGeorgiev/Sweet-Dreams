@@ -51,8 +51,8 @@ export default function Recipes() {
             data={[
               { value: "_createdOn desc", label: "Newest" },
               { value: "_createdOn", label: "Oldest" },
-              { value: "name", label: "Title (A-Z)" },
-              { value: "name desc", label: "Title (Z-A)" },
+              { value: "title", label: "Title (A-Z)" },
+              { value: "title desc", label: "Title (Z-A)" },
               { value: "difficulty desc", label: "Most difficult" },
               { value: "difficulty", label: "Easiest" },
               { value: "cookTimeMinutes", label: "Cooking time" },

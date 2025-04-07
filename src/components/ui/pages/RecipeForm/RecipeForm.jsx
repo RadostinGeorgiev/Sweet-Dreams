@@ -38,8 +38,8 @@ const MAX_FILE_SIZE = 1024 * 1024; // 1MB
 const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp"];
 
 const schema = z.object({
-  name: z.string().min(6, {
-    message: "The name of the recipe must be at least 6 characters",
+  title: z.string().min(6, {
+    message: "The title of the recipe must be at least 6 characters",
   }),
   description: z.string().min(6, {
     message: "The description of the recipe must be at least 6 characters",
@@ -83,7 +83,7 @@ export default function RecipeForm({ isEdited }) {
 
   const form = useForm({
     initialValues: {
-      name: data?.name || "",
+      title: data?.title || "",
       category: data?.category || [],
       description: data?.description?.join("\n") || [],
       ingredients: data?.ingredients?.join("\n") || [],
@@ -164,7 +164,7 @@ export default function RecipeForm({ isEdited }) {
       const uploadedUrls = newFiles.length > 0 ? await handleUploadImages(newFiles) : [];
 
       const recipeData = {
-        name: values.name,
+        title: values.title,
         category: values.category,
         description: values.description.split("\n").filter((p) => p.trim() !== ""),
         ingredients: ingredients,
@@ -213,10 +213,10 @@ export default function RecipeForm({ isEdited }) {
       </Title>
       <form onSubmit={form.onSubmit(handleSubmit)}>
         <TextInput
-          label="Recipe Name"
-          placeholder="Enter recipe name"
+          label="Recipe Title"
+          placeholder="Enter recipe title"
           mb="sm"
-          {...form.getInputProps("name")}
+          {...form.getInputProps("title")}
           required
         />
 

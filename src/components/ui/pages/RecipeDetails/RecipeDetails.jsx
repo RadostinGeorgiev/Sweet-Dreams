@@ -114,7 +114,7 @@ export default function RecipeDetails() {
 
   async function handleDeleteClick() {
     const result = await deleteRecipe(id);
-    console.log(`Recipe ${result.name} was deleted successfully`);
+    console.log(`Recipe ${result.title} was deleted successfully`);
     navigate("/recipes");
   }
 

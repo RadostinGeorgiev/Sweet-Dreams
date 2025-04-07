@@ -1,25 +1,11 @@
 import { Link } from "react-router";
 
-import {
-  Flex,
-  Box,
-  Group,
-  Image,
-  Title,
-  List,
-  ListItem,
-  Text,
-  Button,
-} from "@mantine/core";
+import { Flex, Box, Group, Image, Title, List, ListItem, Text, Button } from "@mantine/core";
 import { IconStar, IconArrowRight } from "@tabler/icons-react";
 
 import styles from "./RecipeCard.module.scss";
 
-export default function RecipeCard({
-  recipe,
-  layout = "vertical",
-  size = "large",
-}) {
+export default function RecipeCard({ recipe, layout = "vertical", size = "large" }) {
   return (
     <Flex
       shadow="md"
@@ -39,13 +25,7 @@ export default function RecipeCard({
           <List className={styles.widget}>
             {recipe.category.map((category, index) => (
               <ListItem key={index}>
-                <Button
-                  variant="outline"
-                  size="compact-xs"
-                  radius="0"
-                  tt="uppercase"
-                  className={styles.property}
-                >
+                <Button variant="outline" size="compact-xs" radius="0" tt="uppercase" className={styles.property}>
                   {category}
                 </Button>
               </ListItem>
@@ -54,17 +34,11 @@ export default function RecipeCard({
         )}
 
         <Title order={3} fw={400} className={styles.title}>
-          {recipe.name}
+          {recipe.title}
         </Title>
 
         {size === "large" && (
-          <Flex
-            gap="xl"
-            direction="row"
-            justify="space-between"
-            align="center"
-            className={styles.widget}
-          >
+          <Flex gap="xl" direction="row" justify="space-between" align="center" className={styles.widget}>
             <Group gap="xs">
               <Text tt="uppercase" size="sm" c="dimmed">
                 Difficulty
@@ -95,13 +69,7 @@ export default function RecipeCard({
         )}
 
         {size !== "small" && (
-          <Flex
-            gap="xl"
-            direction="row"
-            justify="flex-start"
-            align="center"
-            className={styles.widget}
-          >
+          <Flex gap="xl" direction="row" justify="flex-start" align="center" className={styles.widget}>
             <Group gap="xs">
               <Text tt="uppercase" size="sm" c="dimmed">
                 Preparation
