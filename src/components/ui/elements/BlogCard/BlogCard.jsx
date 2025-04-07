@@ -1,23 +1,7 @@
 import { Link } from "react-router";
 
-import {
-  Flex,
-  Box,
-  Group,
-  Image,
-  List,
-  ListItem,
-  Button,
-  Title,
-  Text,
-} from "@mantine/core";
-import {
-  IconStar,
-  IconEye,
-  IconThumbUp,
-  IconThumbDown,
-  IconArrowRight,
-} from "@tabler/icons-react";
+import { Flex, Box, Group, Image, List, ListItem, Button, Title, Text } from "@mantine/core";
+import { IconStar, IconEye, IconThumbUp, IconThumbDown, IconArrowRight } from "@tabler/icons-react";
 
 import styles from "./BlogCard.module.scss";
 
@@ -39,27 +23,15 @@ export default function BlogCard({ article, layout = "vertical" }) {
       className={`${styles.card} ${styles[layout]}`}
     >
       <Box className={styles["item-image"]}>
-        <Image
-          src={article?.images?.[0]}
-          fit="cover"
-          className={styles.image}
-        />
+        <Image src={article?.images?.[0]} fit="cover" className={styles.image} />
         <Text span size="md" tt="uppercase" c="dimmed" className={styles.date}>
           {`${formattedDate} ――`}
         </Text>
       </Box>
-      {/* <Stack align="center" justify="center" gap="0" className={styles.meta}>
-          <Title order={2} fw={900}>
-            {article.date.day}
-          </Title>
-          <Text size="sm" f1w={600} tt="uppercase" c="dimmed">
-            {article.date.month}
-          </Text>
-        </Stack> */}
 
       <Flex gap="0" className={styles["item-text"]}>
         <List className={styles.widget}>
-          {article.category.map((category, index) => (
+          {article?.category.map((category, index) => (
             <ListItem key={index}>
               <Button
                 variant="outline"
@@ -67,6 +39,8 @@ export default function BlogCard({ article, layout = "vertical" }) {
                 radius="0"
                 tt="uppercase"
                 className={styles.property}
+                component={Link}
+                to={`/blog?where=category in ("${category}")`}
               >
                 {category}
               </Button>
@@ -78,13 +52,7 @@ export default function BlogCard({ article, layout = "vertical" }) {
           {article.title}
         </Title>
 
-        <Flex
-          gap="xl"
-          direction="row"
-          justify="start"
-          align="center"
-          className={styles.widget}
-        >
+        <Flex gap="xl" direction="row" justify="start" align="center" className={styles.widget}>
           <Group gap="xs">
             <Text size="sm" c="dimmed">
               by

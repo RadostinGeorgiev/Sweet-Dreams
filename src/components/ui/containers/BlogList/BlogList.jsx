@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router";
+import { Link, useLocation } from "react-router";
 
 import { Flex, Grid, Group, Text, Select, Pagination, Button } from "@mantine/core";
 import { IconWriting } from "@tabler/icons-react";
@@ -18,6 +18,9 @@ export default function BlogList() {
   const loggedIn = isLogged();
   const [page, setPage] = useState(1);
   const [sortValue, setSortValue] = useState("_createdOn desc");
+  const [filterQuery, setFilterQuery] = useState("");
+  const location = useLocation();
+
   const pageSize = 6;
 
   const {
@@ -33,8 +36,21 @@ export default function BlogList() {
   });
 
   useEffect(() => {
-    getArticles({ page: page, sort: sortValue });
-  }, [sortValue, page]);
+    const searchParams = new URLSearchParams(location.search);
+    const where = searchParams.get("where") || "";
+    setPage(1);
+    setFilterQuery(where);
+  }, [location.search]);
+
+  useEffect(() => {
+    getArticles({
+      page,
+      sort: sortValue,
+      filter: filterQuery,
+    });
+
+    console.log(totalPages, page, sortValue, filterQuery);
+  }, [sortValue, page, filterQuery]);
 
   if (articlesLoading) return <Loading />;
   if (articlesError) return <div>Error: {articlesError}</div>;
