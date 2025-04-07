@@ -12,10 +12,15 @@ Sweet Dreams is a React-based platform for sharing dessert recipes and culinary 
 ## 🛠 Key Features
 
 - **User Authentication**: Registration, login
+- **Card Design**: Articles and recipes are presented in styled cards with quick-access actions and metadata
 - **Interactive Elements**: Comments and rating system
+- **Reactions & Rating**: Like/Dislike with rating calculation functionality with dynamic visual feedback
+- **Comment Threads**: Real-time comment updates tied to each post/recipe
 - **Image Uploads**: Firebase Storage integration
 
 ### 🔓 Public (Available to All Users)
+
+Responsive and accessible **card layout** for content browsing
 
 - **Homepage** - Displays the latest articles and recipes.
 - **Blog Section** - Browse and read all articles
