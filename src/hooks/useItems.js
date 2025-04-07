@@ -26,9 +26,12 @@ export const useItemsCRUD = (endpoint, initialParams = {}) => {
   const { data: count, loading: countLoading, error: countError, execute: fetchCount } = useFetch();
   const { loading: changeLoading, error: changeError, execute: changeItem } = useFetch();
 
-  const getItemsCount = useCallback(async () => {
-    return fetchCount(() => api.get(`${endpoint}?count={}`));
-  }, [endpoint, fetchCount]);
+  const getItemsCount = useCallback(
+    async (filter = null) => {
+      return fetchCount(() => api.get(`${endpoint}?${filter ? `where=${encodeURIComponent(filter)}&` : ""}count={}`));
+    },
+    [endpoint, fetchCount]
+  );
 
   const getItems = useCallback(
     async (customParams = {}) => {
@@ -38,7 +41,7 @@ export const useItemsCRUD = (endpoint, initialParams = {}) => {
       const response = await fetchItems(() => api.get(`${endpoint}?${query}`));
 
       if (params.pageSize) {
-        const records = await getItemsCount();
+        const records = await getItemsCount(params.filter);
         const total = Math.ceil(records / params.pageSize);
 
         setTotalRecords(records);

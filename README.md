@@ -2,7 +2,7 @@
 
 ![Sweet Dreams Logo](/public/images/logo1.png)
 
-Sweet Dreams is a React-based platform for sharing dessert recipes and culinary articles, featuring user authentication, content management, and community interactions. The platform offers a collection of delicious recipes and interesting articles related to desserts.
+**Sweet Dreams** is a **React**-based **Single Page Application (SPA)** for sharing dessert recipes and culinary articles, featuring user authentication, content management, and community interactions. The platform offers a collection of delicious recipes and interesting articles related to desserts. The application is made entirely with educational purposes.
 
 ## 🔗 Links
 
