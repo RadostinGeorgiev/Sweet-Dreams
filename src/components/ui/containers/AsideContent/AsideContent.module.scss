@@ -1,3 +1,15 @@
 .button {
   width: auto;
 }
+
+.widget {
+  margin-bottom: 0.625em;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5em;
+
+  .property {
+    color: var(--color-text);
+  }
+}

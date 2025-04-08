@@ -3,9 +3,9 @@ import { Link } from "react-router";
 import { Flex, Box, Group, Image, List, ListItem, Button, Title, Text } from "@mantine/core";
 import { IconStar, IconEye, IconThumbUp, IconThumbDown, IconArrowRight } from "@tabler/icons-react";
 
-import styles from "./BlogCard.module.scss";
+import styles from "./PostCard.module.scss";
 
-export default function BlogCard({ article, layout = "vertical" }) {
+export default function PostCard({ article, layout = "vertical" }) {
   const formattedDate = new Intl.DateTimeFormat("en-US", {
     month: "long",
     day: "numeric",

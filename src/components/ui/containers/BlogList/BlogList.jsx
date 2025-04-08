@@ -4,7 +4,7 @@ import { Link, useLocation } from "react-router";
 import { Flex, Grid, Group, Text, Select, Pagination, Button } from "@mantine/core";
 import { IconWriting } from "@tabler/icons-react";
 
-import BlogCard from "../../elements/BlogCard/BlogCard";
+import PostCard from "../../elements/PostCard/PostCard";
 import Loading from "../../elements/Loading";
 
 import { useAuth } from "../../../../context/AuthContext";
@@ -48,8 +48,6 @@ export default function BlogList() {
       sort: sortValue,
       filter: filterQuery,
     });
-
-    console.log(totalPages, page, sortValue, filterQuery);
   }, [sortValue, page, filterQuery]);
 
   if (articlesLoading) return <Loading />;
@@ -96,7 +94,7 @@ export default function BlogList() {
         {articles?.map((article) => {
           return (
             <Grid.Col key={article._id} span={6}>
-              <BlogCard article={article} />
+              <PostCard article={article} />
             </Grid.Col>
           );
         })}
