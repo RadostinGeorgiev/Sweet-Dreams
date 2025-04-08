@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link, useLocation } from "react-router";
+import { Link, useLocation, useNavigate } from "react-router";
 
 import { Image, Anchor, Container, Group, Button } from "@mantine/core";
 import { IconUserDown, IconUserPlus, IconUserShare } from "@tabler/icons-react";
@@ -14,13 +14,14 @@ const mainLinks = [
   { link: "/", label: "Home" },
   { link: "/blog", label: "Blog" },
   { link: "/recipes", label: "Recipes" },
-  { link: "/personal", label: "Personal Publications" },
+  { link: "/personal", label: "Personal Publications", authRequired: true },
   // { link: "/project", label: "Project Design" },
 ];
 
 export default function Header() {
   const { user, logout, isAuthenticated } = useAuth();
   const [active, setActive] = useState(0);
+  const navigate = useNavigate();
   const location = useLocation();
 
   useEffect(() => {
@@ -38,32 +39,35 @@ export default function Header() {
     setActive(index);
   }, [location.pathname]);
 
-  const menuItems = mainLinks.map((item, index) => (
-    <Anchor
-      key={item.label}
-      component={Link}
-      to={item.link}
-      data-active={index === active || undefined}
-      onClick={() => {
-        setActive(index);
-      }}
-      className={styles.link}
-    >
-      {item.label}
-    </Anchor>
-  ));
+  const menuItems = mainLinks
+    .filter((link) => isAuthenticated || !link.authRequired)
+    .map((item, index) => (
+      <Anchor
+        key={item.label}
+        component={Link}
+        to={item.link}
+        data-active={index === active || undefined}
+        onClick={() => {
+          setActive(index);
+        }}
+        className={styles.link}
+      >
+        {item.label}
+      </Anchor>
+    ));
+
+  function handleLogout() {
+    navigate("/");
+
+    setTimeout(() => {
+      logout();
+    }, 500);
+  }
 
   return (
     <Container size="xl" mb="xl">
       <Group justify="space-between" align="center" mt="md">
-        <Image
-          h={60}
-          w="auto"
-          fit="fill"
-          src={logo}
-          alt="Logo"
-          className={styles.logo}
-        />
+        <Image h={60} w="auto" fit="fill" src={logo} alt="Logo" className={styles.logo} />
         <div
           style={{
             flex: 1,
@@ -80,7 +84,7 @@ export default function Header() {
                 radius="0"
                 leftSection={<IconUserShare size={16} />}
                 className={styles.button}
-                onClick={() => logout()}
+                onClick={handleLogout}
                 component={Link}
                 to="/"
               >

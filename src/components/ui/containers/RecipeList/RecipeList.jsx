@@ -14,14 +14,12 @@ export default function RecipeList({ recipes, columns }) {
   }
 
   return (
-    <>
-      <Grid gutter="xs">
-        {recipes?.map((recipe) => (
-          <Grid.Col key={recipe._id} span={Math.ceil(12 / columns)}>
-            <RecipeCard recipe={recipe} size={size} />
-          </Grid.Col>
-        ))}
-      </Grid>
-    </>
+    <Grid gutter="xs">
+      {recipes?.map((recipe) => (
+        <Grid.Col key={recipe._id} span={Math.ceil(12 / columns)}>
+          <RecipeCard recipe={recipe} size={size} />
+        </Grid.Col>
+      ))}
+    </Grid>
   );
 }

@@ -1,9 +1,9 @@
 import { Container, Grid } from "@mantine/core";
 
 import { Outlet } from "react-router";
-import AsideContent from "../containers/AsideContent/AsideContent";
+import AsideContent from "./AsideContent/AsideContent";
 
-export default function Blog() {
+export default function BlogContainer() {
   return (
     <Container size="xl" mt="md">
       <Grid>

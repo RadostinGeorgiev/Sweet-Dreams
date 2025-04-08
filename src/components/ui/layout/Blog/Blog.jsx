@@ -1,46 +1,62 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router";
+import { Link, useLocation } from "react-router";
 
-import { Button, Container, Flex, Group, Pagination, Select, Text } from "@mantine/core";
+import { Button, Flex, Group, Select, Text, Pagination } from "@mantine/core";
 import { IconWriting } from "@tabler/icons-react";
 
-import { useAuth } from "../../../../context/AuthContext";
 import { useItemsCRUD } from "../../../../hooks/useItems";
 import { endpoints } from "../../../../../config";
 
 import Loading from "../../elements/Loading";
-import RecipeList from "../../containers/RecipeList/RecipeList";
+import { useAuth } from "../../../../context/AuthContext";
+import BlogList from "../../containers/BlogList/BlogList";
 
-import styles from "./Recipes.module.scss";
+import styles from "./Blog.module.scss";
 
-export default function Recipes() {
+export default function Blog() {
   const { isLogged } = useAuth();
-  const loggedIn = isLogged();
   const [page, setPage] = useState(1);
+  const [filterQuery, setFilterQuery] = useState("");
+
+  const loggedIn = isLogged();
+  const location = useLocation();
+
   const [sortValue, setSortValue] = useState("_createdOn desc");
-  const pageSize = 10;
+
+  const pageSize = 6;
 
   const {
-    items: recipes,
-    itemsLoading: recipesLoading,
-    itemsError: recipesError,
+    items: articles,
+    itemsLoading: articlesLoading,
+    itemsError: articlesError,
     totalPages,
-    getItems: getRecipes,
-  } = useItemsCRUD(endpoints.recipes, {
+    getItems: getArticles,
+  } = useItemsCRUD(endpoints.blog, {
     relations: "author=_ownerId:authors@_ownerId",
     sort: sortValue,
     pageSize: pageSize,
   });
 
   useEffect(() => {
-    getRecipes({ page: 1, sort: sortValue });
-  }, [page, sortValue]);
+    const searchParams = new URLSearchParams(location.search);
+    const where = searchParams.get("where") || "";
+    setPage(1);
+    setFilterQuery(where);
+  }, [location.search]);
 
-  if (recipesLoading) return <Loading />;
-  if (recipesError) return <div>Error: {recipesError}</div>;
+  useEffect(() => {
+    getArticles({
+      page,
+      sort: sortValue,
+      filter: filterQuery,
+    });
+  }, [page, sortValue, filterQuery]);
+
+  if (articlesLoading) return <Loading />;
+  if (articlesError) return <div>Error: {articlesError}</div>;
 
   return (
-    <Container size="xl" mt="md">
+    <>
       <Flex justify="space-between" align="center" mt="lg" mb="lg">
         <Flex justify="start" align="center" gap="sm">
           <Text fw={700} ml="xl" ta="right">
@@ -53,11 +69,9 @@ export default function Recipes() {
               { value: "_createdOn", label: "Oldest" },
               { value: "title", label: "Title (A-Z)" },
               { value: "title desc", label: "Title (Z-A)" },
-              { value: "difficulty desc", label: "Most difficult" },
-              { value: "difficulty", label: "Easiest" },
-              { value: "cookTimeMinutes", label: "Cooking time" },
               { value: "rating desc", label: "Highest rated" },
               { value: "rating", label: "Lowest rated" },
+              { value: "views desc", label: "Popularity" },
             ]}
             value={sortValue}
             onChange={setSortValue}
@@ -72,18 +86,18 @@ export default function Recipes() {
             leftSection={<IconWriting size={16} />}
             className={styles.button}
             component={Link}
-            to="/recipes/create"
+            to="/blog/create"
           >
-            Create Recipe
+            Create Blog Post
           </Button>
         )}
       </Flex>
 
-      <RecipeList recipes={recipes} columns={2} />
+      <BlogList articles={articles} />
 
-      <Group justify="center" m="lg">
+      <Group justify="center" mt="lg">
         <Pagination radius="0" total={totalPages} value={page} onChange={setPage} />
       </Group>
-    </Container>
+    </>
   );
 }

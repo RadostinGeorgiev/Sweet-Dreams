@@ -6,9 +6,7 @@ const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(authServices.getUserData() || null);
-  const [isAuthenticated, setIsAuthenticated] = useState(
-    authServices.isLogged()
-  );
+  const [isAuthenticated, setIsAuthenticated] = useState(authServices.isLogged());
 
   const {
     data: registerData,
@@ -36,9 +34,7 @@ export const AuthProvider = ({ children }) => {
 
   const register = async (credentials) => {
     try {
-      const response = await registerExecute(() =>
-        authServices.register(credentials)
-      );
+      const response = await registerExecute(() => authServices.register(credentials));
 
       if (!response) {
         throw new Error("Invalid credentials");
@@ -50,8 +46,7 @@ export const AuthProvider = ({ children }) => {
 
       return response;
     } catch (error) {
-      const errorMessage =
-        error.response?.data?.message || error.message || "Register failed";
+      const errorMessage = error.response?.data?.message || error.message || "Register failed";
       setRegisterError(errorMessage);
       throw errorMessage;
     }
@@ -59,9 +54,7 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (credentials) => {
     try {
-      const response = await loginExecute(() =>
-        authServices.login(credentials)
-      );
+      const response = await loginExecute(() => authServices.login(credentials));
       if (!response) {
         throw new Error("Invalid credentials");
       }
@@ -72,8 +65,7 @@ export const AuthProvider = ({ children }) => {
 
       return response;
     } catch (error) {
-      const errorMessage =
-        error.response?.data?.message || error.message || "Login failed";
+      const errorMessage = error.response?.data?.message || error.message || "Login failed";
       setLoginError(errorMessage);
       throw errorMessage;
     }

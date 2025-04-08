@@ -14,8 +14,8 @@ import Footer from "./ui/layout/Footer/Footer";
 import LoginForm from "./auth/Login";
 import RegisterForm from "./auth/Register";
 import HomePage from "./ui/pages/HomePage/HomePage";
-import Blog from "./ui/layout/Blog";
-import BlogList from "./ui/containers/BlogList/BlogList";
+import BlogContainer from "./ui/containers/BlogContainer";
+import Blog from "./ui/layout/Blog/Blog";
 import PostDetails from "./ui/pages/PostDetails/PostDetails";
 import Recipes from "./ui/layout/Recipes/Recipes";
 import RecipeDetails from "./ui/pages/RecipeDetails/RecipeDetails";
@@ -40,8 +40,8 @@ export default function App() {
               <Route path="/register" element={<RegisterForm />} />
               <Route path="/" element={<HomePage />} />
 
-              <Route element={<Blog />}>
-                <Route path="/blog" element={<BlogList />} />
+              <Route element={<BlogContainer />}>
+                <Route path="/blog" element={<Blog />} />
                 <Route path="/blog/:id" element={<PostDetails />} />
               </Route>
 
@@ -53,10 +53,7 @@ export default function App() {
                 <Route path="/blog/edit/:id" element={<PostForm isEdited />} />
 
                 <Route path="/recipes/create" element={<RecipeForm />} />
-                <Route
-                  path="/recipes/edit/:id"
-                  element={<RecipeForm isEdited />}
-                />
+                <Route path="/recipes/edit/:id" element={<RecipeForm isEdited />} />
                 <Route path="/personal" element={<PersonalInfo />} />
               </Route>
 

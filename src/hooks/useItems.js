@@ -68,7 +68,7 @@ export const useItemsCRUD = (endpoint, initialParams = {}) => {
     async (itemData) => {
       return await changeItem(() => api.post(endpoint, itemData));
     },
-    [endpoint, changeItem, getItems]
+    [endpoint, changeItem]
   );
 
   const editItem = useCallback(
@@ -82,7 +82,7 @@ export const useItemsCRUD = (endpoint, initialParams = {}) => {
 
       return result;
     },
-    [endpoint, changeItem, getItems, getItem, item]
+    [endpoint, changeItem, getItem, item]
   );
 
   const updateItem = useCallback(
@@ -96,14 +96,14 @@ export const useItemsCRUD = (endpoint, initialParams = {}) => {
 
       return result;
     },
-    [endpoint, changeItem, getItems, getItem, item]
+    [endpoint, changeItem, getItem, item]
   );
 
   const deleteItem = useCallback(
     async (id) => {
       return await changeItem(() => api.del(`${endpoint}/${id}`));
     },
-    [endpoint, changeItem, getItems]
+    [endpoint, changeItem]
   );
 
   return {

@@ -4,9 +4,7 @@ import { authServices } from "../services/auth.service";
 
 export const useAuth = () => {
   const [user, setUser] = useState(authServices.getUserData()); // Слагаме user в state
-  const [isAuthenticated, setIsAuthenticated] = useState(
-    authServices.isLogged()
-  );
+  const [isAuthenticated, setIsAuthenticated] = useState(authServices.isLogged());
 
   const {
     execute: registerExecute,
@@ -45,8 +43,7 @@ export const useAuth = () => {
 
       return response;
     } catch (error) {
-      const errorMessage =
-        error.response?.data?.message || error.message || "Register failed";
+      const errorMessage = error.response?.data?.message || error.message || "Register failed";
       setRegisterError(errorMessage);
       throw errorMessage;
     }
@@ -65,8 +62,7 @@ export const useAuth = () => {
 
       return response;
     } catch (error) {
-      const errorMessage =
-        error.response?.data?.message || error.message || "Login failed";
+      const errorMessage = error.response?.data?.message || error.message || "Login failed";
       setLoginError(errorMessage);
       throw errorMessage;
     }
