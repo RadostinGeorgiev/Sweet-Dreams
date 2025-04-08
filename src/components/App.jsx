@@ -8,6 +8,7 @@ import { AuthProvider } from "../context/AuthContext";
 
 import "./App.scss";
 
+import AuthGuard from "./guards/AuthGuard";
 import Header from "./ui/layout/Header/Header";
 import Footer from "./ui/layout/Footer/Footer";
 import LoginForm from "./auth/Login";
@@ -42,14 +43,18 @@ export default function App() {
               <Route element={<Blog />}>
                 <Route path="/blog" element={<BlogList />} />
                 <Route path="/blog/:id" element={<PostDetails />} />
-                <Route path="/blog/create" element={<PostForm />} />
-                <Route path="/blog/edit/:id" element={<PostForm isEdited />} />
               </Route>
 
               <Route path="/recipes" element={<Recipes />} />
               <Route path="/recipes/:id" element={<RecipeDetails />} />
-              <Route path="/recipes/create" element={<RecipeForm />} />
-              <Route path="/recipes/edit/:id" element={<RecipeForm isEdited />} />
+
+              <Route element={<AuthGuard />}>
+                <Route path="/blog/create" element={<PostForm />} />
+                <Route path="/blog/edit/:id" element={<PostForm isEdited />} />
+
+                <Route path="/recipes/create" element={<RecipeForm />} />
+                <Route path="/recipes/edit/:id" element={<RecipeForm isEdited />} />
+              </Route>
 
               {/* <Route path="/tips" element={<CookingTips />} />
               <Route path="/project" element={<ProjectDescription />} /> */}
