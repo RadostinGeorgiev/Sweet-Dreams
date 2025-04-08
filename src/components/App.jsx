@@ -22,8 +22,9 @@ import RecipeDetails from "./ui/pages/RecipeDetails/RecipeDetails";
 import NotFoundPage from "./ui/pages/NotFoundPage/NotFoundPage";
 import PostForm from "./ui/pages/PostForm/PostForm";
 import RecipeForm from "./ui/pages/RecipeForm/RecipeForm";
-// import ProjectDescription from "./ui/pages/ProjectDescription";
 import PersonalInfo from "./ui/pages/PersonalPublications/PersonalPublications";
+// import ProjectDescription from "./ui/pages/ProjectDescription";
+import Contacts from "./ui/pages/Contacts/Contacts";
 
 export default function App() {
   return (
@@ -47,6 +48,8 @@ export default function App() {
 
               <Route path="/recipes" element={<Recipes />} />
               <Route path="/recipes/:id" element={<RecipeDetails />} />
+
+              <Route path="/contacts" element={<Contacts />} />
 
               <Route element={<AuthGuard />}>
                 <Route path="/blog/create" element={<PostForm />} />

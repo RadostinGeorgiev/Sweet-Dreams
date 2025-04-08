@@ -17,6 +17,7 @@
     "@mantine/core": "^7.17.2",
     "@mantine/form": "^7.17.2",
     "@mantine/hooks": "^7.17.2",
+    "@react-google-maps/api": "^2.20.6",
     "@tabler/icons-react": "^3.31.0",
     "embla-carousel-react": "^8.5.2",
     "firebase": "^11.6.0",

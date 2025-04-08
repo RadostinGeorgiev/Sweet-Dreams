@@ -15,6 +15,7 @@ const mainLinks = [
   { link: "/blog", label: "Blog" },
   { link: "/recipes", label: "Recipes" },
   { link: "/personal", label: "Personal Publications", authRequired: true },
+  { link: "/contacts", label: "Contacts" },
   // { link: "/project", label: "Project Design" },
 ];
 
