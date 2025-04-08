@@ -180,7 +180,7 @@ export default function PostDetails() {
             leftSection={<IconThumbUp size={18} />}
             onClick={() => handleReaction("likes")}
             className={styles.reactions}
-            disabled={!isAuthenticated}
+            disabled={!isAuthenticated || isOwner}
           >
             {article.reactions.likes}
           </Button>
@@ -190,7 +190,7 @@ export default function PostDetails() {
             leftSection={<IconThumbDown size={18} />}
             onClick={() => handleReaction("dislikes")}
             className={styles.reactions}
-            disabled={!isAuthenticated}
+            disabled={!isAuthenticated || isOwner}
           >
             {article.reactions.dislikes}
           </Button>

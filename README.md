@@ -17,6 +17,7 @@
 - **Reactions & Rating**: Like/Dislike with rating calculation functionality with dynamic visual feedback
 - **Comment Threads**: Real-time comment updates tied to each post/recipe
 - **Image Uploads**: Firebase Storage integration
+- **Protected data**: Protected routes & data only for registered users
 
 ### 🔓 Public (Available to All Users)
 
@@ -36,6 +37,7 @@ Responsive and accessible **card layout** for content browsing
 - **Engage with Content**:
   - Comment on articles and recipes.
   - Like or dislike articles and recipes to contribute to their rating.
+- **Personal Publications**: A dedicated page for visualizing the user's personal posts.
 
 ## 🛠 Technologies Used
 

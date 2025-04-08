@@ -1,11 +1,11 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 import { useAuth } from "../../../../context/AuthContext";
 import { useItemsCRUD } from "../../../../hooks/useItems";
 import { endpoints } from "../../../../../config";
 
 import Loading from "../../elements/Loading";
-import { Button, Container, Flex, Image, Text, Title } from "@mantine/core";
+import { Button, Container, Flex, Group, Image, Pagination, Text, Title } from "@mantine/core";
 import BlogList from "../../containers/BlogList/BlogList";
 
 import styles from "./PersonalPublications.module.scss";
@@ -15,12 +15,16 @@ import { IconWriting } from "@tabler/icons-react";
 
 export default function PersonalInfo() {
   const { user } = useAuth();
+  const [blogPage, setBlogPage] = useState(1);
+  const [recipesPage, setRecipesPage] = useState(1);
+
   const pageSize = 9;
 
   const {
     items: personalBlogs,
-    itemsLoading: personalBlogLoading,
-    itemsError: personalBlogError,
+    itemsLoading: blogLoading,
+    itemsError: blogError,
+    totalPages: blogTotalPages,
     getItems: getPersonalBlogs,
   } = useItemsCRUD(endpoints.blog, {
     filter: `_ownerId="${user._id}"`,
@@ -30,9 +34,10 @@ export default function PersonalInfo() {
   });
 
   const {
-    items: personalRecipes,
-    itemsLoading: personalRecipesLoading,
-    itemsError: personalRecipesError,
+    items: recipes,
+    itemsLoading: recipesLoading,
+    itemsError: recipesError,
+    totalPages: recipesTotalPages,
     getItems: getPersonalRecipes,
   } = useItemsCRUD(endpoints.recipes, {
     filter: `_ownerId="${user._id}"`,
@@ -46,12 +51,12 @@ export default function PersonalInfo() {
     getPersonalRecipes();
   }, []);
 
-  if (personalBlogLoading || personalRecipesLoading) return <Loading />;
-  if (personalBlogError || personalRecipesError) return <div>Error:{personalBlogError || personalRecipesError}</div>;
+  if (blogLoading || recipesLoading) return <Loading />;
+  if (blogError || recipesError) return <div>Error:{blogError || recipesError}</div>;
 
   return (
     <Container size="xl" className={styles.container}>
-      {personalBlogs.length === 0 && personalRecipes.length === 0 && (
+      {personalBlogs.length === 0 && recipes.length === 0 && (
         <Image h={400} w="auto" fit="contain" src="/images/Be_more_creative.jpg" alt="Be more creative" />
       )}
 
@@ -76,10 +81,16 @@ export default function PersonalInfo() {
             Your Posts
           </Title>
           <BlogList articles={personalBlogs} />
+
+          {blogTotalPages > 1 && (
+            <Group justify="center" mt="lg">
+              <Pagination radius="0" total={blogTotalPages} value={blogPage} onChange={setBlogPage} />
+            </Group>
+          )}
         </>
       )}
 
-      {personalRecipes.length === 0 ? (
+      {recipes.length === 0 ? (
         <Flex justify="flex-start" align="center" gap="lg" mt="xl">
           <Text>You have not created any recipes yet.</Text>
           <Button
@@ -99,7 +110,13 @@ export default function PersonalInfo() {
           <Title order={4} fw={400} tt="uppercase" align="start" c="dimmed" className={styles.title}>
             Your Recipes
           </Title>
-          <RecipeList recipes={personalRecipes} columns={3} />
+          <RecipeList recipes={recipes} columns={3} />
+
+          {recipesTotalPages > 1 && (
+            <Group justify="center" mt="lg">
+              <Pagination radius="0" total={recipesTotalPages} value={recipesPage} onChange={setRecipesPage} />
+            </Group>
+          )}
         </>
       )}
     </Container>
