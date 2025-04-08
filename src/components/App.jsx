@@ -19,11 +19,11 @@ import BlogList from "./ui/containers/BlogList/BlogList";
 import PostDetails from "./ui/pages/PostDetails/PostDetails";
 import Recipes from "./ui/layout/Recipes/Recipes";
 import RecipeDetails from "./ui/pages/RecipeDetails/RecipeDetails";
-// import CookingTips from "./CookingTips";
-// import ProjectDescription from "./ui/pages/ProjectDescription";
 import NotFoundPage from "./ui/pages/NotFoundPage/NotFoundPage";
 import PostForm from "./ui/pages/PostForm/PostForm";
 import RecipeForm from "./ui/pages/RecipeForm/RecipeForm";
+// import ProjectDescription from "./ui/pages/ProjectDescription";
+import PersonalInfo from "./ui/pages/PersonalPublications/PersonalPublications";
 
 export default function App() {
   return (
@@ -53,11 +53,14 @@ export default function App() {
                 <Route path="/blog/edit/:id" element={<PostForm isEdited />} />
 
                 <Route path="/recipes/create" element={<RecipeForm />} />
-                <Route path="/recipes/edit/:id" element={<RecipeForm isEdited />} />
+                <Route
+                  path="/recipes/edit/:id"
+                  element={<RecipeForm isEdited />}
+                />
+                <Route path="/personal" element={<PersonalInfo />} />
               </Route>
 
-              {/* <Route path="/tips" element={<CookingTips />} />
-              <Route path="/project" element={<ProjectDescription />} /> */}
+              {/* <Route path="/project" element={<ProjectDescription />} /> */}
 
               <Route path="*" element={<NotFoundPage />} />
             </Routes>

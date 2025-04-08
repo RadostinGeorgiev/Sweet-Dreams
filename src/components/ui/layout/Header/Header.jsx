@@ -14,7 +14,7 @@ const mainLinks = [
   { link: "/", label: "Home" },
   { link: "/blog", label: "Blog" },
   { link: "/recipes", label: "Recipes" },
-  // { link: "/tips", label: "Cooking Tips" },
+  { link: "/personal", label: "Personal Publications" },
   // { link: "/project", label: "Project Design" },
 ];
 
@@ -56,7 +56,14 @@ export default function Header() {
   return (
     <Container size="xl" mb="xl">
       <Group justify="space-between" align="center" mt="md">
-        <Image h={60} w="auto" fit="fill" src={logo} alt="Logo" className={styles.logo} />
+        <Image
+          h={60}
+          w="auto"
+          fit="fill"
+          src={logo}
+          alt="Logo"
+          className={styles.logo}
+        />
         <div
           style={{
             flex: 1,
