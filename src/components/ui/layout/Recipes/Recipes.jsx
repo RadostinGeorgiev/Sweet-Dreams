@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router";
+import { Link, useLocation } from "react-router";
 
 import { Button, Container, Flex, Group, Pagination, Select, Text } from "@mantine/core";
 import { IconWriting } from "@tabler/icons-react";
@@ -16,7 +16,10 @@ import styles from "./Recipes.module.scss";
 export default function Recipes() {
   const { isLogged } = useAuth();
   const loggedIn = isLogged();
+  const location = useLocation();
+
   const [page, setPage] = useState(1);
+  const [filterQuery, setFilterQuery] = useState("");
   const [sortValue, setSortValue] = useState("_createdOn desc");
   const pageSize = 10;
 
@@ -33,8 +36,19 @@ export default function Recipes() {
   });
 
   useEffect(() => {
-    getRecipes({ page: 1, sort: sortValue });
-  }, [page, sortValue]);
+    const searchParams = new URLSearchParams(location.search);
+    const where = searchParams.get("where") || "";
+    setPage(1);
+    setFilterQuery(where);
+  }, [location.search]);
+
+  useEffect(() => {
+    getRecipes({
+      page,
+      sort: sortValue,
+      filter: filterQuery,
+    });
+  }, [page, sortValue, filterQuery]);
 
   if (recipesLoading) return <Loading />;
   if (recipesError) return <div>Error: {recipesError}</div>;

@@ -15,12 +15,11 @@ import styles from "./Blog.module.scss";
 
 export default function Blog() {
   const { isLogged } = useAuth();
-  const [page, setPage] = useState(1);
-  const [filterQuery, setFilterQuery] = useState("");
-
   const loggedIn = isLogged();
   const location = useLocation();
 
+  const [page, setPage] = useState(1);
+  const [filterQuery, setFilterQuery] = useState("");
   const [sortValue, setSortValue] = useState("_createdOn desc");
 
   const pageSize = 6;

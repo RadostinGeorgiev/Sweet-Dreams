@@ -25,7 +25,15 @@ export default function RecipeCard({ recipe, layout = "vertical", size = "large"
           <List className={styles.widget}>
             {recipe.category.map((category, index) => (
               <ListItem key={index}>
-                <Button variant="outline" size="compact-xs" radius="0" tt="uppercase" className={styles.property}>
+                <Button
+                  variant="outline"
+                  size="compact-xs"
+                  radius="0"
+                  tt="uppercase"
+                  className={styles.property}
+                  component={Link}
+                  to={`/recipes?where=category in ("${category}")`}
+                >
                   {category}
                 </Button>
               </ListItem>

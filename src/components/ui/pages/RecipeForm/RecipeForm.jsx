@@ -223,7 +223,7 @@ export default function RecipeForm({ isEdited }) {
         <MultiSelect
           label="Categories"
           placeholder="Please select categories"
-          data={["Cakes & Cupcakes", "Cookies & Bars", "Pies & Tarts", "Puddings & Custards", "Frozen Treats"]}
+          data={["Cakes", "Cookies", "Pies", "Puddings", "Frozen Treats"]}
           mb="sm"
           {...form.getInputProps("category")}
           required
