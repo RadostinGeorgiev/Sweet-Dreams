@@ -85,6 +85,7 @@ export default function Contacts() {
                 mapId: "c371713879d22443",
                 disableDefaultUI: false,
                 clickableIcons: true,
+                zoomControl: true,
               }}
             />
           </LoadScript>
