@@ -25,9 +25,9 @@ export default function HomePage() {
     items: topRatedBlogsTotalPages,
     getItems: getTopRatedBlogs,
   } = useItemsCRUD(endpoints.blog, {
-    select: "_id,title,category,content,readingTimeMinutes,images,reviewCount,_ownerId,_createdOn",
+    select: "_id,title,category,readingTimeMinutes,images,rating,_ownerId,_createdOn",
     relations: "author=_ownerId:authors@_ownerId",
-    sort: "rating",
+    sort: "rating desc",
     pageSize: pageSize,
   });
 
@@ -102,6 +102,7 @@ export default function HomePage() {
         </Title>
         <ItemsMasonry subject={latestBlogs} />
       </Container>
+
       <GalleryCarousel images={images} />
     </>
   );

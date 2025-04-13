@@ -204,7 +204,7 @@ export default function RecipeForm({ isEdited }) {
 
   return (
     <Paper withBorder shadow="lg" p="lg" mt="lg" style={{ maxWidth: 600, margin: "auto", position: "relative" }}>
-      <CloseButton onClick={() => navigate(-1)} pos="absolute" top={20} right={20} style={{ zIndex: 1 }} />
+      <CloseButton onClick={() => navigate(-1)} pos="absolute" top={20} right={20} style={{ zindex: 1 }} />
 
       <LoadingOverlay visible={isUploading} />
 

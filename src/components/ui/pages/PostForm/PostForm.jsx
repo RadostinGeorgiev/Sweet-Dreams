@@ -21,11 +21,7 @@ import {
   CloseButton,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import {
-  IconCircleCheckFilled,
-  IconMinus,
-  IconXboxXFilled,
-} from "@tabler/icons-react";
+import { IconCircleCheckFilled, IconMinus, IconXboxXFilled } from "@tabler/icons-react";
 
 import { zodResolver } from "mantine-form-zod-resolver";
 import { z } from "zod";
@@ -37,9 +33,7 @@ const MAX_FILE_SIZE = 1024 * 1024; // 1MB
 const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp"];
 
 const schema = z.object({
-  title: z
-    .string()
-    .min(6, { message: "The title of the post must be at least 6 characters" }),
+  title: z.string().min(6, { message: "The title of the post must be at least 6 characters" }),
   content: z.string().min(6, {
     message: "The content of the post must be at least 6 characters",
   }),
@@ -50,14 +44,10 @@ const schema = z.object({
       (files) =>
         files.every((file) => {
           if (typeof file === "string") return true;
-          return (
-            file.size <= MAX_FILE_SIZE &&
-            ACCEPTED_IMAGE_TYPES.includes(file.type)
-          );
+          return file.size <= MAX_FILE_SIZE && ACCEPTED_IMAGE_TYPES.includes(file.type);
         }),
       {
-        message:
-          "Invalid images - must be either existing URLs or valid new files (max 1MB, only .jpg, .png, .webp)",
+        message: "Invalid images - must be either existing URLs or valid new files (max 1MB, only .jpg, .png, .webp)",
       }
     ),
 });
@@ -103,20 +93,13 @@ export default function PostForm({ isEdited }) {
   const handleImageChange = (newFiles) => {
     if (!newFiles) return;
 
-    const validNewFiles = Array.from(newFiles).filter(
-      (file) => file instanceof File
-    );
+    const validNewFiles = Array.from(newFiles).filter((file) => file instanceof File);
 
-    const allFiles = [
-      ...form.values.imagesFiles.filter((file) => typeof file === "string"),
-      ...validNewFiles,
-    ];
+    const allFiles = [...form.values.imagesFiles.filter((file) => typeof file === "string"), ...validNewFiles];
 
     form.setFieldValue("imagesFiles", allFiles);
 
-    const urls = allFiles.map((file) =>
-      typeof file === "string" ? file : URL.createObjectURL(file)
-    );
+    const urls = allFiles.map((file) => (typeof file === "string" ? file : URL.createObjectURL(file)));
     setPreviewUrls(urls);
   };
 
@@ -135,26 +118,17 @@ export default function PostForm({ isEdited }) {
     updatedFiles.splice(index, 1);
 
     form.setFieldValue("imagesFiles", updatedFiles);
-    setPreviewUrls(
-      updatedFiles.map((file) =>
-        typeof file === "string" ? file : URL.createObjectURL(file)
-      )
-    );
+    setPreviewUrls(updatedFiles.map((file) => (typeof file === "string" ? file : URL.createObjectURL(file))));
   };
 
   const handleSubmit = async (values) => {
     setIsUploading(true);
 
     try {
-      const newFiles = values.imagesFiles.filter(
-        (file) => file instanceof File
-      );
-      const existingUrls = values.imagesFiles.filter(
-        (file) => typeof file === "string"
-      );
+      const newFiles = values.imagesFiles.filter((file) => file instanceof File);
+      const existingUrls = values.imagesFiles.filter((file) => typeof file === "string");
 
-      const uploadedUrls =
-        newFiles.length > 0 ? await handleUploadImages(newFiles) : [];
+      const uploadedUrls = newFiles.length > 0 ? await handleUploadImages(newFiles) : [];
 
       const articleData = {
         title: values.title,
@@ -162,9 +136,7 @@ export default function PostForm({ isEdited }) {
         tags: values.tags || null,
         content: values.content.split("\n").filter((p) => p.trim() !== ""),
         cuisine: values.cuisine,
-        readingTimeMinutes: Math.ceil(
-          values.content.trim().split(/\s+/).filter(Boolean).length / 150
-        ),
+        readingTimeMinutes: Math.ceil(values.content.trim().split(/\s+/).filter(Boolean).length / 150),
         images: [...existingUrls, ...uploadedUrls],
 
         rating: isEdited ? data?.rating : 0,
@@ -173,16 +145,12 @@ export default function PostForm({ isEdited }) {
         reviewCount: isEdited ? data?.reviewCount : 0,
       };
 
-      const result = isEdited
-        ? await editArticle(data._id, articleData)
-        : await createArticle(articleData);
+      const result = isEdited ? await editArticle(data._id, articleData) : await createArticle(articleData);
 
       if (result) {
         const notification = {
           title: `Successfuly ${isEdited ? "update" : "create"}`,
-          message: `The article ${result.title} was ${
-            isEdited ? "updated" : "created"
-          } sucessfuly!`,
+          message: `The article ${result.title} was ${isEdited ? "updated" : "created"} sucessfuly!`,
         };
         setArticleNotification(notification);
         form.reset();
@@ -195,20 +163,8 @@ export default function PostForm({ isEdited }) {
   };
 
   return (
-    <Paper
-      withBorder
-      shadow="lg"
-      p="lg"
-      mt="lg"
-      style={{ maxWidth: 600, margin: "auto", position: "relative" }}
-    >
-      <CloseButton
-        onClick={() => navigate(-1)}
-        pos="absolute"
-        top={20}
-        right={20}
-        zIndex={1}
-      />
+    <Paper withBorder shadow="lg" p="lg" mt="lg" style={{ maxWidth: 600, margin: "auto", position: "relative" }}>
+      <CloseButton onClick={() => navigate(-1)} pos="absolute" top={20} right={20} zindex={1} />
 
       <LoadingOverlay visible={isUploading} />
 
@@ -226,13 +182,7 @@ export default function PostForm({ isEdited }) {
         <MultiSelect
           label="Categories"
           placeholder="Please select categories"
-          data={[
-            "Food presentation",
-            "Gourmet",
-            "Cooking Tips",
-            "Food Travel",
-            "Food Stories",
-          ]}
+          data={["Food presentation", "Gourmet", "Cooking Tips", "Food Travel", "Food Stories"]}
           mb="sm"
           {...form.getInputProps("category")}
           required
@@ -246,12 +196,7 @@ export default function PostForm({ isEdited }) {
             style={{ flex: 1 }}
           />
 
-          <TextInput
-            label="Cuisine"
-            placeholder="Cuisine"
-            {...form.getInputProps("cuisine")}
-            style={{ flex: 1 }}
-          />
+          <TextInput label="Cuisine" placeholder="Cuisine" {...form.getInputProps("cuisine")} style={{ flex: 1 }} />
         </Flex>
 
         <Textarea
@@ -284,25 +229,13 @@ export default function PostForm({ isEdited }) {
               fit="contain"
               mb="sm"
             />
-            <ActionIcon
-              variant="outline"
-              size="sm"
-              radius="0"
-              onClick={() => handleRemoveImage(index)}
-            >
+            <ActionIcon variant="outline" size="sm" radius="0" onClick={() => handleRemoveImage(index)}>
               <IconMinus size="1em" />
             </ActionIcon>
           </Flex>
         ))}
 
-        <Button
-          type="submit"
-          fullWidth
-          radius="0"
-          mt="lg"
-          tt="uppercase"
-          disabled={!form.isValid()}
-        >
+        <Button type="submit" fullWidth radius="0" mt="lg" tt="uppercase" disabled={!form.isValid()}>
           {isEdited ? "Update Post" : "Create Post"}
         </Button>
 
@@ -322,12 +255,7 @@ export default function PostForm({ isEdited }) {
           </Notification>
         )}
         {(createError || editError) && (
-          <Notification
-            icon={<IconXboxXFilled size={24} />}
-            title="Error"
-            color="red"
-            mt="md"
-          >
+          <Notification icon={<IconXboxXFilled size={24} />} title="Error" color="red" mt="md">
             {createError || editError}
           </Notification>
         )}

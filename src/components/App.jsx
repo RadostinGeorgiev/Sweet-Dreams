@@ -37,8 +37,6 @@ export default function App() {
 
           <AppShell.Main>
             <Routes>
-              <Route path="/login" element={<LoginForm />} />
-              <Route path="/register" element={<RegisterForm />} />
               <Route path="/" element={<HomePage />} />
 
               <Route element={<BlogContainer />}>
@@ -52,6 +50,9 @@ export default function App() {
               <Route path="/contacts" element={<Contacts />} />
 
               <Route element={<AuthGuard />}>
+                <Route path="/login" element={<LoginForm />} />
+                <Route path="/register" element={<RegisterForm />} />
+
                 <Route path="/blog/create" element={<PostForm />} />
                 <Route path="/blog/edit/:id" element={<PostForm isEdited />} />
 
