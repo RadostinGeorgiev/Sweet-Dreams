@@ -1,7 +1,7 @@
-import { useEffect, useState } from "react";
-import { Link, useLocation, useNavigate } from "react-router";
+import { useEffect } from "react";
+import { Link, NavLink, useLocation, useNavigate } from "react-router";
 
-import { Image, Anchor, Container, Group, Stack, Button, Burger, Drawer } from "@mantine/core";
+import { Container, Group, Image, Button, Burger, Drawer, Flex } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { IconUserDown, IconUserPlus, IconUserShare } from "@tabler/icons-react";
 
@@ -20,13 +20,40 @@ const mainLinks = [
 ];
 
 function Menu({
-  menuItems,
   variant = "horizontal", // 'horizontal' | 'vertical'
+  closeDrawer,
 }) {
-  const Wrapper = variant === "horizontal" ? Group : Stack;
-  const wrapperProps = variant === "horizontal" ? { justify: "center", grow: true, gap: "sm" } : { gap: 0 };
+  const { isAuthenticated } = useAuth();
 
-  return <Wrapper {...wrapperProps}>{menuItems}</Wrapper>;
+  const wrapperProps =
+    variant === "horizontal"
+      ? {
+          direction: "row",
+          justify: "center",
+          align: "flex-end",
+          wrap: "wrap",
+          gap: "sm",
+        }
+      : {
+          direction: "column",
+          align: "flex-start",
+          gap: 0,
+        };
+
+  const menuItems = mainLinks
+    .filter((link) => isAuthenticated || !link.authRequired)
+    .map((item) => (
+      <NavLink
+        key={item.label}
+        to={item.link}
+        onClick={() => closeDrawer()}
+        className={({ isActive }) => `${styles.link} ${isActive ? styles.active : ""}`}
+      >
+        <span className={styles.linkInner}>{item.label}</span>{" "}
+      </NavLink>
+    ));
+
+  return <Flex {...wrapperProps}>{menuItems}</Flex>;
 }
 
 function Buttons({
@@ -39,7 +66,7 @@ function Buttons({
   const buttonsProps =
     variant === "horizontal"
       ? { justify: "flex-end", align: "center" }
-      : { justify: "center", grow: true, pb: "xl", px: "md" };
+      : { justify: "center", grow: true, pt: "xl", pb: "xl", px: "md" };
 
   function handleLogout() {
     closeMenu?.();
@@ -101,30 +128,9 @@ function Buttons({
 }
 
 export default function Header() {
-  const { isAuthenticated } = useAuth();
-
   const [opened, { toggle, close: closeDrawer }] = useDisclosure(false);
-  const [active, setActive] = useState(0);
 
   const location = useLocation();
-
-  const menuItems = mainLinks
-    .filter((link) => isAuthenticated || !link.authRequired)
-    .map((item, index) => (
-      <Anchor
-        key={item.label}
-        component={Link}
-        to={item.link}
-        data-active={index === active || undefined}
-        onClick={() => {
-          setActive(index);
-          closeDrawer();
-        }}
-        className={styles.link}
-      >
-        {item.label}
-      </Anchor>
-    ));
 
   useEffect(() => {
     const path = location.pathname;
@@ -137,17 +143,17 @@ export default function Header() {
         index = mainLinks.findIndex((link) => link.link === "/recipes");
       }
     }
-
-    setActive(index);
   }, [location.pathname]);
 
   return (
     <Container size="xl" mb="xl" className={styles.header}>
       <Group justify="space-between" align="center" mt="md" className={styles.inner}>
-        <Image h={60} w="auto" fit="fill" src={logo} alt="Logo" className={styles.logo} />
+        <Link to="/">
+          <Image h={60} w="auto" fit="fill" src={logo} alt="Logo" className={styles.logo} />
+        </Link>
 
-        <Group visibleFrom="sm" gap={0}>
-          <Menu menuItems={menuItems} />
+        <Group visibleFrom="sm">
+          <Menu />
         </Group>
 
         <Group visibleFrom="sm" gap="md">
@@ -166,7 +172,7 @@ export default function Header() {
         hiddenFrom="sm"
         zIndex={1000}
       >
-        <Menu menuItems={menuItems} variant="vertical" />
+        <Menu variant="vertical" closeDrawer={closeDrawer} />
         <Buttons variant="vertical" closeMenu={closeDrawer} />
       </Drawer>
     </Container>
