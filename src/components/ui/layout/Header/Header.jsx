@@ -1,5 +1,4 @@
-import { useEffect } from "react";
-import { Link, NavLink, useLocation, useNavigate } from "react-router";
+import { Link, NavLink, useNavigate } from "react-router";
 
 import { Container, Group, Image, Button, Burger, Drawer, Flex } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
@@ -10,6 +9,7 @@ import { UserInfo } from "../../elements/UserInfo/UserInfo";
 
 import styles from "./Header.module.scss";
 import logo from "/images/logo1.png";
+import { useCallback } from "react";
 
 const mainLinks = [
   { link: "/", label: "Home" },
@@ -21,7 +21,7 @@ const mainLinks = [
 
 function Menu({
   variant = "horizontal", // 'horizontal' | 'vertical'
-  closeDrawer,
+  onClose,
 }) {
   const { isAuthenticated } = useAuth();
 
@@ -46,7 +46,7 @@ function Menu({
       <NavLink
         key={item.label}
         to={item.link}
-        onClick={() => closeDrawer()}
+        onClick={() => onClose?.()}
         className={({ isActive }) => `${styles.link} ${isActive ? styles.active : ""}`}
       >
         <span className={styles.linkInner}>{item.label}</span>{" "}
@@ -58,7 +58,7 @@ function Menu({
 
 function Buttons({
   variant = "horizontal", // 'horizontal' | 'vertical'
-  closeMenu,
+  onClose,
 }) {
   const { user, logout, isAuthenticated } = useAuth();
   const navigate = useNavigate();
@@ -68,14 +68,14 @@ function Buttons({
       ? { justify: "flex-end", align: "center" }
       : { justify: "center", grow: true, pt: "xl", pb: "xl", px: "md" };
 
-  function handleLogout() {
-    closeMenu?.();
+  const handleLogout = useCallback(() => {
+    onClose?.();
     navigate("/");
 
     setTimeout(() => {
       logout();
     }, 500);
-  }
+  }, [onClose, navigate, logout]);
 
   return (
     <Group {...buttonsProps}>
@@ -103,7 +103,7 @@ function Buttons({
             radius="0"
             leftSection={<IconUserDown size={16} />}
             className={styles.button}
-            onClick={() => closeMenu?.()}
+            onClick={() => onClose?.()}
             component={Link}
             to="/login"
           >
@@ -115,7 +115,7 @@ function Buttons({
             radius="0"
             leftSection={<IconUserPlus size={16} />}
             className={styles.button}
-            onClick={() => closeMenu?.()}
+            onClick={() => onClose?.()}
             component={Link}
             to="/register"
           >
@@ -130,21 +130,6 @@ function Buttons({
 export default function Header() {
   const [opened, { toggle, close: closeDrawer }] = useDisclosure(false);
 
-  const location = useLocation();
-
-  useEffect(() => {
-    const path = location.pathname;
-    let index = mainLinks.findIndex((link) => link.link === path);
-
-    if (index === -1) {
-      if (path.startsWith("/blog")) {
-        index = mainLinks.findIndex((link) => link.link === "/blog");
-      } else if (path.startsWith("/recipes")) {
-        index = mainLinks.findIndex((link) => link.link === "/recipes");
-      }
-    }
-  }, [location.pathname]);
-
   return (
     <Container size="xl" mb="xl" className={styles.header}>
       <Group justify="space-between" align="center" mt="md" className={styles.inner}>
@@ -152,8 +137,8 @@ export default function Header() {
           <Image h={60} w="auto" fit="fill" src={logo} alt="Logo" className={styles.logo} />
         </Link>
 
-        <Group visibleFrom="sm">
-          <Menu />
+        <Group visibleFrom="sm" style={{ alignSelf: "flex-end" }}>
+          <Menu variant="horizontal" />
         </Group>
 
         <Group visibleFrom="sm" gap="md">
@@ -172,8 +157,8 @@ export default function Header() {
         hiddenFrom="sm"
         zIndex={1000}
       >
-        <Menu variant="vertical" closeDrawer={closeDrawer} />
-        <Buttons variant="vertical" closeMenu={closeDrawer} />
+        <Menu variant="vertical" onClose={closeDrawer} />
+        <Buttons variant="vertical" onClose={closeDrawer} />
       </Drawer>
     </Container>
   );
