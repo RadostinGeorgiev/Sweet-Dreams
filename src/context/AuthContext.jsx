@@ -97,6 +97,9 @@ export const AuthProvider = ({ children }) => {
         registerError,
         loginError,
 
+        setRegisterError,
+        setLoginError,
+
         isLogged: authServices.isLogged,
         getUserData: authServices.getUserData,
       }}

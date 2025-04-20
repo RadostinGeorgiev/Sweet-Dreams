@@ -1,16 +1,7 @@
 import { Link, useNavigate } from "react-router";
 
 import { useForm } from "@mantine/form";
-import {
-  Paper,
-  Title,
-  TextInput,
-  PasswordInput,
-  Button,
-  Checkbox,
-  Text,
-  Notification,
-} from "@mantine/core";
+import { Paper, Title, TextInput, PasswordInput, Button, Checkbox, Text, Notification } from "@mantine/core";
 import { IconXboxXFilled } from "@tabler/icons-react";
 
 import { zodResolver } from "mantine-form-zod-resolver";
@@ -23,7 +14,7 @@ const schema = z.object({
 });
 
 export default function LoginForm() {
-  const { login, loginError } = useAuth();
+  const { login, loginError, setLoginError } = useAuth();
 
   const navigate = useNavigate();
 
@@ -47,23 +38,12 @@ export default function LoginForm() {
   };
 
   return (
-    <Paper
-      withBorder
-      shadow="lg"
-      p="lg"
-      mt="lg"
-      style={{ maxWidth: 400, margin: "auto" }}
-    >
+    <Paper withBorder shadow="lg" p="lg" mt="lg" style={{ maxWidth: 400, margin: "auto" }}>
       <Title align="center" mb="md">
         Login
       </Title>
       <form onSubmit={form.onSubmit(handleSubmit)}>
-        <TextInput
-          label="Email"
-          placeholder="Enter your email"
-          {...form.getInputProps("email")}
-          required
-        />
+        <TextInput label="Email" placeholder="Enter your email" {...form.getInputProps("email")} required />
 
         <PasswordInput
           label="Password"
@@ -73,12 +53,7 @@ export default function LoginForm() {
           required
         />
 
-        <Checkbox
-          label="Remember me"
-          size="xs"
-          mt="md"
-          {...form.getInputProps("remember", { type: "checkbox" })}
-        />
+        <Checkbox label="Remember me" size="xs" mt="md" {...form.getInputProps("remember", { type: "checkbox" })} />
 
         <Button type="submit" fullWidth radius="0" mt="lg" tt="uppercase">
           Login
@@ -92,6 +67,7 @@ export default function LoginForm() {
             mt="md"
             withCloseButton
             onClose={() => {
+              setLoginError(null);
               navigate("/register");
             }}
           >

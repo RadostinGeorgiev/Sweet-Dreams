@@ -24,7 +24,6 @@ import NotFoundPage from "./ui/pages/NotFoundPage/NotFoundPage";
 import PostForm from "./ui/pages/PostForm/PostForm";
 import RecipeForm from "./ui/pages/RecipeForm/RecipeForm";
 import PersonalInfo from "./ui/pages/PersonalPublications/PersonalPublications";
-// import ProjectDescription from "./ui/pages/ProjectDescription";
 import Contacts from "./ui/pages/Contacts/Contacts";
 
 export default function App() {
@@ -63,8 +62,6 @@ export default function App() {
                 <Route path="/recipes/edit/:id" element={<RecipeForm isEdited />} />
                 <Route path="/personal" element={<PersonalInfo />} />
               </Route>
-
-              {/* <Route path="/project" element={<ProjectDescription />} /> */}
 
               <Route path="*" element={<NotFoundPage />} />
             </Routes>
