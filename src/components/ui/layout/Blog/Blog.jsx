@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router";
 
 import { Button, Flex, Group, Select, Text, Pagination } from "@mantine/core";
+import { useMediaQuery } from "@mantine/hooks";
 import { IconWriting } from "@tabler/icons-react";
 
 import { useItemsCRUD } from "../../../../hooks/useItems";
@@ -9,7 +10,8 @@ import { endpoints } from "../../../../../config";
 
 import Loading from "../../elements/Loading";
 import { useAuth } from "../../../../context/AuthContext";
-import BlogList from "../../containers/BlogList/BlogList";
+import ResponsiveGrid from "../../containers/ResponsiveGrid";
+import PostCard from "../../elements/PostCard/PostCard";
 
 import styles from "./Blog.module.scss";
 
@@ -22,7 +24,15 @@ export default function Blog() {
   const [filterQuery, setFilterQuery] = useState("");
   const [sortValue, setSortValue] = useState("_createdOn desc");
 
-  const pageSize = 6;
+  const maxColumns = 2;
+  const isMd = useMediaQuery("(min-width: 768px)");
+  const isLg = useMediaQuery("(min-width: 992px)");
+
+  let columns = 1;
+  if (isMd && !isLg) columns = 2;
+  else if (isLg) columns = Math.min(maxColumns, 4);
+
+  const pageSize = columns * 3;
 
   const {
     items: articles,
@@ -92,7 +102,7 @@ export default function Blog() {
         )}
       </Flex>
 
-      <BlogList articles={articles} />
+      <ResponsiveGrid items={articles} maxColumns={maxColumns} CardComponent={PostCard} />
 
       <Group justify="center" mt="lg">
         <Pagination radius="0" total={totalPages} value={page} onChange={setPage} />

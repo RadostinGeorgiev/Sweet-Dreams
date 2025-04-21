@@ -5,7 +5,7 @@ import { IconStar, IconArrowRight } from "@tabler/icons-react";
 
 import styles from "./RecipeCard.module.scss";
 
-export default function RecipeCard({ recipe, layout = "vertical", size = "large" }) {
+export default function RecipeCard({ data, layout = "vertical", size = "large" }) {
   return (
     <Flex
       shadow="md"
@@ -17,13 +17,13 @@ export default function RecipeCard({ recipe, layout = "vertical", size = "large"
       className={`${styles.card} ${styles[layout]}`}
     >
       <Box className={styles["item-image"]}>
-        <Image src={recipe.images[0]} fit="cover" className={styles.image} />
+        <Image src={data.images[0]} fit="cover" className={styles.image} />
       </Box>
 
       <Flex gap="0" className={styles["item-text"]}>
         {size !== "small" && (
           <List className={styles.widget}>
-            {recipe.category.map((category, index) => (
+            {data.category.map((category, index) => (
               <ListItem key={index}>
                 <Button
                   variant="outline"
@@ -42,7 +42,7 @@ export default function RecipeCard({ recipe, layout = "vertical", size = "large"
         )}
 
         <Title order={3} fw={400} className={styles.title}>
-          {recipe.title}
+          {data.title}
         </Title>
 
         {size === "large" && (
@@ -52,7 +52,7 @@ export default function RecipeCard({ recipe, layout = "vertical", size = "large"
                 Difficulty
               </Text>
               <Text size="sm" fw={700}>
-                {recipe.difficulty}
+                {data.difficulty}
               </Text>
             </Group>
 
@@ -61,7 +61,7 @@ export default function RecipeCard({ recipe, layout = "vertical", size = "large"
                 Serves
               </Text>
               <Text size="sm" fw={700}>
-                {recipe.servings}
+                {data.servings}
               </Text>
             </Group>
 
@@ -70,7 +70,7 @@ export default function RecipeCard({ recipe, layout = "vertical", size = "large"
                 Calories per serving
               </Text>
               <Text size="sm" fw={700}>
-                {`${Number(recipe.caloriesPerServing)} kcal`}
+                {`${Number(data.caloriesPerServing)} kcal`}
               </Text>
             </Group>
           </Flex>
@@ -83,7 +83,7 @@ export default function RecipeCard({ recipe, layout = "vertical", size = "large"
                 Preparation
               </Text>
               <Text size="sm" fw={700}>
-                {recipe.prepTimeMinutes}
+                {data.prepTimeMinutes}
               </Text>
             </Group>
 
@@ -92,20 +92,20 @@ export default function RecipeCard({ recipe, layout = "vertical", size = "large"
                 Cooking time
               </Text>
               <Text size="sm" fw={700}>
-                {`${Number(recipe.cookTimeMinutes)} minutes`}
+                {`${Number(data.cookTimeMinutes)} minutes`}
               </Text>
             </Group>
           </Flex>
         )}
 
         <Text size="md" lineClamp={3} className={styles.description}>
-          {recipe.description}
+          {data.description}
         </Text>
 
         <Group justify="space-between">
           <Group c="dimmed">
             <IconStar size={20} className={styles.icon} />
-            <Text size="sm">{recipe.rating.toFixed(2)}</Text>
+            <Text size="sm">{data.rating.toFixed(2)}</Text>
           </Group>
           <Button
             variant="outline"
@@ -115,7 +115,7 @@ export default function RecipeCard({ recipe, layout = "vertical", size = "large"
             p="xs"
             rightSection={<IconArrowRight size={24} />}
             component={Link}
-            to={`/recipes/${recipe._id}`}
+            to={`/recipes/${data._id}`}
             className={styles.button}
           >
             Read more

@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router";
 
 import { Button, Container, Flex, Group, Pagination, Select, Text } from "@mantine/core";
+import { useMediaQuery } from "@mantine/hooks";
 import { IconWriting } from "@tabler/icons-react";
 
 import { useAuth } from "../../../../context/AuthContext";
@@ -9,7 +10,8 @@ import { useItemsCRUD } from "../../../../hooks/useItems";
 import { endpoints } from "../../../../../config";
 
 import Loading from "../../elements/Loading";
-import RecipeList from "../../containers/RecipeList/RecipeList";
+import ResponsiveGrid from "../../containers/ResponsiveGrid";
+import RecipeCard from "../../elements/RecipeCard/RecipeCard";
 
 import styles from "./Recipes.module.scss";
 
@@ -21,7 +23,16 @@ export default function Recipes() {
   const [page, setPage] = useState(1);
   const [filterQuery, setFilterQuery] = useState("");
   const [sortValue, setSortValue] = useState("_createdOn desc");
-  const pageSize = 10;
+
+  const maxColumns = 3;
+  const isMd = useMediaQuery("(min-width: 768px)");
+  const isLg = useMediaQuery("(min-width: 992px)");
+
+  let columns = 1;
+  if (isMd && !isLg) columns = 2;
+  else if (isLg) columns = Math.min(maxColumns, 4);
+
+  const pageSize = columns * 4;
 
   const {
     items: recipes,
@@ -48,15 +59,15 @@ export default function Recipes() {
       sort: sortValue,
       filter: filterQuery,
     });
-  }, [page, sortValue, filterQuery]);
+  }, [page, pageSize, sortValue, filterQuery]);
 
   if (recipesLoading) return <Loading />;
   if (recipesError) return <div>Error: {recipesError}</div>;
 
   return (
     <Container size="xl" mt="md">
-      <Flex justify="space-between" align="center" mt="lg" mb="lg">
-        <Flex justify="start" align="center" gap="sm">
+      <Flex justify="space-between" align="center" mt="lg" p="md">
+        <Flex justify="start" align="center" gap="xs">
           <Text fw={700} ml="xl" ta="right">
             SortBy
           </Text>
@@ -93,7 +104,7 @@ export default function Recipes() {
         )}
       </Flex>
 
-      <RecipeList recipes={recipes} columns={2} />
+      <ResponsiveGrid items={recipes} maxColumns={maxColumns} CardComponent={RecipeCard} />
 
       <Group justify="center" m="lg">
         <Pagination radius="0" total={totalPages} value={page} onChange={setPage} />

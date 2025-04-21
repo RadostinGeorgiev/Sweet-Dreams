@@ -5,12 +5,12 @@ import { IconStar, IconEye, IconThumbUp, IconThumbDown, IconArrowRight } from "@
 
 import styles from "./PostCard.module.scss";
 
-export default function PostCard({ article, layout = "vertical" }) {
+export default function PostCard({ data, layout = "vertical" }) {
   const formattedDate = new Intl.DateTimeFormat("en-US", {
     month: "long",
     day: "numeric",
     year: "numeric",
-  }).format(new Date(article._createdOn));
+  }).format(new Date(data._createdOn));
 
   return (
     <Flex
@@ -23,7 +23,7 @@ export default function PostCard({ article, layout = "vertical" }) {
       className={`${styles.card} ${styles[layout]}`}
     >
       <Box className={styles["item-image"]}>
-        <Image src={article?.images?.[0]} fit="cover" className={styles.image} />
+        <Image src={data?.images?.[0]} fit="cover" className={styles.image} />
         <Text span size="md" tt="uppercase" c="dimmed" className={styles.date}>
           {`${formattedDate} ――`}
         </Text>
@@ -31,7 +31,7 @@ export default function PostCard({ article, layout = "vertical" }) {
 
       <Flex gap="0" className={styles["item-text"]}>
         <List className={styles.widget}>
-          {article?.category.map((category, index) => (
+          {data?.category.map((category, index) => (
             <ListItem key={index}>
               <Button
                 variant="outline"
@@ -49,7 +49,7 @@ export default function PostCard({ article, layout = "vertical" }) {
         </List>
 
         <Title order={3} fw={400} className={styles.title}>
-          {article.title}
+          {data.title}
         </Title>
 
         <Flex gap="xl" direction="row" justify="start" align="center" className={styles.widget}>
@@ -58,13 +58,13 @@ export default function PostCard({ article, layout = "vertical" }) {
               by
             </Text>
             <Text size="sm" fw={700}>
-              {` ${article.author?.firstName} ${article.author?.lastName}`}
+              {` ${data.author?.firstName} ${data.author?.lastName}`}
             </Text>
           </Group>
 
           <Group gap="xs">
             <Text size="sm" fw={700}>
-              {article.readingTimeMinutes}
+              {data.readingTimeMinutes}
             </Text>
             <Text size="sm" c="dimmed">
               minutes read
@@ -73,26 +73,26 @@ export default function PostCard({ article, layout = "vertical" }) {
         </Flex>
 
         <Text size="md" lineClamp={3} className={styles.description}>
-          {article.content}
+          {data.content}
         </Text>
 
         <Group justify="space-between">
           <Group c="dimmed">
             <Group gap="0">
               <IconStar size={20} className={styles.icon} />
-              <Text size="sm">{article.rating.toFixed(2)}</Text>
+              <Text size="sm">{data.rating.toFixed(2)}</Text>
             </Group>
             <Group gap="0">
               <IconEye size={20} className={styles.icon} />
-              <Text size="sm">{article.views}</Text>
+              <Text size="sm">{data.views}</Text>
             </Group>
             <Group gap="0">
               <IconThumbUp size={20} className={styles.icon} />
-              <Text size="sm">{article.reactions.likes}</Text>
+              <Text size="sm">{data.reactions.likes}</Text>
             </Group>
             <Group gap="0">
               <IconThumbDown size={20} className={styles.icon} />
-              <Text size="sm">{article.reactions.dislikes}</Text>
+              <Text size="sm">{data.reactions.dislikes}</Text>
             </Group>
           </Group>
           <Button
@@ -103,7 +103,7 @@ export default function PostCard({ article, layout = "vertical" }) {
             p="xs"
             rightSection={<IconArrowRight size={24} />}
             component={Link}
-            to={`/blog/${article._id}`}
+            to={`/blog/${data._id}`}
             className={styles.button}
           >
             Read more
