@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router";
 
 import { Button, Flex, Group, Select, Text, Pagination } from "@mantine/core";
-import { useMediaQuery } from "@mantine/hooks";
 import { IconWriting } from "@tabler/icons-react";
 
 import { useItemsCRUD } from "../../../../hooks/useItems";
@@ -10,6 +9,7 @@ import { endpoints } from "../../../../../config";
 
 import Loading from "../../elements/Loading";
 import { useAuth } from "../../../../context/AuthContext";
+import { useColumns } from "../../../../hooks/useColumns";
 import ResponsiveGrid from "../../containers/ResponsiveGrid";
 import PostCard from "../../elements/PostCard/PostCard";
 
@@ -25,13 +25,7 @@ export default function Blog() {
   const [sortValue, setSortValue] = useState("_createdOn desc");
 
   const maxColumns = 2;
-  const isMd = useMediaQuery("(min-width: 768px)");
-  const isLg = useMediaQuery("(min-width: 992px)");
-
-  let columns = 1;
-  if (isMd && !isLg) columns = 2;
-  else if (isLg) columns = Math.min(maxColumns, 4);
-
+  const columns = useColumns(maxColumns);
   const pageSize = columns * 3;
 
   const {

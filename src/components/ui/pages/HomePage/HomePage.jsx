@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 
 import { Container, Title } from "@mantine/core";
 import "@mantine/carousel/styles.css";
@@ -6,23 +6,23 @@ import "@mantine/carousel/styles.css";
 import { useItemsCRUD } from "../../../../hooks/useItems";
 import { endpoints } from "../../../../../config";
 
-import ItemsMasonry from "../../containers/ItemsMasonry/ItemsMasonry";
 import ItemsCarousel from "../../containers/ItemsCarousel/ItemsCarousel";
+import ResponsiveGrid from "../../containers/ResponsiveGrid";
+import RecipeCard from "../../elements/RecipeCard/RecipeCard";
+import ItemsMasonry from "../../containers/ItemsMasonry/ItemsMasonry";
 import GalleryCarousel from "../../elements/GalleryCarousel/GalleryCarousel";
 import Loading from "../../elements/Loading";
 
 import styles from "./HomePage.module.scss";
-import RecipeList from "../../containers/RecipeList/RecipeList";
+import PostCard from "../../elements/PostCard/PostCard";
 
 export default function HomePage() {
-  const [page, setPage] = useState(1);
   const pageSize = 20;
 
   const {
     items: topRatedBlogs,
     itemsLoading: topRatedBlogLoading,
     itemsError: topRatedBlogError,
-    items: topRatedBlogsTotalPages,
     getItems: getTopRatedBlogs,
   } = useItemsCRUD(endpoints.blog, {
     select: "_id,title,category,readingTimeMinutes,images,rating,_ownerId,_createdOn",
@@ -83,24 +83,18 @@ export default function HomePage() {
 
   return (
     <>
-      <ItemsCarousel
-        subject={topRatedBlogs}
-        endpoint={"/blog"}
-        currentPage={page}
-        totalPages={topRatedBlogsTotalPages}
-        onPageChange={setPage}
-      />
+      <ItemsCarousel items={topRatedBlogs} endpoint={"/blog"} maxColumns={3} />
 
       <Container size="xl" className={styles.container}>
         <Title order={4} fw={400} tt="uppercase" align="start" c="dimmed" className={styles.title}>
           Latest Recipes
         </Title>
-        <RecipeList recipes={recipes} columns={3} />
+        <ResponsiveGrid items={recipes} maxColumns={3} CardComponent={RecipeCard} />
 
         <Title order={4} fw={400} tt="uppercase" align="start" c="dimmed" className={styles.title}>
           Latest Posts
         </Title>
-        <ItemsMasonry subject={latestBlogs} />
+        <ItemsMasonry items={latestBlogs} maxColumns={3} CardComponent={PostCard} />
       </Container>
 
       <GalleryCarousel images={images} />

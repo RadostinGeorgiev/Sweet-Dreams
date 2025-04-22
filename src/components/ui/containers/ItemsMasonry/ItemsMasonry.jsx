@@ -1,12 +1,13 @@
-import PostCard from "../../elements/PostCard/PostCard";
-
+import { useColumns } from "../../../../hooks/useColumns";
 import styles from "./ItemsMasonry.module.scss";
 
-export default function ItemsMasonry({ subject }) {
+export default function ItemsMasonry({ items, maxColumns = 3, CardComponent }) {
+  const columns = useColumns(maxColumns);
+
   return (
-    <div className={styles.masonry}>
-      {subject?.map((item) => (
-        <PostCard key={item._id} article={item} className={styles["masonry-item"]} />
+    <div className={styles.masonry} style={{ columnCount: columns }}>
+      {items?.map((item) => (
+        <CardComponent key={item._id} data={item} className={styles["masonry-item"]} />
       ))}
     </div>
   );

@@ -65,8 +65,8 @@ function Buttons({
 
   const buttonsProps =
     variant === "horizontal"
-      ? { justify: "flex-end", align: "center" }
-      : { justify: "center", grow: true, pt: "xl", pb: "xl", px: "md" };
+      ? { direction: "row", justify: "flex-end", gap: "md", align: "center" }
+      : { direction: "column", justify: "center", gap: "md", grow: true, pt: "xl", pb: "xl", px: "md" };
 
   const handleLogout = useCallback(() => {
     onClose?.();
@@ -78,7 +78,7 @@ function Buttons({
   }, [onClose, navigate, logout]);
 
   return (
-    <Group {...buttonsProps}>
+    <Flex {...buttonsProps}>
       {isAuthenticated ? (
         <>
           <UserInfo user={user} />
@@ -123,7 +123,7 @@ function Buttons({
           </Button>
         </>
       )}
-    </Group>
+    </Flex>
   );
 }
 
@@ -137,15 +137,15 @@ export default function Header() {
           <Image h={60} w="auto" fit="fill" src={logo} alt="Logo" className={styles.logo} />
         </Link>
 
-        <Group visibleFrom="sm" style={{ alignSelf: "flex-end" }}>
+        <Group visibleFrom="md" style={{ alignSelf: "flex-end" }}>
           <Menu variant="horizontal" />
         </Group>
 
-        <Group visibleFrom="sm" gap="md">
+        <Group visibleFrom="md" gap="md">
           <Buttons variant="horizontal" />
         </Group>
 
-        <Burger opened={opened} onClick={toggle} hiddenFrom="sm" />
+        <Burger opened={opened} onClick={toggle} hiddenFrom="md" />
       </Group>
 
       <Drawer

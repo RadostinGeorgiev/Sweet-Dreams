@@ -1,23 +1,25 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router";
+
+import { Button, Container, Flex, Group, Image, Pagination, Text, Title } from "@mantine/core";
+import { IconWriting } from "@tabler/icons-react";
 
 import { useAuth } from "../../../../context/AuthContext";
 import { useItemsCRUD } from "../../../../hooks/useItems";
 import { endpoints } from "../../../../../config";
 
+import ResponsiveGrid from "../../containers/ResponsiveGrid";
+import PostCard from "../../elements/PostCard/PostCard";
+import RecipeCard from "../../elements/RecipeCard/RecipeCard";
 import Loading from "../../elements/Loading";
-import { Button, Container, Flex, Group, Image, Pagination, Text, Title } from "@mantine/core";
-import BlogList from "../../containers/BlogList/BlogList";
 
 import styles from "./PersonalPublications.module.scss";
-import RecipeList from "../../containers/RecipeList/RecipeList";
-import { Link } from "react-router";
-import { IconWriting } from "@tabler/icons-react";
 
 export default function PersonalInfo() {
   const { user } = useAuth();
   const [blogPage, setBlogPage] = useState(1);
   const [recipesPage, setRecipesPage] = useState(1);
-
+  const maxColumns = 3;
   const pageSize = 9;
 
   const {
@@ -80,7 +82,7 @@ export default function PersonalInfo() {
           <Title order={4} fw={400} tt="uppercase" align="start" c="dimmed" className={styles.title}>
             Your Posts
           </Title>
-          <BlogList articles={personalBlogs} />
+          <ResponsiveGrid items={personalBlogs} maxColumns={maxColumns} CardComponent={PostCard} />
 
           {blogTotalPages > 1 && (
             <Group justify="center" mt="lg">
@@ -110,7 +112,7 @@ export default function PersonalInfo() {
           <Title order={4} fw={400} tt="uppercase" align="start" c="dimmed" className={styles.title}>
             Your Recipes
           </Title>
-          <RecipeList recipes={recipes} columns={3} />
+          <ResponsiveGrid items={recipes} maxColumns={maxColumns} CardComponent={RecipeCard} />
 
           {recipesTotalPages > 1 && (
             <Group justify="center" mt="lg">

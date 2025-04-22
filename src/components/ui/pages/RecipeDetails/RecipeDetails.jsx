@@ -26,6 +26,7 @@ import {
   IconEye,
   IconThumbUp,
   IconThumbDown,
+  IconCircle,
 } from "@tabler/icons-react";
 
 import { useAuth } from "../../../../context/AuthContext";
@@ -98,6 +99,10 @@ export default function RecipeDetails() {
 
     updateViews();
   }, [recipe?._id]);
+
+  const handleToggleChecked = (event) => {
+    console.log("Ingredient clicked:", event.currentTarget);
+  };
 
   const calculateRating = (reactions) => {
     const total = reactions.likes + reactions.dislikes;
@@ -249,7 +254,12 @@ export default function RecipeDetails() {
                 </List.Item>
               ))} */}
               {recipe?.ingredients.map((ingredient, index) => (
-                <List.Item key={index}>{ingredient}</List.Item>
+                <List.Item
+                  key={index}
+                  icon={<IconCircle c="dimmed" size={14} onClick={() => handleToggleChecked(index)} />}
+                >
+                  {ingredient}
+                </List.Item>
               ))}
             </List>
           </Paper>
